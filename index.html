@@ -55,7 +55,7 @@ h2{font-size:18px;font-weight:800;margin:0 0 10px}
 .tab{flex:1;min-width:66px;padding:10px 4px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
 .tab.on{background:var(--acc);border-color:var(--acc);color:var(--accink);box-shadow:0 4px 12px rgba(220,38,38,.28)}
 .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
-input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
+input,select{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .btn{display:block;width:100%;padding:13px;border:0;border-radius:12px;background:var(--acc);color:var(--accink);font:inherit;font-weight:800;font-size:16px;cursor:pointer;transition:.15s}
 .btn:active{transform:scale(.99)}
@@ -74,9 +74,10 @@ input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);ba
 .li:last-child{border:0}.li small{color:var(--mute)}
 .tag{font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(22,163,74,.16);color:var(--ok)}
 .tag.l{background:rgba(217,119,6,.2);color:var(--warn)}
+.tag.b{background:rgba(220,38,38,.18);color:var(--acc)}
 textarea{width:100%;height:150px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:10px;margin-top:8px}
 .mute{color:var(--mute)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 
 /* Hero with White Neural Brain SVG & Red Gradient */
 .hero{
@@ -212,149 +213,195 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
     <button class="theme-btn" id="tbtn" title="تبديل المظهر">🌙</button>
   </div>
 
-  <div class="tabs">
-    <button class="tab on" data-t="1">التحضير</button>
-    <button class="tab" data-t="2">الطلاب 🔒</button>
-    <button class="tab" data-t="3">السجل</button>
-    <button class="tab" data-t="4">الشكاوى</button>
-    <button class="tab" data-t="5">المندوب 🔐</button>
+  <!-- الواجهة الأولى: اختيار الدخول بالإنترنت أو بدون إنترنت -->
+  <div class="card" id="entryGateCard">
+    <h2>بوابة الدخول السريع</h2>
+    <p class="mute" style="margin:0 0 12px;font-size:14px">اختر طريقة الدخول المناسبة. عند «الدخول بدون إنترنت» يتم حفظ الحالة ووقت التسجيل محلياً، وعند فتح الإنترنت يتم تسجيل وقت فتح الإنترنت وإرسال البيانات إلى تبويب المندوب.</p>
+    <button class="btn" id="btnEnterOnline">🌐 دخول باستخدام الإنترنت</button>
+    <button class="btn gh" id="btnEnterOffline" style="margin-top:8px">📴 دخول بدون إنترنت</button>
+    <div id="gateAlert"></div>
   </div>
 
-  <section id="s1">
-    <div class="card" id="lec"></div>
-    <div id="stats"></div>
-    <div class="card">
-      <div class="cam" id="cb"><video id="v" playsinline muted></video><i></i></div>
-      <button class="btn" id="cbtn">فتح الكاميرا للتحضير</button>
-      <button class="btn gh" id="pbtn" style="margin-top:8px">التقاط صورة للباركود</button>
-      <input type="file" id="pf" accept="image/*" capture="environment" hidden>
-      <div class="row" style="margin-top:10px">
-        <input id="man" placeholder="أو اكتب رمز التحضير يدوياً" inputmode="text">
-        <button class="btn sm" id="mbtn" style="flex:0 0 auto;margin-bottom:8px">تحضير</button>
-      </div>
-      <div id="msg"></div>
+  <!-- وضع تسجيل الطالب (أونلاين / أوفلاين) ومزامنته مع تبويب المندوب -->
+  <div class="card" id="studentModeCard" hidden>
+    <div class="row" style="align-items:center;margin-bottom:8px">
+      <h2 id="studentModeTitle" style="margin:0"></h2>
+      <button class="btn sm gh" id="btnChangeMode" style="flex:0 0 auto">تغيير الوضع</button>
     </div>
-    <div class="card"><h2>آخر من حضر</h2><div id="recent"></div></div>
-  </section>
+    <p class="mute" id="studentModeHint" style="margin:0 0 10px;font-size:13px"></p>
+    <input id="quickStudentName" placeholder="اسم الطالب">
+    <select id="quickStudentStatus">
+      <option value="حاضر">حاضر</option>
+      <option value="متأخر">متأخر</option>
+      <option value="غائب">غائب</option>
+    </select>
+    <button class="btn" id="btnSaveQuickStatus">تسجيل الحالة</button>
+    <div id="quickStatusMsg"></div>
+  </div>
 
-  <section id="s2" hidden>
-    <div class="card" id="lockCard">
-      <h2>🔒 قسم الطلاب مقفل لحماية الخصوصية</h2>
-      <p class="mute" style="margin:0 0 10px;font-size:14px">عرض الأسماء وأرقام القيد والإدارة متاح للمندوب فقط برمز المرور.</p>
-      <input id="pinInput" type="password" inputmode="numeric" placeholder="أدخل رمز مرور المندوب">
-      <button class="btn" id="unlockBtn">فتح قسم الطلاب</button>
-      <div id="lockMsg"></div>
+  <div id="mainWorkspace" hidden>
+    <div class="tabs">
+      <button class="tab on" data-t="1">التحضير</button>
+      <button class="tab" data-t="2">الطلاب 🔒</button>
+      <button class="tab" data-t="3">السجل</button>
+      <button class="tab" data-t="4">الشكاوى</button>
+      <button class="tab" data-t="5">المندوب 🔐</button>
     </div>
 
-    <div id="studentsPanel" hidden>
+    <section id="s1">
+      <div class="card" id="lec"></div>
+      <div id="stats"></div>
       <div class="card">
-        <div class="row" style="align-items:center;margin-bottom:8px">
-          <h2 style="margin:0">إضافة طالب</h2>
-          <button class="btn sm gh" id="lockNowBtn" style="flex:0 0 auto">🔒 قفل القسم</button>
+        <div class="cam" id="cb"><video id="v" playsinline muted></video><i></i></div>
+        <button class="btn" id="cbtn">فتح الكاميرا للتحضير</button>
+        <button class="btn gh" id="pbtn" style="margin-top:8px">التقاط صورة للباركود</button>
+        <input type="file" id="pf" accept="image/*" capture="environment" hidden>
+        <div class="row" style="margin-top:10px">
+          <input id="man" placeholder="أو اكتب رمز التحضير يدوياً" inputmode="text">
+          <button class="btn sm" id="mbtn" style="flex:0 0 auto;margin-bottom:8px">تحضير</button>
         </div>
-        <input id="sn" placeholder="اسم الطالب">
-        <input id="sc" placeholder="رقم القيد / رمز الباركود">
-        <button class="btn" id="sadd">حفظ الطالب</button>
-        <p class="mute" style="margin:10px 0 0;font-size:14px">يمكنك أيضاً مسح بطاقة طالب جديد أثناء التحضير، وسيطلب منك التطبيق كتابة اسمه مرة واحدة فقط.</p>
+        <div id="msg"></div>
+      </div>
+      <div class="card"><h2>آخر من حضر</h2><div id="recent"></div></div>
+    </section>
+
+    <section id="s2" hidden>
+      <div class="card" id="lockCard">
+        <h2>🔒 قسم الطلاب مقفل لحماية الخصوصية</h2>
+        <p class="mute" style="margin:0 0 10px;font-size:14px">عرض الأسماء وأرقام القيد والإدارة متاح للمندوب فقط برمز المرور.</p>
+        <input id="pinInput" type="password" inputmode="numeric" placeholder="أدخل رمز مرور المندوب">
+        <button class="btn" id="unlockBtn">فتح قسم الطلاب</button>
+        <div id="lockMsg"></div>
       </div>
 
-      <div class="card">
-        <h2 id="sh">الطلاب</h2>
-        <input id="ssearch" placeholder="🔍 ابحث بالاسم أو رقم القيد..." inputmode="search">
-        <div id="slist"></div>
-      </div>
-
-      <div class="card">
-        <h2>🔑 تغيير رمز مرور المندوب</h2>
-        <input id="newPin" type="password" inputmode="numeric" placeholder="اكتب رمز المرور الجديد">
-        <button class="btn gh" id="savePinBtn">حفظ الرمز الجديد</button>
-        <div id="pinSaveMsg"></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="s3" hidden>
-    <div class="card"><h2>المحاضرة الحالية</h2><div id="curlog"></div></div>
-    <div class="card">
-      <h2>طباعة وتصدير ومشاركة</h2>
-      <div class="row" style="margin-bottom:8px">
-        <button class="btn" id="pr">🔒 طباعة الكشف</button>
-        <button class="btn gh" id="xl">🔒 تصدير Excel</button>
-      </div>
-      <div class="card" id="expPinBox" hidden style="margin:10px 0;padding:12px">
-        <h2 style="font-size:16px">🔐 التحقق من كلمة السر</h2>
-        <p class="mute" style="margin:0 0 10px;font-size:13px" id="expPinDesc">أدخل كلمة السر الخاصة بالمندوب / المندوبة لإظهار أرقام القيد الرسمية.</p>
-        <input id="expPinInput" type="password" inputmode="numeric" placeholder="أدخل كلمة السر">
-        <div class="row">
-          <button class="btn" id="expPinConfirmBtn">تأكيد والمتابعة</button>
-          <button class="btn gh" id="expPinCancelBtn">إلغاء</button>
+      <div id="studentsPanel" hidden>
+        <div class="card">
+          <div class="row" style="align-items:center;margin-bottom:8px">
+            <h2 style="margin:0">إضافة طالب</h2>
+            <button class="btn sm gh" id="lockNowBtn" style="flex:0 0 auto">🔒 قفل القسم</button>
+          </div>
+          <input id="sn" placeholder="اسم الطالب">
+          <input id="sc" placeholder="رقم القيد / رمز الباركود">
+          <button class="btn" id="sadd">حفظ الطالب</button>
+          <p class="mute" style="margin:10px 0 0;font-size:14px">يمكنك أيضاً مسح بطاقة طالب جديد أثناء التحضير، وسيطلب منك التطبيق كتابة اسمه مرة واحدة فقط.</p>
         </div>
-        <div id="expPinMsg"></div>
-      </div>
-      <div id="expUnlockedBar" hidden style="margin-bottom:8px">
-        <button class="btn sm gh" id="expLockBtn">🔒 قفل صلاحية الطباعة وExcel</button>
-      </div>
-      <button class="btn wa" id="wacopy">📋 نسخ التقرير المنسق لقروب الواتساب</button>
-      <div id="cmsg"></div>
-      <p class="mute" style="font-size:14px;margin:10px 0 0">يظهر في السجل والواتساب الأسماء فقط دون رقم القيد، بينما يتطلب كشف الطباعة وExcel كلمة سر المندوب لإظهار أرقام القيد الرسمية.</p>
-    </div>
-    <div class="card"><h2>المحاضرات السابقة</h2><div id="hist"></div></div>
-    <textarea id="rt" readonly hidden></textarea>
-  </section>
 
-  <section id="s4" hidden>
-    <div class="card">
-      <h2>صندوق الشكاوى والمقترحات</h2>
-      <input id="cn" placeholder="اسمك (اختياري)">
-      <textarea id="cm" style="height:110px;margin:0 0 8px" placeholder="اكتب شكواك أو اقتراحك هنا"></textarea>
-      <button class="btn" id="csend">حفظ وإرسال عبر واتساب</button>
-      <p class="mute" style="margin:10px 0 0;font-size:14px">تُحفظ نسخة على جوالك، ثم يفتح واتساب لإرسالها إلى مندوب القسم يوسف المروني.</p>
-    </div>
-    <div class="card"><h2>الشكاوى المحفوظة</h2><div id="clist"></div></div>
-  </section>
-
-  <section id="s5" hidden>
-    <div class="card" id="repLockCard">
-      <h2>🔐 لوحة المندوب / المندوبة</h2>
-      <p class="mute" style="margin:0 0 10px;font-size:14px">أدخل كلمة السر الخاصة بالمندوب / المندوبة لفتح أدوات الإدارة والنسخ الاحتياطي والإحصائيات.</p>
-      <input id="repPinInput" type="password" inputmode="numeric" placeholder="أدخل كلمة السر">
-      <button class="btn" id="repUnlockBtn">دخول لوحة المندوب</button>
-      <div id="repLockMsg"></div>
-    </div>
-
-    <div id="repPanel" hidden>
-      <div class="card">
-        <div class="row" style="align-items:center;margin-bottom:8px">
-          <h2 style="margin:0">📝 تخصيص ترويسة التقرير</h2>
-          <button class="btn sm gh" id="repLockNowBtn" style="flex:0 0 auto">🔒 قفل</button>
+        <div class="card">
+          <h2 id="sh">الطلاب</h2>
+          <input id="ssearch" placeholder="🔍 ابحث بالاسم أو رقم القيد..." inputmode="search">
+          <div id="slist"></div>
         </div>
-        <input id="hdrDoc" placeholder="اسم الدكتور / أستاذ المقرر (اختياري)">
-        <div class="row">
-          <input id="hdrSec" placeholder="الشعبة (اختياري)">
-          <input id="hdrHall" placeholder="القاعة (اختياري)">
+
+        <div class="card">
+          <h2>🔑 تغيير رمز مرور المندوب</h2>
+          <input id="newPin" type="password" inputmode="numeric" placeholder="اكتب رمز المرور الجديد">
+          <button class="btn gh" id="savePinBtn">حفظ الرمز الجديد</button>
+          <div id="pinSaveMsg"></div>
         </div>
-        <button class="btn" id="saveHdrBtn">حفظ بيانات الترويسة</button>
-        <div id="hdrMsg"></div>
-        <p class="mute" style="margin:8px 0 0;font-size:13px">تُضاف تلقائياً إلى تقارير الواتساب وكشوفات الطباعة وملفات Excel.</p>
+      </div>
+    </section>
+
+    <section id="s3" hidden>
+      <div class="card"><h2>المحاضرة الحالية</h2><div id="curlog"></div></div>
+      <div class="card">
+        <h2>طباعة وتصدير ومشاركة</h2>
+        <div class="row" style="margin-bottom:8px">
+          <button class="btn" id="pr">🔒 طباعة الكشف</button>
+          <button class="btn gh" id="xl">🔒 تصدير Excel</button>
+        </div>
+        <div class="card" id="expPinBox" hidden style="margin:10px 0;padding:12px">
+          <h2 style="font-size:16px">🔐 التحقق من كلمة السر</h2>
+          <p class="mute" style="margin:0 0 10px;font-size:13px" id="expPinDesc">أدخل كلمة السر الخاصة بالمندوب / المندوبة لإظهار أرقام القيد الرسمية.</p>
+          <input id="expPinInput" type="password" inputmode="numeric" placeholder="أدخل كلمة السر">
+          <div class="row">
+            <button class="btn" id="expPinConfirmBtn">تأكيد والمتابعة</button>
+            <button class="btn gh" id="expPinCancelBtn">إلغاء</button>
+          </div>
+          <div id="expPinMsg"></div>
+        </div>
+        <div id="expUnlockedBar" hidden style="margin-bottom:8px">
+          <button class="btn sm gh" id="expLockBtn">🔒 قفل صلاحية الطباعة وExcel</button>
+        </div>
+        <button class="btn wa" id="wacopy">📋 نسخ التقرير المنسق لقروب الواتساب</button>
+        <div id="cmsg"></div>
+        <p class="mute" style="font-size:14px;margin:10px 0 0">يظهر في السجل والواتساب الأسماء فقط دون رقم القيد، بينما يتطلب كشف الطباعة وExcel كلمة سر المندوب لإظهار أرقام القيد الرسمية.</p>
+      </div>
+      <div class="card"><h2>المحاضرات السابقة</h2><div id="hist"></div></div>
+      <textarea id="rt" readonly hidden></textarea>
+    </section>
+
+    <section id="s4" hidden>
+      <div class="card">
+        <h2>صندوق الشكاوى والمقترحات</h2>
+        <input id="cn" placeholder="اسمك (اختياري)">
+        <textarea id="cm" style="height:110px;margin:0 0 8px" placeholder="اكتب شكواك أو اقتراحك هنا"></textarea>
+        <button class="btn" id="csend">حفظ وإرسال عبر واتساب</button>
+        <p class="mute" style="margin:10px 0 0;font-size:14px">تُحفظ نسخة على جوالك، ثم يفتح واتساب لإرسالها إلى مندوب القسم يوسف المروني.</p>
+      </div>
+      <div class="card"><h2>الشكاوى المحفوظة</h2><div id="clist"></div></div>
+    </section>
+
+    <section id="s5" hidden>
+      <div class="card" id="repLockCard">
+        <h2>🔐 لوحة المندوب / المندوبة</h2>
+        <p class="mute" style="margin:0 0 10px;font-size:14px">أدخل كلمة السر الخاصة بالمندوب / المندوبة لفتح أدوات الإدارة والنسخ الاحتياطي والإحصائيات.</p>
+        <input id="repPinInput" type="password" inputmode="numeric" placeholder="أدخل كلمة السر">
+        <button class="btn" id="repUnlockBtn">دخول لوحة المندوب</button>
+        <div id="repLockMsg"></div>
       </div>
 
-      <div class="card">
-        <h2>💾 نسخ احتياطي واستعادة (JSON)</h2>
-        <p class="mute" style="margin:0 0 10px;font-size:14px">احفظ نسخة كاملة من الطلاب والمحاضرات السابقة والشكاوى، أو استعدها في أي وقت.</p>
-        <div class="row">
-          <button class="btn" id="expJsonBtn">تصدير نسخة JSON</button>
-          <button class="btn gh" id="impJsonBtn">استعادة نسخة JSON</button>
+      <div id="repPanel" hidden>
+        <div class="card">
+          <div class="row" style="align-items:center;margin-bottom:8px">
+            <h2 style="margin:0">📡 سجل المزامنة (أونلاين / أوفلاين)</h2>
+            <button class="btn sm gh" id="repLockNowBtn" style="flex:0 0 auto">🔒 قفل</button>
+          </div>
+          <p class="mute" style="margin:0 0 10px;font-size:13px">يعرض الاسم، الحالة، وقت التسجيل، ووقت فتح الإنترنت عند المزامنة.</p>
+          <div id="offlineSyncList"></div>
         </div>
-        <input type="file" id="jsonFileInput" accept=".json,application/json" hidden>
-        <div id="bakMsg"></div>
-      </div>
 
-      <div class="card">
-        <h2>📊 إحصائيات الحضور والغياب لكل طالب</h2>
-        <div id="studentStatsList"></div>
+        <div class="card">
+          <h2 style="margin:0 0 8px">🚨 تنبيهات التحضير (مشبوه / خارج الوقت / مكرر)</h2>
+          <p class="mute" style="margin:0 0 10px;font-size:13px">تظهر هنا الحالات غير المعتادة للمراجعة السريعة دون إظهارها في الواجهة العامة.</p>
+          <div id="suspiciousAlertsList"></div>
+        </div>
+
+        <div class="card">
+          <h2>✅ تأكيد مزدوج للطلاب الجدد والحالات الاستثنائية</h2>
+          <p class="mute" style="margin:0 0 10px;font-size:13px">الطلاب غير المسجّلين مسبقاً أو المسجّلون يدوياً بعد وقت طويل من بدء المحاضرة تتطلب تأكيدك قبل اعتماد الكشف.</p>
+          <div id="exceptionalConfirmList"></div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin:0 0 8px">📝 تخصيص ترويسة التقرير</h2>
+          <input id="hdrDoc" placeholder="اسم الدكتور / أستاذ المقرر (اختياري)">
+          <div class="row">
+            <input id="hdrSec" placeholder="الشعبة (اختياري)">
+            <input id="hdrHall" placeholder="القاعة (اختياري)">
+          </div>
+          <button class="btn" id="saveHdrBtn">حفظ بيانات الترويسة</button>
+          <div id="hdrMsg"></div>
+          <p class="mute" style="margin:8px 0 0;font-size:13px">تُضاف تلقائياً إلى تقارير الواتساب وكشوفات الطباعة وملفات Excel.</p>
+        </div>
+
+        <div class="card">
+          <h2>💾 نسخ احتياطي واستعادة (JSON)</h2>
+          <p class="mute" style="margin:0 0 10px;font-size:14px">احفظ نسخة كاملة من الطلاب والمحاضرات السابقة والشكاوى، أو استعدها في أي وقت.</p>
+          <div class="row">
+            <button class="btn" id="expJsonBtn">تصدير نسخة JSON</button>
+            <button class="btn gh" id="impJsonBtn">استعادة نسخة JSON</button>
+          </div>
+          <input type="file" id="jsonFileInput" accept=".json,application/json" hidden>
+          <div id="bakMsg"></div>
+        </div>
+
+        <div class="card">
+          <h2>📊 إحصائيات الحضور والغياب لكل طالب</h2>
+          <div id="studentStatsList"></div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <div class="foot">
     <svg class="hero-bg" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -371,10 +418,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
 <div id="psheet"></div>
 
 <script>
-var STORAGE_KEY='ai_hajjah_s1_attendance_v5';
+var STORAGE_KEY='ai_hajjah_s1_attendance_v7';
 var THEME_KEY='ai_hajjah_theme_v1';
 var PIN_KEY='ai_hajjah_admin_pin_v1';
-var D={students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''}},stream=null,det=null,timer=null,seen={},pending=null,unlocked=false,repUnlocked=false,exportUnlocked=false,pendingExportAction=null;
+var CLOUD_ENDPOINT=''; // سنربط رابط قاعدة البيانات هنا في الخطوة القادمة
+
+var D={students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},
+    stream=null,det=null,timer=null,seen={},pending=null,unlocked=false,repUnlocked=false,exportUnlocked=false,pendingExportAction=null,quickMode=null;
 
 function $(i){return document.getElementById(i)}
 
@@ -404,19 +454,185 @@ $('tbtn').onclick=function(){
 };
 
 try{
-  var raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('ai_hajjah_s1_attendance_v4');
+  var raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('ai_hajjah_s1_attendance_v6')||localStorage.getItem('ai_hajjah_s1_attendance_v5')||localStorage.getItem('ai_hajjah_s1_attendance_v4');
   if(raw){
     var parsed=JSON.parse(raw);
-    D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''}},parsed);
+    D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},parsed);
     D.meta=Object.assign({doctor:'',section:'',hall:''},D.meta||{});
+    D.alerts=Array.isArray(D.alerts)?D.alerts:[];
+    D.syncQueue=Array.isArray(D.syncQueue)?D.syncQueue:[];
   }
 }catch(e){}
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D))}catch(e){}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function tm(t){return new Date(t).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'})}
+function tm(t){return t?new Date(t).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'}):'لم يُفتح بعد'}
 function dt(t){return new Date(t).toLocaleDateString('ar',{day:'numeric',month:'short'})+' '+tm(t)}
 function msg(t,k){$('msg').innerHTML='<div class="msg '+k+'">'+t+'</div>'}
 function beep(ok){try{var a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=ok?880:300;g.gain.value=.15;o.start();o.stop(a.currentTime+.15)}catch(e){}if(navigator.vibrate)navigator.vibrate(ok?80:[60,40,60])}
+
+/* فحص توفر الإنترنت الفعلي */
+async function hasRealInternet(){
+  if(typeof navigator!=='undefined' && navigator.onLine===false)return false;
+  try{
+    var ctrl=new AbortController();
+    var timerId=setTimeout(function(){ctrl.abort()},3500);
+    await fetch('https://clients3.google.com/generate_204',{mode:'no-cors',cache:'no-store',signal:ctrl.signal});
+    clearTimeout(timerId);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+async function pushSyncToCloud(item){
+  if(!CLOUD_ENDPOINT)return true;
+  try{
+    var res=await fetch(CLOUD_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(item)
+    });
+    return res.ok;
+  }catch(e){
+    return false;
+  }
+}
+
+async function syncOfflineQueue(){
+  var online=await hasRealInternet();
+  if(!online)return;
+  var openedAt=Date.now();
+  var changed=false;
+  for(var i=0;i<(D.syncQueue||[]).length;i++){
+    var item=D.syncQueue[i];
+    if(!item.synced){
+      if(!item.onlineOpenedAt)item.onlineOpenedAt=openedAt;
+      var sent=await pushSyncToCloud(item);
+      if(sent){
+        item.synced=true;
+        changed=true;
+      }
+    }
+  }
+  if(changed){
+    save();
+    if(repUnlocked)renderOfflineSyncList();
+  }
+}
+
+$('btnEnterOnline').onclick=async function(){
+  $('gateAlert').innerHTML='<div class="msg warn">جاري التحقق من توفر الإنترنت...</div>';
+  var online=await hasRealInternet();
+  if(!online){
+    $('gateAlert').innerHTML='<div class="msg bad">تعذّر الدخول باستخدام الإنترنت لأن الإنترنت مغلق لديك. شغّل الإنترنت ثم أعد المحاولة، أو اختر «دخول بدون إنترنت».</div>';
+    return;
+  }
+  $('gateAlert').innerHTML='';
+  quickMode='online';
+  $('entryGateCard').hidden=true;
+  $('studentModeCard').hidden=false;
+  $('mainWorkspace').hidden=false;
+  $('studentModeTitle').textContent='🌐 وضع الدخول بالإنترنت';
+  $('studentModeHint').textContent='الاتصال متاح. سيتم تسجيل حالتك وإرسالها إلى تبويب المندوب مع مزامنة أي سجلات سابقة.';
+  $('quickStatusMsg').innerHTML='';
+  await syncOfflineQueue();
+  draw();
+};
+
+$('btnEnterOffline').onclick=function(){
+  $('gateAlert').innerHTML='';
+  quickMode='offline';
+  $('entryGateCard').hidden=true;
+  $('studentModeCard').hidden=false;
+  $('mainWorkspace').hidden=false;
+  $('studentModeTitle').textContent='📴 وضع الدخول بدون إنترنت';
+  $('studentModeHint').textContent='أنت تعمل بدون إنترنت. يتم حفظ اسمك وحالتك ووقت التسجيل محلياً، وعند فتح الإنترنت يتم تسجيل وقت فتح الإنترنت وإرسال البيانات إلى تبويب المندوب.';
+  $('quickStatusMsg').innerHTML='';
+  draw();
+};
+
+$('btnChangeMode').onclick=function(){
+  stopCam();
+  quickMode=null;
+  $('studentModeCard').hidden=true;
+  $('mainWorkspace').hidden=true;
+  $('entryGateCard').hidden=false;
+};
+
+$('btnSaveQuickStatus').onclick=async function(){
+  var name=($('quickStudentName').value||'').trim();
+  var status=$('quickStudentStatus').value;
+  if(!name){
+    $('quickStatusMsg').innerHTML='<div class="msg warn">يرجى إدخال اسم الطالب أولاً.</div>';
+    return;
+  }
+  var recordedAt=Date.now();
+  var isOnlineNow=await hasRealInternet();
+  var entry={
+    id:recordedAt+'_'+Math.random().toString(36).slice(2,6),
+    studentName:name,
+    status:status,
+    mode:quickMode||'offline',
+    recordedAt:recordedAt,
+    onlineOpenedAt:(quickMode==='online' && isOnlineNow)?recordedAt:null,
+    synced:false
+  };
+  D.syncQueue.unshift(entry);
+  save();
+  $('quickStudentName').value='';
+
+  if(quickMode==='online' && isOnlineNow){
+    var ok=await pushSyncToCloud(entry);
+    if(ok){
+      entry.synced=true;
+      save();
+    }
+    $('quickStatusMsg').innerHTML='<div class="msg ok">✓ تم تسجيل ('+esc(status)+') الساعة '+tm(recordedAt)+' وإرساله إلى تبويب المندوب.</div>';
+  }else{
+    $('quickStatusMsg').innerHTML='<div class="msg warn">✓ تم حفظ ('+esc(status)+') بدون إنترنت الساعة '+tm(recordedAt)+'. سيُرسل إلى تبويب المندوب مع وقت فتح الإنترنت فور تشغيلها.</div>';
+  }
+  if(repUnlocked)renderOfflineSyncList();
+};
+
+window.addEventListener('online',function(){
+  syncOfflineQueue();
+});
+
+function addAlert(type,studentName,detail,lectureId){
+  D.alerts=D.alerts||[];
+  var exists=D.alerts.some(function(al){
+    return !al.resolved && al.type===type && al.studentName===studentName && al.lectureId===lectureId && al.detail===detail;
+  });
+  if(exists)return;
+  D.alerts.unshift({
+    id:Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    type:type,
+    studentName:studentName,
+    detail:detail,
+    lectureId:lectureId||null,
+    t:Date.now(),
+    resolved:false
+  });
+  if(D.alerts.length>120)D.alerts=D.alerts.slice(0,120);
+}
+
+function getStudentPatternNote(code){
+  var past=D.hist||[];
+  if(past.length<2)return null;
+  var checked=0,lateCount=0;
+  past.forEach(function(L){
+    var rec=L.rec||[];
+    var found=rec.filter(function(r){return r.c==code})[0];
+    if(found){
+      checked++;
+      if(found.s=='متأخر')lateCount++;
+    }
+  });
+  if(checked>=2 && lateCount===0){
+    return 'اختلاف عن النمط المعتاد (كان منتظماً في آخر '+checked+' محاضرات)';
+  }
+  return null;
+}
 
 document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){
   document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x==b)});
@@ -457,21 +673,50 @@ function recent(){
   $('recent').innerHTML=r.length?r.map(function(x){return '<div class="li"><div><b>'+esc(x.n)+'</b><br><small>'+tm(x.t)+'</small></div><span class="tag'+(x.s=='متأخر'?' l':'')+'">'+x.s+'</span></div>'}).join(''):'<p class="mute" style="margin:0">لم يحضر أحد بعد.</p>';
 }
 
-function mark(code){
+function mark(code,opts){
+  opts=opts||{};
   code=String(code).trim();if(!code)return;
   if(!D.cur){msg('ابدأ المحاضرة أولاً قبل التحضير.','warn');return}
   var s=D.students.filter(function(x){return x.c==code})[0];
   if(!s){pending=code;
     $('msg').innerHTML='<div class="msg warn">رمز جديد غير مسجّل: '+esc(code)+'<br>اكتب اسم الطالب لتسجيله وتحضيره.<input id="pn" placeholder="اسم الطالب" style="margin-top:8px"><button class="btn" id="pok">حفظ وتحضير</button></div>';
-    $('pok').onclick=function(){var n=$('pn').value.trim();if(!n)return;D.students.push({c:pending,n:n});pending=null;save();mark(code)};
+    $('pok').onclick=function(){var n=$('pn').value.trim();if(!n)return;D.students.push({c:pending,n:n});pending=null;save();mark(code,{isNewStudent:true,method:'manual'})};
     beep(false);return}
   var ex=D.cur.rec.filter(function(x){return x.c==code})[0];
-  if(ex){msg('تم تحضير '+esc(s.n)+' مسبقاً الساعة '+tm(ex.t),'warn');beep(false);return}
-  var now=Date.now(),late=(now-D.cur.start)/60000>D.cur.late;
-  D.cur.rec.push({c:code,n:s.n,t:now,s:late?'متأخر':'حاضر'});save();
+  if(ex){
+    addAlert('مكرر',s.n,'محاولة تحضير مكررة (سُجّل مسبقاً الساعة '+tm(ex.t)+')',D.cur.id);
+    save();
+    msg('تم تحضير '+esc(s.n)+' مسبقاً الساعة '+tm(ex.t),'warn');beep(false);return}
+  var now=Date.now();
+  var minsElapsed=(now-D.cur.start)/60000;
+  var late=minsElapsed>D.cur.late;
+  var veryLate=minsElapsed>Math.max(D.cur.late*2,25);
+  var isManualLate=!opts.isNewStudent && opts.method==='manual' && minsElapsed>25;
+  var needsConfirm=Boolean(opts.isNewStudent || isManualLate);
+
+  if(veryLate){
+    addAlert('خارج الوقت',s.n,'تسجيل متأخر جداً ('+Math.round(minsElapsed)+' دقيقة من بدء المحاضرة)',D.cur.id);
+  }
+  var pat=getStudentPatternNote(code);
+  if(late && pat){
+    addAlert('مشبوه',s.n,pat,D.cur.id);
+  }
+  if(needsConfirm){
+    addAlert('تأكيد مزدوج',s.n,opts.isNewStudent?'طالب جديد أُضيف أثناء المحاضرة':'تحضير يدوي بعد أكثر من 25 دقيقة من بدء المحاضرة',D.cur.id);
+  }
+
+  D.cur.rec.push({
+    c:code,
+    n:s.n,
+    t:now,
+    s:late?'متأخر':'حاضر',
+    needsConfirm:needsConfirm,
+    confirmed:false
+  });
+  save();
   msg('✓ تم تحضير '+esc(s.n)+' الساعة '+tm(now)+(late?' (متأخر)':''),late?'warn':'ok');beep(true);draw();
 }
-$('mbtn').onclick=function(){mark($('man').value);$('man').value=''};
+$('mbtn').onclick=function(){mark($('man').value,{method:'manual'});$('man').value=''};
 $('pbtn').onclick=function(){if(!D.cur){msg('ابدأ المحاضرة أولاً.','warn');return}$('pf').click()};
 $('pf').onchange=async function(){
   var f=this.files[0];this.value='';if(!f)return;
@@ -479,12 +724,12 @@ $('pf').onchange=async function(){
     var bm=await createImageBitmap(f),code=null;
     if('BarcodeDetector' in window){var a=await new BarcodeDetector().detect(bm);if(a.length)code=a[0].rawValue}
     if(!code&&window.jsQR){var sc=Math.min(1,1280/bm.width),cv=document.createElement('canvas');cv.width=Math.round(bm.width*sc);cv.height=Math.round(bm.height*sc);var cx=cv.getContext('2d');cx.drawImage(bm,0,0,cv.width,cv.height);var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);if(r)code=r.data}
-    if(code)mark(code);else{msg('لم أستطع قراءة الباركود من الصورة. قرّب الكاميرا وأعد التقاط الصورة.','bad');beep(false)}
+    if(code)mark(code,{method:'photo'});else{msg('لم أستطع قراءة الباركود من الصورة. قرّب الكاميرا وأعد التقاط الصورة.','bad');beep(false)}
   }catch(e){msg('تعذّرت قراءة الصورة.','bad')}
 };
 $('man').onkeydown=function(e){if(e.key=='Enter')$('mbtn').click()};
 
-function got(c){var n=Date.now();if(pending||(seen[c]&&n-seen[c]<4000))return;seen[c]=n;mark(c)}
+function got(c){var n=Date.now();if(pending||(seen[c]&&n-seen[c]<4000))return;seen[c]=n;mark(c,{method:'camera'})}
 function stopCam(){if(timer)clearInterval(timer);timer=null;if(stream)stream.getTracks().forEach(function(t){t.stop()});stream=null;$('cb').style.display='none';$('cbtn').textContent='فتح الكاميرا للتحضير'}
 $('cbtn').onclick=async function(){
   if(stream){stopCam();return}
@@ -744,6 +989,79 @@ $('repLockNowBtn').onclick=function(){
   syncExportLockUI();
 };
 
+function renderOfflineSyncList(){
+  var q=D.syncQueue||[];
+  if(!q.length){
+    $('offlineSyncList').innerHTML='<p class="mute" style="margin:0">لا توجد سجلات مزامنة بعد.</p>';
+    return;
+  }
+  $('offlineSyncList').innerHTML=q.map(function(item){
+    var diffSec=(item.onlineOpenedAt && item.mode==='offline')?Math.max(0,Math.round((item.onlineOpenedAt-item.recordedAt)/1000)):null;
+    var tagCls=(item.mode==='offline'?' l':'');
+    return '<div class="li"><div><b>'+esc(item.studentName)+'</b> · الحالة: <b>'+esc(item.status)+'</b> <span class="tag'+tagCls+'">'+(item.mode==='offline'?'أوفلاين':'أونلاين')+'</span><br><small>وقت التسجيل: '+tm(item.recordedAt)+' · وقت فتح الإنترنت: '+tm(item.onlineOpenedAt)+(diffSec!==null?' (فارق '+diffSec+' ثانية)':'')+'</small></div><span class="tag">'+(item.synced?'مزامن':'بانتظار النت')+'</span></div>';
+  }).join('');
+}
+
+function renderSuspiciousAlerts(){
+  var openAlerts=(D.alerts||[]).filter(function(al){return !al.resolved && al.type!=='تأكيد مزدوج'});
+  if(!openAlerts.length){
+    $('suspiciousAlertsList').innerHTML='<p class="mute" style="margin:0">لا توجد تنبيهات تحضير غير معتادة حالياً.</p>';
+    return;
+  }
+  $('suspiciousAlertsList').innerHTML=openAlerts.map(function(al){
+    var tagCls=(al.type==='مشبوه'?' b':' l');
+    return '<div class="li"><div><b>'+esc(al.studentName)+'</b> <span class="tag'+tagCls+'">'+esc(al.type)+'</span><br><small>'+esc(al.detail)+' · '+dt(al.t)+'</small></div><button class="btn sm gh" data-resolve="'+esc(al.id)+'">تجاهل / مراجع</button></div>';
+  }).join('');
+  document.querySelectorAll('[data-resolve]').forEach(function(btn){
+    btn.onclick=function(){
+      var id=btn.getAttribute('data-resolve');
+      (D.alerts||[]).forEach(function(al){if(al.id===id)al.resolved=true});
+      save();
+      renderSuspiciousAlerts();
+    };
+  });
+}
+
+function renderExceptionalConfirmations(){
+  var pendingItems=[];
+  if(D.cur && Array.isArray(D.cur.rec)){
+    D.cur.rec.forEach(function(r,idx){
+      if(r.needsConfirm && !r.confirmed){
+        pendingItems.push({
+          idx:idx,
+          name:r.n,
+          time:r.t,
+          status:r.s
+        });
+      }
+    });
+  }
+  if(!pendingItems.length){
+    $('exceptionalConfirmList').innerHTML='<p class="mute" style="margin:0">لا توجد حالات جديدة أو استثنائية بانتظار التأكيد.</p>';
+    return;
+  }
+  $('exceptionalConfirmList').innerHTML=pendingItems.map(function(item){
+    return '<div class="li"><div><b>'+esc(item.name)+'</b> <span class="tag b">بانتظار التأكيد</span><br><small>الحالة: '+esc(item.status)+' · الساعة '+tm(item.time)+'</small></div><button class="btn sm" data-confirm-idx="'+item.idx+'">تأكيد ✓</button></div>';
+  }).join('');
+  document.querySelectorAll('[data-confirm-idx]').forEach(function(btn){
+    btn.onclick=function(){
+      var idx=+btn.getAttribute('data-confirm-idx');
+      if(D.cur && D.cur.rec[idx]){
+        var targetName=D.cur.rec[idx].n;
+        D.cur.rec[idx].confirmed=true;
+        (D.alerts||[]).forEach(function(al){
+          if(al.type==='تأكيد مزدوج' && al.studentName===targetName && al.lectureId===D.cur.id){
+            al.resolved=true;
+          }
+        });
+        save();
+        renderExceptionalConfirmations();
+        renderSuspiciousAlerts();
+      }
+    };
+  });
+}
+
 $('saveHdrBtn').onclick=function(){
   D.meta={
     doctor:($('hdrDoc').value||'').trim(),
@@ -788,8 +1106,10 @@ $('jsonFileInput').onchange=function(){
         $('bakMsg').innerHTML='<div class="msg bad">ملف JSON غير صالح أو لا يحتوي على بيانات الطلاب.</div>';
         return;
       }
-      D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''}},src);
+      D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},src);
       D.meta=Object.assign({doctor:'',section:'',hall:''},D.meta||{});
+      D.alerts=Array.isArray(D.alerts)?D.alerts:[];
+      D.syncQueue=Array.isArray(D.syncQueue)?D.syncQueue:[];
       save();
       draw();
       $('bakMsg').innerHTML='<div class="msg ok">✓ تمت استعادة النسخة الاحتياطية بنجاح.</div>';
@@ -833,10 +1153,14 @@ function repSection(){
   if($('hdrDoc')&&document.activeElement!==$('hdrDoc'))$('hdrDoc').value=m.doctor||'';
   if($('hdrSec')&&document.activeElement!==$('hdrSec'))$('hdrSec').value=m.section||'';
   if($('hdrHall')&&document.activeElement!==$('hdrHall'))$('hdrHall').value=m.hall||'';
+  renderOfflineSyncList();
+  renderSuspiciousAlerts();
+  renderExceptionalConfirmations();
   renderStudentStats();
 }
 
 draw();
+syncOfflineQueue();
 </script>
 </body>
 </html>
