@@ -17,10 +17,8 @@
       --danger: #ef4444;
       --success: #22c55e;
       --warn: #f59e0b;
-      --ornament-opacity: 0.14;
     }
 
-    /* 1. هوية وتشكيلات قسم الذكاء الاصطناعي (محفوظة كما هي دون تغيير) */
     body.dept-ai {
       --bg-main: #090612;
       --bg-card: #140d26;
@@ -33,7 +31,6 @@
         radial-gradient(circle at 85% 80%, rgba(250, 204, 21, 0.12), transparent 45%);
     }
 
-    /* 2. هوية وتشكيلات فخمة دقيقة لقسم الأمن السيبراني */
     body.dept-cyber {
       --bg-main: #030e12;
       --bg-card: #071920;
@@ -57,26 +54,16 @@
     }
 
     body.dept-cyber .card::before {
-      content: "◈ SECURITY MATRIX • ZERO-TRUST NODE • ENCRYPTED SESSION ◈";
+      content: "SECURITY MATRIX • ZERO-TRUST NODE • ENCRYPTED SESSION";
       position: absolute;
       top: 10px;
       left: 16px;
-      font-size: 0.68rem;
-      letter-spacing: 1.5px;
+      font-size: 0.65rem;
+      letter-spacing: 1.2px;
       color: rgba(56, 189, 248, 0.34);
       pointer-events: none;
     }
 
-    body.dept-cyber .card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 18px;
-      background: linear-gradient(125deg, transparent 40%, rgba(34, 211, 238, 0.06) 50%, transparent 60%);
-      pointer-events: none;
-    }
-
-    /* 3. هوية وتشكيلات فخمة دقيقة لقسم الحاسوب */
     body.dept-cs {
       --bg-main: #060b16;
       --bg-card: #0c1528;
@@ -104,8 +91,8 @@
       position: absolute;
       top: 10px;
       left: 16px;
-      font-size: 0.7rem;
-      letter-spacing: 1.2px;
+      font-size: 0.68rem;
+      letter-spacing: 1.1px;
       color: rgba(192, 132, 252, 0.34);
       pointer-events: none;
     }
@@ -119,12 +106,7 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
-    .container {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 20px 14px 64px;
-    }
-
+    .container { max-width: 1040px; margin: 0 auto; padding: 20px 14px 64px; }
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -134,12 +116,7 @@
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
     }
 
-    .hero-title {
-      margin: 0 0 6px;
-      font-size: 1.45rem;
-      color: var(--accent-2);
-    }
-
+    .hero-title { margin: 0 0 6px; font-size: 1.45rem; color: var(--accent-2); }
     .muted { color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; }
 
     .gate-buttons {
@@ -149,12 +126,7 @@
       margin-top: 18px;
     }
 
-    .dept-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 16px;
-    }
+    .dept-stack { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
 
     button, input, select {
       border-radius: 12px;
@@ -165,40 +137,14 @@
       background: var(--bg-elevated);
     }
 
-    button {
-      cursor: pointer;
-      font-weight: 700;
-      transition: transform 0.15s ease, opacity 0.2s ease, background 0.2s ease;
-    }
-
+    button { cursor: pointer; font-weight: 700; transition: transform 0.15s ease, opacity 0.2s ease; }
     button:hover:not(:disabled) { transform: translateY(-1px); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #090612;
-      border: none;
-    }
-
-    .btn-secondary {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-    }
-
-    .btn-warn {
-      background: rgba(245, 158, 11, 0.16);
-      border: 1px solid var(--warn);
-      color: #fde68a;
-    }
-
-    .btn-dept {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 18px;
-      font-size: 1.05rem;
-      text-align: right;
-    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #090612; border: none; }
+    .btn-secondary { background: var(--bg-elevated); border: 1px solid var(--border); }
+    .btn-warn { background: rgba(245, 158, 11, 0.16); border: 1px solid var(--warn); color: #fde68a; }
+    .btn-dept { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; font-size: 1.05rem; text-align: right; }
 
     .badge {
       display: inline-flex;
@@ -213,113 +159,32 @@
       margin-top: 4px;
     }
 
-    .topbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
+    .topbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: transparent; }
 
-    .tabs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
-
-    .tab-btn.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: transparent;
-    }
-
-    .timer-box {
-      padding: 14px;
-      border-radius: 14px;
-      background: rgba(0, 0, 0, 0.28);
-      border: 1px solid var(--border);
-      margin-top: 12px;
-    }
-
-    .timer-num {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--success);
-    }
-
+    .timer-box { padding: 14px; border-radius: 14px; background: rgba(0, 0, 0, 0.28); border: 1px solid var(--border); margin-top: 12px; }
+    .timer-num { font-size: 1.5rem; font-weight: 800; color: var(--success); }
     .timer-num.warn { color: var(--warn); }
     .timer-num.closed { color: var(--danger); }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 12px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-      margin: 12px 0;
-    }
-
-    .stat-box {
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-    }
-
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 12px 0; }
+    .stat-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
     .stat-val { font-size: 1.3rem; font-weight: 800; color: var(--accent-2); }
 
-    .record-card {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
-    }
-
-    .suspicious-box {
-      border: 1px solid rgba(239, 68, 68, 0.45);
-      background: rgba(239, 68, 68, 0.08);
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 14px;
-    }
+    .record-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+    .suspicious-box { border: 1px solid rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.08); border-radius: 14px; padding: 14px; margin-top: 14px; }
 
     .tag-ok { color: #86efac; font-weight: 700; }
     .tag-warn { color: #fde047; font-weight: 700; }
-    .tag-bad { color: #fca5a5; font-weight: 700; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.86rem;
-    }
-
-    th, td {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 8px 9px;
-      text-align: right;
-      vertical-align: middle;
-    }
-
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.86rem; }
+    th, td { border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 9px; text-align: right; vertical-align: middle; }
     th { background: rgba(255, 255, 255, 0.06); }
 
     .hidden { display: none !important; }
-    .alert {
-      padding: 11px 14px;
-      border-radius: 12px;
-      margin-top: 10px;
-      font-size: 0.9rem;
-      border: 1px solid var(--border);
-      background: rgba(0, 0, 0, 0.28);
-    }
+    .alert { padding: 11px 14px; border-radius: 12px; margin-top: 10px; font-size: 0.9rem; border: 1px solid var(--border); background: rgba(0, 0, 0, 0.28); }
 
     @media print {
       .no-print { display: none !important; }
@@ -331,46 +196,43 @@
 <body class="dept-ai">
   <div class="container">
 
-    <!-- 1. البوابة الأولى: الدخول بالإنترنت أو بدون إنترنت -->
     <section id="gateScreen" class="card">
       <div class="badge">جامعة حجة • كلية الهندسة وتكنولوجيا المعلومات • إعداد يوسف وليد المروني</div>
       <h1 class="hero-title" style="margin-top:10px;">المنصة الذكية لتحضير وغياب الطلاب</h1>
       <p class="muted">بوابة دخول مباشرة للانتقال إلى الأقسام الهندسية، مع دعم العمل المزدوج (أونلاين وأوفلاين)، وحساب الفارق الزمني بين وقت التسجيل ووقت فتح الإنترنت تلقائياً.</p>
 
       <div class="gate-buttons">
-        <button class="btn-primary" onclick="enterWithMode('online')">🌐 دخول باستخدام الإنترنت</button>
-        <button class="btn-secondary" onclick="enterWithMode('offline')">📴 دخول بدون إنترنت</button>
+        <button id="btnOnline" type="button" class="btn-primary">دخول باستخدام الإنترنت</button>
+        <button id="btnOffline" type="button" class="btn-secondary">دخول بدون إنترنت</button>
       </div>
       <div id="gateMsg" class="alert hidden"></div>
     </section>
 
-    <!-- 2. شاشة اختيار الأقسام بأزرار عمودية -->
     <section id="deptScreen" class="card hidden">
       <div class="topbar">
         <div>
           <h2 class="hero-title" style="font-size:1.25rem;">اختر القسم الأكاديمي</h2>
           <div class="muted">الوضع المحدد: <strong id="currentModeLabel"></strong></div>
         </div>
-        <button class="btn-secondary" onclick="backToGate()">↩ تغيير وضع الدخول</button>
+        <button id="btnBackGate" type="button" class="btn-secondary">تغيير وضع الدخول</button>
       </div>
 
       <div class="dept-stack">
-        <button class="btn-dept btn-secondary" onclick="selectDepartment('ai')">
-          <span>🤖 قسم الذكاء الاصطناعي</span>
+        <button id="btnDeptAi" type="button" class="btn-dept btn-secondary">
+          <span>قسم الذكاء الاصطناعي</span>
           <span class="badge">الهوية الأصلية • 44 طالباً</span>
         </button>
-        <button class="btn-dept btn-secondary" onclick="selectDepartment('cyber')">
-          <span>🛡️ قسم الأمن السيبراني</span>
+        <button id="btnDeptCyber" type="button" class="btn-dept btn-secondary">
+          <span>قسم الأمن السيبراني</span>
           <span class="badge">تشكيلات سيبرانية • 54 طالباً</span>
         </button>
-        <button class="btn-dept btn-secondary" onclick="selectDepartment('cs')">
-          <span>💻 قسم الحاسوب</span>
+        <button id="btnDeptCs" type="button" class="btn-dept btn-secondary">
+          <span>قسم الحاسوب</span>
           <span class="badge">تشكيلات برمجية • 19 طالباً</span>
         </button>
       </div>
     </section>
 
-    <!-- 3. واجهة القسم المختار -->
     <section id="deptWorkspace" class="hidden">
       <div class="card no-print">
         <div class="topbar">
@@ -383,19 +245,18 @@
             </div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn-secondary" onclick="syncOfflineRecordsNow()">🔄 مزامنة الأوفلاين الآن</button>
-            <button class="btn-secondary" onclick="backToDeptScreen()">الأقسام</button>
+            <button id="btnSyncNow" type="button" class="btn-secondary">مزامنة الأوفلاين الآن</button>
+            <button id="btnBackDept" type="button" class="btn-secondary">الأقسام</button>
           </div>
         </div>
 
         <div class="tabs">
-          <button id="tabStudentBtn" class="tab-btn active" onclick="switchTab('student')">🎓 تسجيل حضور الطالب</button>
-          <button id="tabRepBtn" class="tab-btn" onclick="switchTab('rep')">🧑‍💼 تبويب المندوب</button>
-          <button id="tabLogsBtn" class="tab-btn" onclick="switchTab('logs')">📁 السجل (دكتور / مقرر)</button>
+          <button id="tabStudentBtn" type="button" class="tab-btn active">تسجيل حضور الطالب</button>
+          <button id="tabRepBtn" type="button" class="tab-btn">تبويب المندوب</button>
+          <button id="tabLogsBtn" type="button" class="tab-btn">السجل (دكتور / مقرر)</button>
         </div>
       </div>
 
-      <!-- تبويب الطالب (بدون إظهار أسماء الطلاب أو أرقام القيد) -->
       <div id="studentTab" class="card no-print">
         <h3 style="margin-top:0;">تسجيل الحضور خلال أول 10 دقائق من المحاضرة</h3>
         <p class="muted">أدخل اسمك ورقم قيدك ورمز المحاضرة المكوّن من 4 أرقام وقت المحاضرة. لا يتم عرض قوائم الطلاب للعامة.</p>
@@ -411,7 +272,7 @@
           </div>
           <div>
             <label class="muted">المحاضرة / المجموعة</label>
-            <select id="stuLectureSelect" style="width:100%; margin-top:6px;" onchange="refreshWindowUI()"></select>
+            <select id="stuLectureSelect" style="width:100%; margin-top:6px;"></select>
           </div>
           <div>
             <label class="muted">رمز التحضير (4 أرقام)</label>
@@ -430,19 +291,18 @@
         </div>
 
         <div style="margin-top:14px;">
-          <button id="submitAttendanceBtn" class="btn-primary" style="width:100%;" onclick="submitStudentAttendance()">✅ تأكيد تسجيل الحضور</button>
+          <button id="submitAttendanceBtn" type="button" class="btn-primary" style="width:100%;">تأكيد تسجيل الحضور</button>
         </div>
         <div id="studentFeedback" class="alert hidden"></div>
       </div>
 
-      <!-- تبويب المندوب -->
       <div id="repTab" class="card no-print hidden">
         <div id="repAuthBox">
           <h3 style="margin-top:0;">دخول المندوب (محمي بكلمة مرور)</h3>
           <p class="muted">أدخل كلمة المرور للوصول إلى الرمز الرباعي الخاص بالمحاضرة، حالة المحاضرة الآن، قائمة الطلاب وأرقام القيد، والتسجيل الاستثنائي المؤكد.</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
             <input id="repPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
-            <button class="btn-primary" onclick="unlockRepPanel()">دخول المندوب</button>
+            <button id="btnUnlockRep" type="button" class="btn-primary">دخول المندوب</button>
           </div>
           <div id="repAuthMsg" class="alert hidden"></div>
         </div>
@@ -451,9 +311,9 @@
           <div class="topbar">
             <h3 style="margin:0;">لوحة المندوب — حالة المحاضرة الآن</h3>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn-secondary" onclick="changeSystemPassword()">🔑 تغيير كلمة المرور</button>
-              <button class="btn-secondary" onclick="exportBackupJSON()">💾 نسخ احتياطي JSON</button>
-              <button class="btn-secondary" onclick="lockRepPanel()">🔒 قفل</button>
+              <button id="btnChangePass" type="button" class="btn-secondary">تغيير كلمة المرور</button>
+              <button id="btnExportJson" type="button" class="btn-secondary">نسخ احتياطي JSON</button>
+              <button id="btnLockRep" type="button" class="btn-secondary">قفل</button>
             </div>
           </div>
 
@@ -479,11 +339,11 @@
           <div class="grid-2" style="margin-top:14px;">
             <div>
               <label class="muted">تخصيص ترويسة التقارير</label>
-              <input id="reportHeaderInput" type="text" style="width:100%; margin-top:6px;" onchange="saveReportHeader()" />
+              <input id="reportHeaderInput" type="text" style="width:100%; margin-top:6px;" />
             </div>
             <div>
               <label class="muted">الأسبوع النشط لدورة الرموز المحفوظة</label>
-              <select id="weekSelector" style="width:100%; margin-top:6px;" onchange="changeWeekIndex()">
+              <select id="weekSelector" style="width:100%; margin-top:6px;">
                 <option value="0">الأسبوع 1 (W1)</option>
                 <option value="1">الأسبوع 2 (W2)</option>
                 <option value="2">الأسبوع 3 (W3)</option>
@@ -492,35 +352,33 @@
             </div>
           </div>
 
-          <!-- تأكيد مزدوج للحالات الاستثنائية للمندوب -->
           <div class="record-card" style="margin-top:14px;">
-            <h4 style="margin:0 0 8px;">⚡ تسجيل حالة استثنائية (تأكيد مزدوج)</h4>
+            <h4 style="margin:0 0 8px;">تسجيل حالة استثنائية (تأكيد مزدوج)</h4>
             <p class="muted" style="margin:0 0 10px;">يُستخدم عند وجود عذر تقني أو استثناء معتمد من المندوب ويتطلب تأكيداً مزدوجاً قبل الاعتماد.</p>
             <div class="grid-2">
               <input id="excStudentId" type="text" placeholder="رقم قيد الطالب" />
               <input id="excReason" type="text" placeholder="سبب الحالة الاستثنائية (مثال: عطل جهاز/انقطاع شبكة)" />
             </div>
             <div style="margin-top:10px;">
-              <button class="btn-warn" onclick="startExceptionalEntry()">إضافة حالة استثنائية (يتطلب تأكيداً مزدوجاً)</button>
+              <button id="btnStartExc" type="button" class="btn-warn">إضافة حالة استثنائية (يتطلب تأكيداً مزدوجاً)</button>
             </div>
             <div id="excConfirmBox" class="alert hidden"></div>
           </div>
 
           <div style="margin-top:14px;">
-            <button class="btn-secondary" onclick="toggleRosterVisibility()">👥 عرض / إخفاء قائمة الطلاب وأرقام القيد (للمندوب فقط)</button>
+            <button id="btnToggleRoster" type="button" class="btn-secondary">عرض / إخفاء قائمة الطلاب وأرقام القيد (للمندوب فقط)</button>
             <div id="repRosterBox" class="hidden" style="margin-top:10px; overflow-x:auto;"></div>
           </div>
         </div>
       </div>
 
-      <!-- تبويب السجل: كشوفات مستقلة حسب اسم الدكتور والمقرر + الشفافية الزمنية للأوفلاين + التنبيهات -->
       <div id="logsTab" class="card hidden">
         <div id="logsAuthBox" class="no-print">
           <h3 style="margin-top:0;">قسم السجل (كشوفات الدكتور والمقرر)</h3>
           <p class="muted">أدخل كلمة المرور لعرض الكشوفات المستقلة لكل دكتور ومقرر، وكشف الفروقات الزمنية للأوفلاين، وتنبيهات التحضير المشبوه/المكرر.</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
             <input id="logsPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
-            <button class="btn-primary" onclick="unlockLogsPanel()">فتح السجل</button>
+            <button id="btnUnlockLogs" type="button" class="btn-primary">فتح السجل</button>
           </div>
           <div id="logsAuthMsg" class="alert hidden"></div>
         </div>
@@ -532,9 +390,9 @@
               <div class="muted" style="font-size:0.84rem;">يشمل الفارق الزمني الدقيق بين (وقت التسجيل) و(وقت فتح الإنترنت) لطلاب الأوفلاين.</div>
             </div>
             <div class="no-print" style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn-secondary" onclick="protectedExportCSV()">📊 تصدير Excel/CSV</button>
-              <button class="btn-secondary" onclick="protectedPrint()">🖨️ طباعة الكشوفات</button>
-              <button class="btn-secondary" onclick="lockLogsPanel()">🔒 قفل السجل</button>
+              <button id="btnExportCsv" type="button" class="btn-secondary">تصدير Excel/CSV</button>
+              <button id="btnPrintLogs" type="button" class="btn-secondary">طباعة الكشوفات</button>
+              <button id="btnLockLogs" type="button" class="btn-secondary">قفل السجل</button>
             </div>
           </div>
 
@@ -546,10 +404,6 @@
 
   </div>
   <script>
-    // =========================================================================
-    // 1. بيانات الأقسام الثلاثة الكاملة (الطلاب + الجداول + رموز W1..W4)
-    // ملاحظة: ربط Supabase (جدول attendance_sync) مؤجل للمرحلة اللاحقة.
-    // =========================================================================
     const DEPARTMENTS = {
       ai: {
         id: 'ai',
@@ -737,12 +591,9 @@
       }
     };
 
-    // =========================================================================
-    // 2. حالة التطبيق والتخزين المحلي
-    // =========================================================================
-    const STORAGE_KEY = 'hajjah_smart_attendance_v3';
+    const STORAGE_KEY = 'hajjah_smart_attendance_v4';
     let state = loadState();
-    let currentEntryMode = 'online'; // 'online' | 'offline'
+    let currentEntryMode = 'online';
     let currentDeptKey = 'ai';
     let repUnlocked = false;
     let logsUnlocked = false;
@@ -780,7 +631,7 @@
     }
 
     function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
     }
 
     function verifyPassword(inputVal) {
@@ -798,15 +649,12 @@
         .toLowerCase();
     }
 
-    // =========================================================================
-    // 3. البوابة الأولى واختيار الأقسام
-    // =========================================================================
     function enterWithMode(mode) {
       const msgEl = document.getElementById('gateMsg');
       msgEl.classList.add('hidden');
 
-      if (mode === 'online' && !navigator.onLine) {
-        msgEl.textContent = '⚠️ لا يوجد اتصال بالإنترنت حالياً. فعّل الإنترنت ثم أعد المحاولة، أو اختر «دخول بدون إنترنت».';
+      if (mode === 'online' && navigator.onLine === false) {
+        msgEl.textContent = 'لا يوجد اتصال بالإنترنت حالياً. فعّل الإنترنت ثم أعد المحاولة، أو اختر «دخول بدون إنترنت».';
         msgEl.classList.remove('hidden');
         return;
       }
@@ -862,9 +710,6 @@
         `دورة الرموز: الأسبوع ${Number(state.weekIndex) + 1}`;
     }
 
-    // =========================================================================
-    // 4. توقيت المحاضرات، الرمز الرباعي المحفوظ، ونافذة أول 10 دقائق
-    // =========================================================================
     function populateLectureSelect() {
       const select = document.getElementById('stuLectureSelect');
       const dept = DEPARTMENTS[currentDeptKey];
@@ -910,6 +755,7 @@
     }
 
     function refreshWindowUI() {
+      if (document.getElementById('deptWorkspace').classList.contains('hidden')) return;
       syncTopBadges();
       const dept = DEPARTMENTS[currentDeptKey];
       const now = new Date();
@@ -925,13 +771,13 @@
       if (win.within10Min) {
         countEl.textContent = formatMMSS(win.remainingSeconds);
         countEl.className = win.remainingSeconds <= 120 ? 'timer-num warn' : 'timer-num';
-        statusEl.textContent = `✅ نافذة التحضير مفتوحة الآن لمقرر: ${selectedLec.course} (${selectedLec.doctor})`;
+        statusEl.textContent = `نافذة التحضير مفتوحة الآن لمقرر: ${selectedLec.course} (${selectedLec.doctor})`;
         nextHintEl.textContent = `وقت المحاضرة: ${selectedLec.start} - ${selectedLec.end} | القاعة: ${selectedLec.venue}`;
         submitBtn.disabled = false;
       } else {
         countEl.textContent = '00:00';
         countEl.className = 'timer-num closed';
-        statusEl.textContent = `⛔ تسجيل الحضور متاح خلال أول 10 دقائق من بداية المحاضرة فقط (${selectedLec.start}).`;
+        statusEl.textContent = `تسجيل الحضور متاح خلال أول 10 دقائق من بداية المحاضرة فقط (${selectedLec.start}).`;
         nextHintEl.textContent = 'يتوقف التسجيل تلقائياً بعد أول 10 دقائق ولا يُفتح إلا في موعد المحاضرة التالية.';
         submitBtn.disabled = true;
       }
@@ -944,7 +790,7 @@
 
       if (activeLecture) {
         const aWin = getLectureWindowStatus(activeLecture, now);
-        repTitle.textContent = `🟢 محاضرة جارية: ${activeLecture.course} — ${activeLecture.doctor}`;
+        repTitle.textContent = `محاضرة جارية: ${activeLecture.course} — ${activeLecture.doctor}`;
         repMeta.textContent = `المكان: ${activeLecture.venue} | الوقت: ${activeLecture.start} - ${activeLecture.end}`;
         repCode.textContent = aWin.code;
         if (aWin.within10Min) {
@@ -963,9 +809,6 @@
       }
     }
 
-    // =========================================================================
-    // 5. تسجيل الحضور + الشفافية الزمنية للأوفلاين + رصد السلوك المشبوه/المكرر
-    // =========================================================================
     function logSuspiciousAlert(type, detail, studentId, lectureId) {
       state.alerts.push({
         id: 'alt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
@@ -993,19 +836,19 @@
       const win = getLectureWindowStatus(lec, now);
 
       if (!name || !stuId || !code) {
-        fb.textContent = '⚠️ يرجى إدخال الاسم الكامل ورقم القيد ورمز التحضير المكوّن من 4 أرقام.';
+        fb.textContent = 'يرجى إدخال الاسم الكامل ورقم القيد ورمز التحضير المكوّن من 4 أرقام.';
         return;
       }
 
       if (!win.within10Min) {
         logSuspiciousAlert('خارج نافذة الـ 10 دقائق', `محاولة تسجيل خارج أول 10 دقائق لمقرر (${lec.course}) برقم قيد (${stuId}).`, stuId, lec.id);
-        fb.textContent = '⛔ انتهت نافذة أول 10 دقائق من المحاضرة؛ لا يمكن تسجيل الحضور حتى موعد المحاضرة التالية.';
+        fb.textContent = 'انتهت نافذة أول 10 دقائق من المحاضرة؛ لا يمكن تسجيل الحضور حتى موعد المحاضرة التالية.';
         return;
       }
 
       if (!/^\d{4}$/.test(code) || code !== win.code) {
         logSuspiciousAlert('رمز تحضير غير مطابق', `إدخال رمز غير مطابق (${code}) لمقرر (${lec.course}) في الأسبوع W${state.weekIndex + 1} برقم قيد (${stuId}).`, stuId, lec.id);
-        fb.textContent = '❌ رمز التحضير غير صحيح لهذه المحاضرة في الأسبوع الحالي.';
+        fb.textContent = 'رمز التحضير غير صحيح لهذه المحاضرة في الأسبوع الحالي.';
         return;
       }
 
@@ -1017,7 +860,7 @@
       );
       if (duplicate) {
         logSuspiciousAlert('تكرار تسجيل في نفس المحاضرة', `محاولة تكرار تسجيل رقم القيد (${stuId}) في مقرر (${lec.course}).`, stuId, lec.id);
-        fb.textContent = '⚠️ تم تسجيل حضور هذا الطالب مسبقاً في هذه المحاضرة وتم توثيق محاولة التكرار.';
+        fb.textContent = 'تم تسجيل حضور هذا الطالب مسبقاً في هذه المحاضرة وتم توثيق محاولة التكرار.';
         return;
       }
 
@@ -1041,7 +884,7 @@
       const recordedAtIso = now.toISOString();
       const onlineOpenedAtIso = (!isOfflineRecord && navigator.onLine) ? now.toISOString() : null;
 
-      const payload = {
+      state.records.push({
         id: 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         department: currentDeptKey,
         lecture_id: lec.id,
@@ -1058,14 +901,12 @@
         exceptional_reason: '',
         student_name: name,
         student_id: stuId
-      };
-
-      state.records.push(payload);
+      });
       saveState();
 
       fb.textContent = isOfflineRecord
-        ? '✅ تم تسجيل حضورك محلياً (بدون إنترنت) مع حفظ وقت التسجيل؛ وسيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني عند عودة الشبكة.'
-        : '✅ تم تسجيل حضورك بنجاح وحفظ السجل.';
+        ? 'تم تسجيل حضورك محلياً (بدون إنترنت) مع حفظ وقت التسجيل؛ وسيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني عند عودة الشبكة.'
+        : 'تم تسجيل حضورك بنجاح وحفظ السجل.';
 
       document.getElementById('stuCodeInput').value = '';
       if (repUnlocked) renderRepStats();
@@ -1108,34 +949,19 @@
     function computeTimeDiffInfo(rec) {
       const recTime = new Date(rec.recorded_at).getTime();
       if (!rec.online_opened_at) {
-        return {
-          diffText: 'بانتظار فتح الإنترنت',
-          diffSeconds: null,
-          badgeClass: 'tag-warn'
-        };
+        return { diffText: 'بانتظار فتح الإنترنت', diffSeconds: null, badgeClass: 'tag-warn' };
       }
       const openTime = new Date(rec.online_opened_at).getTime();
       const diffSec = Math.max(0, Math.round((openTime - recTime) / 1000));
       if (rec.entry_mode === 'online' && diffSec <= 5) {
-        return {
-          diffText: 'مباشر (أونلاين)',
-          diffSeconds: diffSec,
-          badgeClass: 'tag-ok'
-        };
+        return { diffText: 'مباشر (أونلاين)', diffSeconds: diffSec, badgeClass: 'tag-ok' };
       }
       const mins = Math.floor(diffSec / 60);
       const secs = diffSec % 60;
       const human = mins > 0 ? `${mins} د و ${secs} ث` : `${secs} ثانية`;
-      return {
-        diffText: `فارق المزامنة: ${human}`,
-        diffSeconds: diffSec,
-        badgeClass: diffSec > 600 ? 'tag-warn' : 'tag-ok'
-      };
+      return { diffText: `فارق المزامنة: ${human}`, diffSeconds: diffSec, badgeClass: diffSec > 600 ? 'tag-warn' : 'tag-ok' };
     }
 
-    // =========================================================================
-    // 6. تبويب المندوب (الإحصائيات + التأكيد المزدوج + القائمة)
-    // =========================================================================
     function switchTab(tab) {
       ['student', 'rep', 'logs'].forEach(t => {
         document.getElementById(`${t}Tab`).classList.toggle('hidden', t !== tab);
@@ -1147,7 +973,7 @@
       const pass = document.getElementById('repPassInput').value;
       const msg = document.getElementById('repAuthMsg');
       if (!verifyPassword(pass)) {
-        msg.textContent = '❌ كلمة المرور غير صحيحة.';
+        msg.textContent = 'كلمة المرور غير صحيحة.';
         msg.classList.remove('hidden');
         return;
       }
@@ -1195,7 +1021,7 @@
       confirmBox.classList.remove('hidden');
 
       if (!stuId || !reason) {
-        confirmBox.textContent = '⚠️ يرجى إدخال رقم القيد وسبب الحالة الاستثنائية أولاً.';
+        confirmBox.textContent = 'يرجى إدخال رقم القيد وسبب الحالة الاستثنائية أولاً.';
         return;
       }
 
@@ -1214,10 +1040,12 @@
       confirmBox.innerHTML = `
         <div><strong>تأكيد مزدوج مطلوب:</strong> هل تؤكد اعتماد تسجيل استثنائي للطالب <strong>${pendingExceptionDraft.student_name}</strong> (${stuId}) في مقرر <strong>${lec.course}</strong> بسبب: «${reason}»؟</div>
         <div style="margin-top:8px; display:flex; gap:8px;">
-          <button class="btn-primary" onclick="confirmExceptionalEntry()">✅ تأكيد نهائي (الخطوة 2/2)</button>
-          <button class="btn-secondary" onclick="cancelExceptionalEntry()">إلغاء</button>
+          <button id="btnConfirmExcFinal" type="button" class="btn-primary">تأكيد نهائي (الخطوة 2/2)</button>
+          <button id="btnCancelExc" type="button" class="btn-secondary">إلغاء</button>
         </div>
       `;
+      document.getElementById('btnConfirmExcFinal').addEventListener('click', confirmExceptionalEntry);
+      document.getElementById('btnCancelExc').addEventListener('click', cancelExceptionalEntry);
     }
 
     function cancelExceptionalEntry() {
@@ -1250,3 +1078,250 @@
       saveState();
       pendingExceptionDraft = null;
       document.getElementById('excStudentId').value = '';
+      document.getElementById('excReason').value = '';
+      document.getElementById('excConfirmBox').innerHTML = 'تم اعتماد الحالة الاستثنائية وإضافتها إلى السجل.';
+      renderRepStats();
+      if (logsUnlocked) renderDoctorCourseSheets();
+    }
+
+    function changeSystemPassword() {
+      const nextPass = prompt('أدخل كلمة المرور الجديدة للمندوب والسجل والتصدير والطباعة:');
+      if (nextPass && nextPass.trim().length >= 2) {
+        state.password = nextPass.trim();
+        saveState();
+        alert('تم تحديث كلمة المرور بنجاح.');
+      }
+    }
+
+    function saveReportHeader() {
+      state.headers[currentDeptKey] = document.getElementById('reportHeaderInput').value;
+      saveState();
+    }
+
+    function changeWeekIndex() {
+      state.weekIndex = Number(document.getElementById('weekSelector').value) || 0;
+      saveState();
+      syncTopBadges();
+      refreshWindowUI();
+    }
+
+    function toggleRosterVisibility() {
+      if (!repUnlocked) return;
+      document.getElementById('repRosterBox').classList.toggle('hidden');
+    }
+
+    function renderRosterTable() {
+      const dept = DEPARTMENTS[currentDeptKey];
+      const rows = dept.students.map((s, idx) =>
+        `<tr><td>${idx + 1}</td><td>${s.name}</td><td>${s.id}</td></tr>`
+      ).join('');
+      document.getElementById('repRosterBox').innerHTML = `
+        <table>
+          <thead><tr><th>م</th><th>اسم الطالب</th><th>رقم القيد</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function exportBackupJSON() {
+      if (!repUnlocked) return;
+      const payload = {
+        department: currentDeptKey,
+        header: state.headers[currentDeptKey],
+        exported_at: new Date().toISOString(),
+        records: state.records.filter(r => r.department === currentDeptKey),
+        alerts: state.alerts.filter(a => a.department === currentDeptKey)
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `attendance_backup_${currentDeptKey}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function unlockLogsPanel() {
+      const pass = document.getElementById('logsPassInput').value;
+      const msg = document.getElementById('logsAuthMsg');
+      if (!verifyPassword(pass)) {
+        msg.textContent = 'كلمة المرور غير صحيحة.';
+        msg.classList.remove('hidden');
+        return;
+      }
+      msg.classList.add('hidden');
+      logsUnlocked = true;
+      document.getElementById('logsAuthBox').classList.add('hidden');
+      document.getElementById('logsPanel').classList.remove('hidden');
+      document.getElementById('activeReportHeader').textContent =
+        state.headers[currentDeptKey] || DEPARTMENTS[currentDeptKey].defaultHeader;
+      renderSuspiciousAlerts();
+      renderDoctorCourseSheets();
+    }
+
+    function lockLogsPanel() {
+      logsUnlocked = false;
+      document.getElementById('logsPassInput').value = '';
+      document.getElementById('logsPanel').classList.add('hidden');
+      document.getElementById('logsAuthBox').classList.remove('hidden');
+    }
+
+    function renderSuspiciousAlerts() {
+      const deptAlerts = state.alerts.filter(a => a.department === currentDeptKey);
+      const sec = document.getElementById('suspiciousAlertsSection');
+      if (!deptAlerts.length) {
+        sec.innerHTML = '';
+        return;
+      }
+      const itemsHtml = deptAlerts.slice().reverse().map(a =>
+        `<li><strong>[${a.type}]</strong> ${a.detail} <span class="muted">(${new Date(a.at).toLocaleString('ar-YE')})</span></li>`
+      ).join('');
+      sec.innerHTML = `
+        <div class="suspicious-box">
+          <h4 style="margin:0 0 6px; color:#fca5a5;">تنبيهات التحضير المشبوه / المكرر / غير المطابق (${deptAlerts.length})</h4>
+          <ul style="margin:6px 0 0; padding-right:18px; line-height:1.7;">${itemsHtml}</ul>
+        </div>
+      `;
+    }
+
+    function renderDoctorCourseSheets() {
+      const dept = DEPARTMENTS[currentDeptKey];
+      const container = document.getElementById('doctorCourseSheets');
+      const deptRecords = state.records.filter(r => r.department === currentDeptKey);
+
+      const groups = {};
+      dept.lectures.forEach(lec => {
+        const key = `${lec.doctor} || ${lec.course}`;
+        if (!groups[key]) groups[key] = { doctor: lec.doctor, course: lec.course, items: [] };
+      });
+
+      deptRecords.forEach(rec => {
+        const key = `${rec.doctor_name} || ${rec.course_name}`;
+        if (!groups[key]) groups[key] = { doctor: rec.doctor_name, course: rec.course_name, items: [] };
+        groups[key].items.push(rec);
+      });
+
+      container.innerHTML = Object.values(groups).map(g => {
+        const presentCount = g.items.length;
+        const absentCount = Math.max(0, dept.students.length - presentCount);
+        const rate = dept.students.length ? Math.round((presentCount / dept.students.length) * 100) : 0;
+
+        const rowsHtml = g.items.length
+          ? g.items.map((it, i) => {
+              const diffInfo = computeTimeDiffInfo(it);
+              const modeLabel = it.exceptional
+                ? `<span class="tag-warn">استثنائي: ${it.exceptional_reason}</span>`
+                : (it.entry_mode === 'offline' ? '<span class="tag-warn">بدون إنترنت</span>' : '<span class="tag-ok">بالإنترنت</span>');
+
+              return `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${it.student_name}</td>
+                  <td>${it.student_id}</td>
+                  <td>W${it.week_index} (${it.code_used})</td>
+                  <td>${modeLabel}</td>
+                  <td>${new Date(it.recorded_at).toLocaleTimeString('ar-YE')}</td>
+                  <td>${it.online_opened_at ? new Date(it.online_opened_at).toLocaleTimeString('ar-YE') : 'بانتظار النت'}</td>
+                  <td class="${diffInfo.badgeClass}">${diffInfo.diffText}</td>
+                </tr>
+              `;
+            }).join('')
+          : `<tr><td colspan="8" class="muted" style="text-align:center;">لا توجد سجلات حضور مسجلة لهذا الكشف حتى الآن.</td></tr>`;
+
+        return `
+          <div class="record-card">
+            <div class="topbar">
+              <div>
+                <strong>المقرر: ${g.course}</strong>
+                <div class="muted">الدكتور / الأستاذ: ${g.doctor}</div>
+              </div>
+              <div class="muted">
+                حاضرون: <strong>${presentCount}</strong> | غائبون تقديرياً: <strong>${absentCount}</strong> | النسبة: <strong>${rate}%</strong>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>رقم القيد</th>
+                    <th>الأسبوع / الرمز</th>
+                    <th>الوضع</th>
+                    <th>وقت التسجيل</th>
+                    <th>وقت فتح الإنترنت</th>
+                    <th>الفارق الزمني</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function protectedExportCSV() {
+      const p = prompt('أدخل كلمة المرور لتأكيد تصدير Excel/CSV:');
+      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
+      const rows = state.records.filter(r => r.department === currentDeptKey);
+      const header = [
+        'department,course_name,doctor_name,week_index,code_used,within_10min,entry_mode,recorded_at,online_opened_at,time_diff_seconds,exceptional,student_name,student_id'
+      ];
+      const body = rows.map(r => {
+        const diffSec = r.online_opened_at
+          ? Math.max(0, Math.round((new Date(r.online_opened_at).getTime() - new Date(r.recorded_at).getTime()) / 1000))
+          : '';
+        return [
+          r.department, r.course_name, r.doctor_name, r.week_index, r.code_used,
+          r.within_10min, r.entry_mode, r.recorded_at, r.online_opened_at || '',
+          diffSec, r.exceptional ? 'true' : 'false', r.student_name, r.student_id
+        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+      });
+      const blob = new Blob(['\ufeff' + header.concat(body).join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `attendance_${currentDeptKey}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function protectedPrint() {
+      const p = prompt('أدخل كلمة المرور لتأكيد الطباعة:');
+      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
+      window.print();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btnOnline').addEventListener('click', () => enterWithMode('online'));
+      document.getElementById('btnOffline').addEventListener('click', () => enterWithMode('offline'));
+      document.getElementById('btnBackGate').addEventListener('click', backToGate);
+      document.getElementById('btnDeptAi').addEventListener('click', () => selectDepartment('ai'));
+      document.getElementById('btnDeptCyber').addEventListener('click', () => selectDepartment('cyber'));
+      document.getElementById('btnDeptCs').addEventListener('click', () => selectDepartment('cs'));
+      document.getElementById('btnSyncNow').addEventListener('click', syncOfflineRecordsNow);
+      document.getElementById('btnBackDept').addEventListener('click', backToDeptScreen);
+      document.getElementById('tabStudentBtn').addEventListener('click', () => switchTab('student'));
+      document.getElementById('tabRepBtn').addEventListener('click', () => switchTab('rep'));
+      document.getElementById('tabLogsBtn').addEventListener('click', () => switchTab('logs'));
+      document.getElementById('stuLectureSelect').addEventListener('change', refreshWindowUI);
+      document.getElementById('submitAttendanceBtn').addEventListener('click', submitStudentAttendance);
+      document.getElementById('btnUnlockRep').addEventListener('click', unlockRepPanel);
+      document.getElementById('btnChangePass').addEventListener('click', changeSystemPassword);
+      document.getElementById('btnExportJson').addEventListener('click', exportBackupJSON);
+      document.getElementById('btnLockRep').addEventListener('click', lockRepPanel);
+      document.getElementById('reportHeaderInput').addEventListener('change', saveReportHeader);
+      document.getElementById('weekSelector').addEventListener('change', changeWeekIndex);
+      document.getElementById('btnStartExc').addEventListener('click', startExceptionalEntry);
+      document.getElementById('btnToggleRoster').addEventListener('click', toggleRosterVisibility);
+      document.getElementById('btnUnlockLogs').addEventListener('click', unlockLogsPanel);
+      document.getElementById('btnExportCsv').addEventListener('click', protectedExportCSV);
+      document.getElementById('btnPrintLogs').addEventListener('click', protectedPrint);
+      document.getElementById('btnLockLogs').addEventListener('click', lockLogsPanel);
+    });
+
+    setInterval(refreshWindowUI, 1000);
+  </script>
+</body>
+</html>
