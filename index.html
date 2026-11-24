@@ -55,7 +55,7 @@ h2{font-size:18px;font-weight:800;margin:0 0 10px}
 .tab{flex:1;min-width:66px;padding:10px 4px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
 .tab.on{background:var(--acc);border-color:var(--acc);color:var(--accink);box-shadow:0 4px 12px rgba(220,38,38,.28)}
 .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
-input,select{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
+input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .btn{display:block;width:100%;padding:13px;border:0;border-radius:12px;background:var(--acc);color:var(--accink);font:inherit;font-weight:800;font-size:16px;cursor:pointer;transition:.15s}
 .btn:active{transform:scale(.99)}
@@ -77,7 +77,7 @@ input,select{width:100%;padding:12px;border-radius:12px;border:2px solid var(--l
 .tag.b{background:rgba(220,38,38,.18);color:var(--acc)}
 textarea{width:100%;height:150px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:10px;margin-top:8px}
 .mute{color:var(--mute)}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 
 /* Hero with White Neural Brain SVG & Red Gradient */
 .hero{
@@ -215,31 +215,19 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
   <!-- الواجهة الأولى: اختيار الدخول بالإنترنت أو بدون إنترنت -->
   <div class="card" id="entryGateCard">
-    <h2>بوابة الدخول السريع</h2>
-    <p class="mute" style="margin:0 0 12px;font-size:14px">اختر طريقة الدخول المناسبة. عند «الدخول بدون إنترنت» يتم حفظ الحالة ووقت التسجيل محلياً، وعند فتح الإنترنت يتم تسجيل وقت فتح الإنترنت وإرسال البيانات إلى تبويب المندوب.</p>
+    <h2>بوابة الدخول</h2>
+    <p class="mute" style="margin:0 0 12px;font-size:14px">اختر «دخول باستخدام الإنترنت» إذا كان الإنترنت مفعلاً، أو «دخول بدون إنترنت» ليتم تسجيل الحضور أو الغياب مع وقت التسجيل وإرساله لتبويب المندوب مع تسجيل وقت فتح الإنترنت فور عودته.</p>
     <button class="btn" id="btnEnterOnline">🌐 دخول باستخدام الإنترنت</button>
     <button class="btn gh" id="btnEnterOffline" style="margin-top:8px">📴 دخول بدون إنترنت</button>
     <div id="gateAlert"></div>
   </div>
 
-  <!-- وضع تسجيل الطالب (أونلاين / أوفلاين) ومزامنته مع تبويب المندوب -->
-  <div class="card" id="studentModeCard" hidden>
-    <div class="row" style="align-items:center;margin-bottom:8px">
-      <h2 id="studentModeTitle" style="margin:0"></h2>
-      <button class="btn sm gh" id="btnChangeMode" style="flex:0 0 auto">تغيير الوضع</button>
-    </div>
-    <p class="mute" id="studentModeHint" style="margin:0 0 10px;font-size:13px"></p>
-    <input id="quickStudentName" placeholder="اسم الطالب">
-    <select id="quickStudentStatus">
-      <option value="حاضر">حاضر</option>
-      <option value="متأخر">متأخر</option>
-      <option value="غائب">غائب</option>
-    </select>
-    <button class="btn" id="btnSaveQuickStatus">تسجيل الحالة</button>
-    <div id="quickStatusMsg"></div>
-  </div>
-
   <div id="mainWorkspace" hidden>
+    <div class="row" style="align-items:center;margin-bottom:10px">
+      <div id="modeBadgeBox" class="mute" style="font-size:13px;font-weight:700"></div>
+      <button class="btn sm gh" id="btnChangeMode" style="flex:0 0 auto">تغيير وضع الدخول</button>
+    </div>
+
     <div class="tabs">
       <button class="tab on" data-t="1">التحضير</button>
       <button class="tab" data-t="2">الطلاب 🔒</button>
@@ -418,13 +406,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <div id="psheet"></div>
 
 <script>
-var STORAGE_KEY='ai_hajjah_s1_attendance_v7';
+var STORAGE_KEY='ai_hajjah_s1_attendance_v8';
 var THEME_KEY='ai_hajjah_theme_v1';
 var PIN_KEY='ai_hajjah_admin_pin_v1';
 var CLOUD_ENDPOINT=''; // سنربط رابط قاعدة البيانات هنا في الخطوة القادمة
 
 var D={students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},
-    stream=null,det=null,timer=null,seen={},pending=null,unlocked=false,repUnlocked=false,exportUnlocked=false,pendingExportAction=null,quickMode=null;
+    stream=null,det=null,timer=null,seen={},pending=null,unlocked=false,repUnlocked=false,exportUnlocked=false,pendingExportAction=null,entryMode=null;
 
 function $(i){return document.getElementById(i)}
 
@@ -454,7 +442,7 @@ $('tbtn').onclick=function(){
 };
 
 try{
-  var raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('ai_hajjah_s1_attendance_v6')||localStorage.getItem('ai_hajjah_s1_attendance_v5')||localStorage.getItem('ai_hajjah_s1_attendance_v4');
+  var raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('ai_hajjah_s1_attendance_v7')||localStorage.getItem('ai_hajjah_s1_attendance_v6')||localStorage.getItem('ai_hajjah_s1_attendance_v5')||localStorage.getItem('ai_hajjah_s1_attendance_v4');
   if(raw){
     var parsed=JSON.parse(raw);
     D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},parsed);
@@ -498,6 +486,32 @@ async function pushSyncToCloud(item){
   }
 }
 
+function recordSyncEntry(studentName,statusText,recordedAt,isOnlineNow){
+  var entry={
+    id:recordedAt+'_'+Math.random().toString(36).slice(2,6),
+    studentName:studentName,
+    status:statusText,
+    mode:entryMode||'online',
+    recordedAt:recordedAt,
+    onlineOpenedAt:isOnlineNow?recordedAt:null,
+    synced:false
+  };
+  D.syncQueue=D.syncQueue||[];
+  D.syncQueue.unshift(entry);
+  if(D.syncQueue.length>200)D.syncQueue=D.syncQueue.slice(0,200);
+  save();
+  if(isOnlineNow){
+    pushSyncToCloud(entry).then(function(ok){
+      if(ok){
+        entry.synced=true;
+        save();
+        if(repUnlocked)renderOfflineSyncList();
+      }
+    });
+  }
+  if(repUnlocked)renderOfflineSyncList();
+}
+
 async function syncOfflineQueue(){
   var online=await hasRealInternet();
   if(!online)return;
@@ -520,6 +534,14 @@ async function syncOfflineQueue(){
   }
 }
 
+function enterWorkspace(mode){
+  entryMode=mode;
+  $('entryGateCard').hidden=true;
+  $('mainWorkspace').hidden=false;
+  $('modeBadgeBox').textContent=(mode==='online'?'🌐 الدخول باستخدام الإنترنت':'📴 الدخول بدون إنترنت (سيُزامن عند فتح الإنترنت)');
+  draw();
+}
+
 $('btnEnterOnline').onclick=async function(){
   $('gateAlert').innerHTML='<div class="msg warn">جاري التحقق من توفر الإنترنت...</div>';
   var online=await hasRealInternet();
@@ -528,70 +550,20 @@ $('btnEnterOnline').onclick=async function(){
     return;
   }
   $('gateAlert').innerHTML='';
-  quickMode='online';
-  $('entryGateCard').hidden=true;
-  $('studentModeCard').hidden=false;
-  $('mainWorkspace').hidden=false;
-  $('studentModeTitle').textContent='🌐 وضع الدخول بالإنترنت';
-  $('studentModeHint').textContent='الاتصال متاح. سيتم تسجيل حالتك وإرسالها إلى تبويب المندوب مع مزامنة أي سجلات سابقة.';
-  $('quickStatusMsg').innerHTML='';
+  enterWorkspace('online');
   await syncOfflineQueue();
-  draw();
 };
 
 $('btnEnterOffline').onclick=function(){
   $('gateAlert').innerHTML='';
-  quickMode='offline';
-  $('entryGateCard').hidden=true;
-  $('studentModeCard').hidden=false;
-  $('mainWorkspace').hidden=false;
-  $('studentModeTitle').textContent='📴 وضع الدخول بدون إنترنت';
-  $('studentModeHint').textContent='أنت تعمل بدون إنترنت. يتم حفظ اسمك وحالتك ووقت التسجيل محلياً، وعند فتح الإنترنت يتم تسجيل وقت فتح الإنترنت وإرسال البيانات إلى تبويب المندوب.';
-  $('quickStatusMsg').innerHTML='';
-  draw();
+  enterWorkspace('offline');
 };
 
 $('btnChangeMode').onclick=function(){
   stopCam();
-  quickMode=null;
-  $('studentModeCard').hidden=true;
+  entryMode=null;
   $('mainWorkspace').hidden=true;
   $('entryGateCard').hidden=false;
-};
-
-$('btnSaveQuickStatus').onclick=async function(){
-  var name=($('quickStudentName').value||'').trim();
-  var status=$('quickStudentStatus').value;
-  if(!name){
-    $('quickStatusMsg').innerHTML='<div class="msg warn">يرجى إدخال اسم الطالب أولاً.</div>';
-    return;
-  }
-  var recordedAt=Date.now();
-  var isOnlineNow=await hasRealInternet();
-  var entry={
-    id:recordedAt+'_'+Math.random().toString(36).slice(2,6),
-    studentName:name,
-    status:status,
-    mode:quickMode||'offline',
-    recordedAt:recordedAt,
-    onlineOpenedAt:(quickMode==='online' && isOnlineNow)?recordedAt:null,
-    synced:false
-  };
-  D.syncQueue.unshift(entry);
-  save();
-  $('quickStudentName').value='';
-
-  if(quickMode==='online' && isOnlineNow){
-    var ok=await pushSyncToCloud(entry);
-    if(ok){
-      entry.synced=true;
-      save();
-    }
-    $('quickStatusMsg').innerHTML='<div class="msg ok">✓ تم تسجيل ('+esc(status)+') الساعة '+tm(recordedAt)+' وإرساله إلى تبويب المندوب.</div>';
-  }else{
-    $('quickStatusMsg').innerHTML='<div class="msg warn">✓ تم حفظ ('+esc(status)+') بدون إنترنت الساعة '+tm(recordedAt)+'. سيُرسل إلى تبويب المندوب مع وقت فتح الإنترنت فور تشغيلها.</div>';
-  }
-  if(repUnlocked)renderOfflineSyncList();
 };
 
 window.addEventListener('online',function(){
@@ -665,6 +637,11 @@ function lecture(){
   if($('lend'))$('lend').onclick=function(){
     stopCam();var c=D.cur,here={};c.rec.forEach(function(r){here[r.c]=1});
     c.end=Date.now();c.abs=D.students.filter(function(s){return!here[s.c]}).map(function(s){return s.n});
+    var nowEnd=Date.now();
+    var isOnlineEnd=(entryMode==='online') && navigator.onLine;
+    c.abs.forEach(function(absName){
+      recordSyncEntry(absName,'غائب',nowEnd,isOnlineEnd);
+    });
     D.hist.unshift(c);D.cur=null;save();$('msg').innerHTML='';draw()};
 }
 
@@ -693,6 +670,7 @@ function mark(code,opts){
   var veryLate=minsElapsed>Math.max(D.cur.late*2,25);
   var isManualLate=!opts.isNewStudent && opts.method==='manual' && minsElapsed>25;
   var needsConfirm=Boolean(opts.isNewStudent || isManualLate);
+  var statusText=late?'متأخر':'حاضر';
 
   if(veryLate){
     addAlert('خارج الوقت',s.n,'تسجيل متأخر جداً ('+Math.round(minsElapsed)+' دقيقة من بدء المحاضرة)',D.cur.id);
@@ -709,10 +687,11 @@ function mark(code,opts){
     c:code,
     n:s.n,
     t:now,
-    s:late?'متأخر':'حاضر',
+    s:statusText,
     needsConfirm:needsConfirm,
     confirmed:false
   });
+  recordSyncEntry(s.n,statusText,now,(entryMode==='online') && navigator.onLine);
   save();
   msg('✓ تم تحضير '+esc(s.n)+' الساعة '+tm(now)+(late?' (متأخر)':''),late?'warn':'ok');beep(true);draw();
 }
