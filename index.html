@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>منصة التحضير الذكي — قسم الذكاء الاصطناعي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#FDF8F8;
+  --card:#FFFFFF;
+  --ink:#230B0E;
+  --mute:#6E4E52;
+  --acc:#DC2626;
+  --acc-dark:#8B0000;
+  --accink:#FFFFFF;
+  --ok:#16A34A;
+  --warn:#D97706;
+  --bad:#991B1B;
+  --line:#EEDADB;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#13080A;
+    --card:#1E0E11;
+    --ink:#FDF2F2;
+    --mute:#B89498;
+    --acc:#EF4444;
+    --acc-dark:#991B1B;
+    --accink:#FFFFFF;
+    --line:#3A1D22;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13080A;
+  --card:#1E0E11;
+  --ink:#FDF2F2;
+  --mute:#B89498;
+  --acc:#EF4444;
+  --acc-dark:#991B1B;
+  --accink:#FFFFFF;
+  --line:#3A1D22;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',system-ui,sans-serif;font-size:16px;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
+#app{max-width:560px;margin:0 auto;padding:14px 14px 50px}
+h1{font-size:21px;font-weight:800;margin:0;line-height:1.35}
+h2{font-size:18px;font-weight:800;margin:0 0 10px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;padding:10px 2px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.tab.on{background:var(--acc);border-color:var(--acc);color:var(--accink);box-shadow:0 4px 12px rgba(220,38,38,.28)}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.btn{display:block;width:100%;padding:13px;border:0;border-radius:12px;background:var(--acc);color:var(--accink);font:inherit;font-weight:800;font-size:16px;cursor:pointer;transition:.15s}
+.btn:active{transform:scale(.99)}
+.btn.sm{width:auto;padding:8px 14px;font-size:14px}
+.btn.gh{background:transparent;border:2px solid var(--line);color:var(--ink)}
+.btn.rd{background:#7F1D1D;color:#fff}
+.btn.wa{background:#15803D;color:#fff}
+.cam{position:relative;border-radius:14px;overflow:hidden;background:#000;margin-bottom:10px;display:none;aspect-ratio:4/3}
+.cam video{width:100%;height:100%;object-fit:cover}
+.cam i{position:absolute;inset:22% 12%;border:3px solid #fff;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.4)}
+.msg{border-radius:12px;padding:12px 14px;margin:10px 0;font-weight:700;line-height:1.5}
+.msg.ok{background:rgba(22,163,74,.16);border:1px solid rgba(22,163,74,.3)}
+.msg.warn{background:rgba(217,119,6,.18);border:1px solid rgba(217,119,6,.3)}
+.msg.bad{background:rgba(220,38,38,.16);border:1px solid rgba(220,38,38,.3)}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border:0}.li small{color:var(--mute)}
+.tag{font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(22,163,74,.16);color:var(--ok)}
+.tag.l{background:rgba(217,119,6,.2);color:var(--warn)}
+textarea{width:100%;height:150px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:10px;margin-top:8px}
+.mute{color:var(--mute)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+
+/* Hero with White Neural Brain SVG & Red Gradient */
+.hero{
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#fff;
+  border-radius:22px;
+  padding:18px 16px;
+  margin-bottom:14px;
+  background:linear-gradient(135deg,#7F0909 0%,#C81E1E 55%,#DC2626 100%);
+  box-shadow:0 8px 22px rgba(185,28,28,.28);
+}
+.hero-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  opacity:.18;
+}
+.hero-main{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.hero h1{color:#fff}
+.hero p{margin:4px 0 0;opacity:.95;font-size:13px;font-weight:500}
+.hl{
+  flex:none;
+  width:56px;
+  height:56px;
+  border-radius:16px;
+  background:rgba(255,255,255,.16);
+  border:1.5px solid rgba(255,255,255,.35);
+  display:grid;
+  place-items:center;
+  backdrop-filter:blur(4px);
+}
+.theme-btn{
+  position:relative;
+  z-index:1;
+  flex:none;
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  border:1.5px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.15);
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+}
+
+/* Stats */
+.st{display:flex;gap:8px;margin-bottom:12px}
+.st div{flex:1;border-radius:14px;padding:10px 4px;text-align:center;font-weight:700}
+.st b{display:block;font-size:26px}
+.st .g{background:rgba(22,163,74,.18);color:var(--ok)}
+.st .y{background:rgba(217,119,6,.2);color:var(--warn)}
+.st .r{background:rgba(153,27,27,.18);color:var(--acc)}
+
+/* Footer */
+.foot{
+  position:relative;
+  overflow:hidden;
+  text-align:center;
+  margin-top:18px;
+  padding:18px 16px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#7F0909 0%,#C81E1E 100%);
+  color:#fff;
+  box-shadow:0 6px 18px rgba(185,28,28,.22);
+}
+.foot p{margin:10px 0 0;font-size:14px;opacity:.95;position:relative;z-index:1}
+.foot b{position:relative;z-index:1}
+.call{
+  position:relative;
+  z-index:1;
+  display:inline-block;
+  margin-top:10px;
+  background:#fff;
+  color:#991B1B;
+  font-weight:800;
+  text-decoration:none;
+  padding:10px 24px;
+  border-radius:99px;
+  font-size:17px;
+  direction:ltr;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+#psheet{display:none}
+@media print{
+  html,body{background:#fff!important}
+  #app{display:none!important}
+  #psheet{display:block;direction:rtl;color:#000;font-family:'Tajawal',sans-serif}
+  #psheet table{width:100%;border-collapse:collapse}
+  #psheet th,#psheet td{border:1px solid #444;padding:7px 8px;text-align:right}
+  #psheet th{background:#FDE8E8;color:#7F0909}
+  .ph{text-align:center;margin-bottom:12px}
+  .ph h1{margin:4px 0;font-size:21px;color:#7F0909}
+  .ph p{margin:4px 0}
+  .pf{text-align:center;margin-top:16px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hero">
+    <!-- خلفية الشبكة العصبية باللون الأبيض -->
+    <svg class="hero-bg" viewBox="0 0 400 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="30" r="4" fill="#fff"/><circle cx="110" cy="20" r="3" fill="#fff"/>
+      <circle cx="90" cy="85" r="5" fill="#fff"/><circle cx="170" cy="50" r="3" fill="#fff"/>
+      <circle cx="260" cy="25" r="4" fill="#fff"/><circle cx="330" cy="40" r="5" fill="#fff"/>
+      <circle cx="360" cy="105" r="4" fill="#fff"/><circle cx="290" cy="115" r="3" fill="#fff"/>
+      <circle cx="210" cy="100" r="4" fill="#fff"/><circle cx="30" cy="115" r="3" fill="#fff"/>
+      <path d="M40 30L110 20L170 50L90 85L40 30ZM90 85L30 115M170 50L260 25L330 40L360 105L290 115L210 100L170 50ZM260 25L210 100" stroke="#fff" stroke-width="1.3"/>
+    </svg>
+    <div class="hero-main">
+      <!-- أيقونة العقل باللون الأبيض -->
+      <div class="hl" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+          <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+          <circle cx="8.5" cy="9" r="1" fill="#fff"/><circle cx="15.5" cy="9" r="1" fill="#fff"/>
+          <circle cx="8.5" cy="14" r="1" fill="#fff"/><circle cx="15.5" cy="14" r="1" fill="#fff"/>
+        </svg>
+      </div>
+      <div>
+        <h1>منصة التحضير الذكي — قسم الذكاء الاصطناعي</h1>
+        <p>إعداد: يوسف وليد المروني · مندوب قسم الذكاء الاصطناعي</p>
+      </div>
+    </div>
+    <button class="theme-btn" id="tbtn" title="تبديل المظهر">🌙</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-t="1">التحضير</button>
+    <button class="tab" data-t="2">الطلاب</button>
+    <button class="tab" data-t="3">السجل</button>
+    <button class="tab" data-t="4">الشكاوى</button>
+  </div>
+
+  <section id="s1">
+    <div class="card" id="lec"></div>
+    <div id="stats"></div>
+    <div class="card">
+      <div class="cam" id="cb"><video id="v" playsinline muted></video><i></i></div>
+      <button class="btn" id="cbtn">فتح الكاميرا للتحضير</button>
+      <button class="btn gh" id="pbtn" style="margin-top:8px">التقاط صورة للباركود</button>
+      <input type="file" id="pf" accept="image/*" capture="environment" hidden>
+      <div class="row" style="margin-top:10px">
+        <input id="man" placeholder="أو اكتب رقم قيد الطالب يدوياً" inputmode="text">
+        <button class="btn sm" id="mbtn" style="flex:0 0 auto;margin-bottom:8px">تحضير</button>
+      </div>
+      <div id="msg"></div>
+    </div>
+    <div class="card"><h2>آخر من حضر</h2><div id="recent"></div></div>
+  </section>
+
+  <section id="s2" hidden>
+    <div class="card">
+      <h2>إضافة طالب</h2>
+      <input id="sn" placeholder="اسم الطالب">
+      <input id="sc" placeholder="رقم القيد / رمز الباركود">
+      <button class="btn" id="sadd">حفظ الطالب</button>
+      <p class="mute" style="margin:10px 0 0;font-size:14px">يمكنك أيضاً مسح بطاقة طالب جديد أثناء التحضير، وسيطلب منك التطبيق كتابة اسمه مرة واحدة فقط.</p>
+    </div>
+    <div class="card">
+      <h2 id="sh">الطلاب</h2>
+      <input id="ssearch" placeholder="🔍 ابحث بالاسم أو رقم القيد..." inputmode="search">
+      <div id="slist"></div>
+    </div>
+  </section>
+
+  <section id="s3" hidden>
+    <div class="card"><h2>المحاضرة الحالية</h2><div id="curlog"></div></div>
+    <div class="card">
+      <h2>طباعة وتصدير ومشاركة</h2>
+      <div class="row" style="margin-bottom:8px">
+        <button class="btn" id="pr">طباعة الكشف</button>
+        <button class="btn gh" id="xl">تصدير Excel</button>
+      </div>
+      <button class="btn wa" id="wacopy">📋 نسخ التقرير المنسق لقروب الواتساب</button>
+      <div id="cmsg"></div>
+      <p class="mute" style="font-size:14px;margin:10px 0 0">يشمل كل الطلاب المسجّلين مع حالة الحضور ووقته، ومن لم يحضر يظهر غائباً.</p>
+    </div>
+    <div class="card"><h2>المحاضرات السابقة</h2><div id="hist"></div></div>
+    <textarea id="rt" readonly hidden></textarea>
+  </section>
+
+  <section id="s4" hidden>
+    <div class="card">
+      <h2>صندوق الشكاوى والمقترحات</h2>
+      <input id="cn" placeholder="اسمك (اختياري)">
+      <textarea id="cm" style="height:110px;margin:0 0 8px" placeholder="اكتب شكواك أو اقتراحك هنا"></textarea>
+      <button class="btn" id="csend">حفظ وإرسال عبر واتساب</button>
+      <p class="mute" style="margin:10px 0 0;font-size:14px">تُحفظ نسخة على جوالك، ثم يفتح واتساب لإرسالها إلى مندوب القسم يوسف المروني.</p>
+    </div>
+    <div class="card"><h2>الشكاوى المحفوظة</h2><div id="clist"></div></div>
+  </section>
+
+  <div class="foot">
+    <svg class="hero-bg" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="25" r="4" fill="#fff"/><circle cx="150" cy="90" r="3" fill="#fff"/>
+      <circle cx="270" cy="30" r="4" fill="#fff"/><circle cx="350" cy="85" r="5" fill="#fff"/>
+      <path d="M50 25L150 90L270 30L350 85" stroke="#fff" stroke-width="1.3"/>
+    </svg>
+    <b>للاستفسار والدعم والتواصل مع المندوب</b><br>
+    <a class="call" href="tel:+967781325909">📞 781325909</a>
+    <p>تصميم وتطوير: يوسف وليد المروني — مندوب قسم الذكاء الاصطناعي</p>
+  </div>
+</div>
+
+<div id="psheet"></div>
+
+<script>
+var STORAGE_KEY='ai_hajjah_s1_attendance_v1';
+var THEME_KEY='ai_hajjah_theme_v1';
+var D={students:[],cur:null,hist:[]},stream=null,det=null,timer=null,seen={},pending=null;
+
+/* إدارة المظهر الليلي والنهاري */
+function applyTheme(t){
+  if(t==='dark'||t==='light'){
+    document.documentElement.setAttribute('data-theme',t);
+    $('tbtn').textContent=(t==='dark'?'☀️':'🌙');
+  }else{
+    var sysDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;
+    $('tbtn').textContent=(sysDark?'☀️':'🌙');
+  }
+}
+function $(i){return document.getElementById(i)}
+try{var savedTheme=localStorage.getItem(THEME_KEY);applyTheme(savedTheme)}catch(e){}
+$('tbtn').onclick=function(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  var sysDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;
+  var next=(cur==='dark'||(!cur&&sysDark))?'light':'dark';
+  try{localStorage.setItem(THEME_KEY,next)}catch(e){}
+  applyTheme(next);
+};
+
+try{var raw=localStorage.getItem(STORAGE_KEY);if(raw)D=JSON.parse(raw)}catch(e){}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D))}catch(e){}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function tm(t){return new Date(t).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'})}
+function dt(t){return new Date(t).toLocaleDateString('ar',{day:'numeric',month:'short'})+' '+tm(t)}
+function msg(t,k){$('msg').innerHTML='<div class="msg '+k+'">'+t+'</div>'}
+function beep(ok){try{var a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=ok?880:300;g.gain.value=.15;o.start();o.stop(a.currentTime+.15)}catch(e){}if(navigator.vibrate)navigator.vibrate(ok?80:[60,40,60])}
+
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x==b)});
+  for(var i=1;i<=4;i++)$('s'+i).hidden=(i!=b.dataset.t);
+  if(b.dataset.t!='1')stopCam();draw()}});
+
+function draw(){lecture();stats();recent();students();logs();complaints()}
+
+function lecture(){
+  var h='';
+  if(!D.cur){
+    h='<h2>بدء محاضرة جديدة</h2><input id="ln" placeholder="اسم المقرر أو المحاضرة"><input id="ll" type="number" inputmode="numeric" value="10" min="0"><p class="mute" style="margin:0 0 10px;font-size:14px">الرقم أعلاه هو عدد الدقائق المسموحة قبل احتساب الطالب متأخراً.</p><button class="btn" id="lgo">بدء المحاضرة الآن</button>';
+  }else{
+    h='<h2>'+esc(D.cur.name)+'</h2><p class="mute" style="margin:0 0 10px">بدأت '+tm(D.cur.start)+' · التأخر بعد '+D.cur.late+' دقيقة · حضر '+D.cur.rec.length+' من '+D.students.length+'</p><button class="btn rd" id="lend">إنهاء المحاضرة</button>';
+  }
+  $('lec').innerHTML=h;
+  if($('lgo'))$('lgo').onclick=function(){
+    D.cur={id:Date.now(),name:$('ln').value.trim()||'محاضرة ذكاء اصطناعي',start:Date.now(),late:Math.max(0,parseInt($('ll').value)||0),rec:[]};
+    save();draw()};
+  if($('lend'))$('lend').onclick=function(){
+    stopCam();var c=D.cur,here={};c.rec.forEach(function(r){here[r.c]=1});
+    c.end=Date.now();c.abs=D.students.filter(function(s){return!here[s.c]}).map(function(s){return s.n});
+    D.hist.unshift(c);D.cur=null;save();$('msg').innerHTML='';draw()};
+}
+
+function recent(){
+  var r=D.cur?D.cur.rec.slice().reverse().slice(0,6):[];
+  $('recent').innerHTML=r.length?r.map(function(x){return '<div class="li"><div><b>'+esc(x.n)+'</b><br><small>'+tm(x.t)+'</small></div><span class="tag'+(x.s=='متأخر'?' l':'')+'">'+x.s+'</span></div>'}).join(''):'<p class="mute" style="margin:0">لم يحضر أحد بعد.</p>';
+}
+
+function mark(code){
+  code=String(code).trim();if(!code)return;
+  if(!D.cur){msg('ابدأ المحاضرة أولاً قبل التحضير.','warn');return}
+  var s=D.students.filter(function(x){return x.c==code})[0];
+  if(!s){pending=code;
+    $('msg').innerHTML='<div class="msg warn">رقم قيد جديد: '+esc(code)+'<br>اكتب اسم الطالب لتسجيله وتحضيره.<input id="pn" placeholder="اسم الطالب" style="margin-top:8px"><button class="btn" id="pok">حفظ وتحضير</button></div>';
+    $('pok').onclick=function(){var n=$('pn').value.trim();if(!n)return;D.students.push({c:pending,n:n});pending=null;save();mark(code)};
+    beep(false);return}
+  var ex=D.cur.rec.filter(function(x){return x.c==code})[0];
+  if(ex){msg(esc(s.n)+' حُضّر من قبل الساعة '+tm(ex.t),'warn');beep(false);return}
+  var now=Date.now(),late=(now-D.cur.start)/60000>D.cur.late;
+  D.cur.rec.push({c:code,n:s.n,t:now,s:late?'متأخر':'حاضر'});save();
+  msg('✓ تم تحضير '+esc(s.n)+' الساعة '+tm(now)+(late?' (متأخر)':''),late?'warn':'ok');beep(true);draw();
+}
+$('mbtn').onclick=function(){mark($('man').value);$('man').value=''};
+$('pbtn').onclick=function(){if(!D.cur){msg('ابدأ المحاضرة أولاً.','warn');return}$('pf').click()};
+$('pf').onchange=async function(){
+  var f=this.files[0];this.value='';if(!f)return;
+  try{
+    var bm=await createImageBitmap(f),code=null;
+    if('BarcodeDetector' in window){var a=await new BarcodeDetector().detect(bm);if(a.length)code=a[0].rawValue}
+    if(!code&&window.jsQR){var sc=Math.min(1,1280/bm.width),cv=document.createElement('canvas');cv.width=Math.round(bm.width*sc);cv.height=Math.round(bm.height*sc);var cx=cv.getContext('2d');cx.drawImage(bm,0,0,cv.width,cv.height);var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);if(r)code=r.data}
+    if(code)mark(code);else{msg('لم أستطع قراءة الباركود من الصورة. قرّب الكاميرا وأعد التقاط الصورة.','bad');beep(false)}
+  }catch(e){msg('تعذّرت قراءة الصورة.','bad')}
+};
+$('man').onkeydown=function(e){if(e.key=='Enter')$('mbtn').click()};
+
+function got(c){var n=Date.now();if(pending||(seen[c]&&n-seen[c]<4000))return;seen[c]=n;mark(c)}
+function stopCam(){if(timer)clearInterval(timer);timer=null;if(stream)stream.getTracks().forEach(function(t){t.stop()});stream=null;$('cb').style.display='none';$('cbtn').textContent='فتح الكاميرا للتحضير'}
+$('cbtn').onclick=async function(){
+  if(stream){stopCam();return}
+  if(!D.cur){msg('ابدأ المحاضرة أولاً ثم افتح الكاميرا.','warn');return}
+  var er=null;
+  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false})}
+  catch(e1){er=e1;try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});er=null}catch(e2){er=e2}}
+  if(!stream){var nm=(er&&er.name)||'خطأ';msg('تعذّر فتح الكاميرا ('+esc(nm)+'). '+(nm=='NotAllowedError'?'الإذن مرفوض لهذا الموقع: اضغط أيقونة الإعدادات يسار عنوان الموقع، ثم الأذونات، ثم الكاميرا، واختر سماح.':nm=='NotReadableError'?'الكاميرا مشغولة بتطبيق آخر. أغلقه وأعد المحاولة.':nm=='NotFoundError'?'لم يتم العثور على كاميرا.':'جرّب زر «التقاط صورة للباركود» بدلاً منها.'),'bad');return}
+  var v=$('v');v.srcObject=stream;await v.play();$('cb').style.display='block';$('cbtn').textContent='إيقاف الكاميرا';
+  try{if('BarcodeDetector' in window)det=new BarcodeDetector()}catch(e){det=null}
+  var cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
+  timer=setInterval(function(){
+    if(!v.videoWidth)return;
+    if(det){det.detect(v).then(function(a){if(a.length)got(a[0].rawValue)}).catch(function(){})}
+    else if(window.jsQR){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);if(r&&r.data)got(r.data)}
+  },250);
+  if(!det&&!window.jsQR)msg('هذا المتصفح لا يدعم قراءة الباركود. استخدم Chrome أو اكتب الرمز يدوياً.','bad');
+};
+
+/* قائمة الطلاب مع البحث السريع */
+function students(){
+  var q=($('ssearch')?$('ssearch').value.trim():'');
+  var list=D.students.map(function(s,idx){return {n:s.n,c:s.c,idx:idx}}).filter(function(s){
+    return !q || s.n.indexOf(q)!==-1 || s.c.indexOf(q)!==-1;
+  });
+  $('sh').textContent='طلاب قسم الذكاء الاصطناعي ('+list.length+(q?' من '+D.students.length:'')+')';
+  $('slist').innerHTML=list.length?list.map(function(s){
+    return '<div class="li"><div><b>'+esc(s.n)+'</b><br><small dir="ltr">رقم القيد: '+esc(s.c)+'</small></div><button class="btn sm gh" data-d="'+s.idx+'">حذف</button></div>';
+  }).join(''):'<p class="mute" style="margin:0">لا توجد نتائج مطابقة.</p>';
+  document.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){D.students.splice(+b.dataset.d,1);save();draw()}});
+}
+if($('ssearch'))$('ssearch').oninput=students;
+$('sadd').onclick=function(){var n=$('sn').value.trim(),c=$('sc').value.trim();if(!n||!c)return;
+  if(D.students.some(function(s){return s.c==c}))return;D.students.push({n:n,c:c});$('sn').value='';$('sc').value='';save();draw()};
+
+/* التقارير المنسقة للواتساب والسجل */
+function waReport(L,abs){
+  var o='🎓 *كشف حضور وغياب — قسم الذكاء الاصطناعي*\n';
+  o+='📚 *المقرر:* '+L.name+'\n';
+  o+='📅 *التاريخ:* '+dt(L.start)+'\n';
+  o+='───────────────\n';
+  o+='✅ *الحضور ('+L.rec.length+'):*\n';
+  if(L.rec.length){
+    L.rec.forEach(function(r,i){o+=(i+1)+'. '+r.n+' ('+tm(r.t)+' - '+r.s+')\n'});
+  }else{
+    o+='لا يوجد\n';
+  }
+  o+='\n❌ *الغياب ('+abs.length+'):*\n';
+  if(abs.length){
+    abs.forEach(function(n,i){o+=(i+1)+'. '+n+'\n'});
+  }else{
+    o+='لا يوجد غياب 🎉\n';
+  }
+  o+='───────────────\n';
+  o+='👤 *مندوب القسم:* يوسف وليد المروني';
+  return o;
+}
+function copyText(t,feedbackEl){
+  var a=$('rt');a.hidden=false;a.value=t;a.select();
+  try{navigator.clipboard.writeText(t)}catch(e){}
+  a.hidden=true;
+  if(feedbackEl){
+    feedbackEl.innerHTML='<div class="msg ok">✓ تم نسخ التقرير المنسق بنجاح، يمكنك لصقه الآن في قروب الواتساب!</div>';
+    setTimeout(function(){feedbackEl.innerHTML=''},3500);
+  }
+}
+$('wacopy').onclick=function(){
+  var L=D.cur||D.hist[0];
+  if(!L){$('cmsg').innerHTML='<div class="msg warn">لا توجد محاضرة جارية أو سابقة لنسخ تقريرها.</div>';return}
+  var abs=[];
+  if(L===D.cur){
+    var here={};L.rec.forEach(function(r){here[r.c]=1});
+    abs=D.students.filter(function(s){return!here[s.c]}).map(function(s){return s.n});
+  }else{
+    abs=L.abs||[];
+  }
+  copyText(waReport(L,abs),$('cmsg'));
+};
+
+function logs(){
+  if(!D.cur)$('curlog').innerHTML='<p class="mute" style="margin:0">لا توجد محاضرة جارية.</p>';
+  else{var here={};D.cur.rec.forEach(function(r){here[r.c]=1});
+    var ab=D.students.filter(function(s){return!here[s.c]}).map(function(s){return s.n});
+    $('curlog').innerHTML='<p style="margin:0 0 8px"><b>'+esc(D.cur.name)+'</b> · حضر '+D.cur.rec.length+' · غائب '+ab.length+'</p>'+D.cur.rec.map(function(x){return '<div class="li"><span>'+esc(x.n)+' <small>'+tm(x.t)+'</small></span><span class="tag'+(x.s=='متأخر'?' l':'')+'">'+x.s+'</span></div>'}).join('')+(ab.length?'<p class="mute" style="margin:10px 0 0">لم يحضروا: '+ab.map(esc).join('، ')+'</p>':'')+'<button class="btn gh" style="margin-top:10px" id="cc">نسخ تقرير المحاضرة</button>';
+    if($('cc'))$('cc').onclick=function(){copyText(waReport(D.cur,ab),$('cmsg'))}}
+  $('hist').innerHTML=D.hist.length?D.hist.map(function(L,i){return '<div class="li"><div><b>'+esc(L.name)+'</b><br><small>'+dt(L.start)+' · حضر '+L.rec.length+' · غاب '+(L.abs||[]).length+'</small></div><button class="btn sm gh" data-h="'+i+'">نسخ</button></div>'}).join(''):'<p class="mute" style="margin:0">لا توجد محاضرات منتهية.</p>';
+  document.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){var L=D.hist[+b.dataset.h];copyText(waReport(L,L.abs||[]),$('cmsg'))}});
+}
+
+/* القائمة الرسمية لطلاب المستوى الأول - قسم الذكاء الاصطناعي (44 طالباً) */
+var PRE_V=1,PRE='2704093|ابراهيم علي حمود علي حدادي\n2704080|اريام مقبل مقبل القحمي\n2704053|اغصان احمد علي علي بدر\n2704124|امنة عبده علي مهدي الهاتف\n2704152|ايمان صالح محمد جهلان الحسام\n2704070|بسمة عامر حسن محمد الجبر\n2704024|بندر يحيى معيض السمد\n2704086|بهاء الدين محمد يحيى علي العفاري\n2704113|خالد علي حزام قايد صعصعه\n2704144|رامي احمد محمد عبده الحجي\n2704131|رقية عبد الله عبد الله محمد الظفيري\n2704051|رهف قيس علي سعيد القيسي\n2704134|رياض عبد الرحمن عبد الله علي ماهوب\n2704161|زيد علي عبدالله القطيب\n2704023|زيد ماجد زيد العظهي\n2704098|زين العابدين علي هراش احمد سفيان\n2704085|شهاب محمد صالح مقبل لطف الله\n2704101|ضياء الدين احمد محمد التام\n2704118|عبد الباري عبد الله احمد المصوبع\n2704035|عبد المجيد يحيى عبد الله الكحلاني\n2704071|عبد الملك عبد الله يحيى العمري\n2704121|عبد الوهاب عبد الله ناصر مسعود\n2704126|علاء عبد الوهاب علي بخيت القراعي\n2704049|علاء وليد راجح النخيف\n2704092|علي حسين ناصر علي الشرفي\n2704076|علي رسام علي رسام\n2704107|علي محمد علي حسين المحطوري\n2704063|علياء مصطفى عبد الله محمد الشرفي\n2704135|عمرو خالد محمد ابو صالح\n2704140|عمرو خالد ناصر المهدي\n2704022|فهد حسن احمد القطبي\n2704123|محمد بشير صالح حسين البطري\n2704129|حسن هادي صولان\n2704060|محمد حمود صالح عودين\n2704119|محمد عبد الله محمد\n2704128|محمد عبده صالح احمد سوار\n2704097|مستور علي يحيى كعدش\n2704164|مصطفى هلال ناجي حسين الغزي\n2704075|ملاك ابراهيم علي عبدالله البقع\n2704136|ميلاد باسم محمد مطهر حميد\n2704027|نسيبة علي حسن عبدالله شريف\n2704062|نواف عبد العزيز محمد حسن سودي\n2704154|يحيى محمد يحيى النخيف\n2704091|يوسف وليد محمد المروني'.split('\n').map(function(l){var p=l.split('|');return {c:p[0],n:p[1]}});
+
+if((D.pre||0)<PRE_V){
+  PRE.forEach(function(p){if(!D.students.some(function(x){return x.c==p.c}))D.students.push(p)});
+  var ord={};PRE.forEach(function(p,i){ord[p.c]=i});
+  D.students.sort(function(a,b){return (ord[a.c]===undefined?9999:ord[a.c])-(ord[b.c]===undefined?9999:ord[b.c])});
+  D.pre=PRE_V;save();
+}
+D.comp=D.comp||[];
+
+function stats(){
+  var p=0,l=0;if(D.cur)D.cur.rec.forEach(function(r){if(r.s=='متأخر')l++;else p++});
+  var a=Math.max(0,D.students.length-p-l);
+  $('stats').innerHTML=D.cur?'<div class="st"><div class="g"><b>'+p+'</b>حاضر</div><div class="y"><b>'+l+'</b>متأخر</div><div class="r"><b>'+a+'</b>غائب</div></div>':'';
+}
+
+function lecRows(){
+  var L=D.cur||D.hist[0];if(!L)return null;
+  var map={};L.rec.forEach(function(r){map[r.c]=r});
+  return {L:L,rows:D.students.map(function(s,i){var r=map[s.c];return [i+1,s.c,s.n,r?r.s:'غائب',r?tm(r.t):'—']})};
+}
+
+$('pr').onclick=function(){
+  var d=lecRows();if(!d||!d.rows.length){alert('لا توجد محاضرة أو طلاب للطباعة.');return}
+  $('psheet').innerHTML='<div class="ph"><b>الجمهورية اليمنية · جامعة حجة</b><br><b>كلية الهندسة وتكنولوجيا المعلومات · قسم الذكاء الاصطناعي</b><br><b>المستوى الأول · العام الجامعي 2026–2027م</b><h1>كشف حضور وغياب الطلاب</h1><p>'+esc(d.L.name)+' · '+dt(d.L.start)+'</p></div><table><thead><tr><th>م</th><th>رقم القيد</th><th>اسم الطالب</th><th>الحالة</th><th>وقت الحضور</th><th>التوقيع</th></tr></thead><tbody>'+d.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+esc(r[2])+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td></td></tr>'}).join('')+'</tbody></table><p class="pf">إعداد وتطوير: يوسف وليد المروني · مندوب قسم الذكاء الاصطناعي · للاستفسار: 781325909</p>';
+  window.print();
+};
+
+$('xl').onclick=function(){
+  var d=lecRows();if(!d||!d.rows.length){alert('لا توجد محاضرة أو طلاب للتصدير.');return}
+  if(!window.XLSX){alert('تعذّر تحميل مكتبة Excel. تأكد من الاتصال بالإنترنت وحدّث الصفحة.');return}
+  var data=[
+    ['الجمهورية اليمنية - جامعة حجة - كلية الهندسة وتكنولوجيا المعلومات'],
+    ['قسم الذكاء الاصطناعي - المستوى الأول (2026-2027م)'],
+    ['كشف حضور وغياب - '+d.L.name+' ('+dt(d.L.start)+')'],
+    [],
+    ['م','رقم القيد','اسم الطالب','الحالة','وقت الحضور']
+  ].concat(d.rows);
+  var ws=XLSX.utils.aoa_to_sheet(data);ws['!cols']=[{wch:5},{wch:12},{wch:34},{wch:12},{wch:14}];
+  var wb=XLSX.utils.book_new();wb.Workbook={Views:[{RTL:true}]};XLSX.utils.book_append_sheet(wb,ws,'الحضور');
+  XLSX.writeFile(wb,'ai_level1_attendance.xlsx');
+};
+
+function complaints(){
+  $('clist').innerHTML=D.comp.length?D.comp.map(function(c,i){return '<div class="li"><div><b>'+esc(c.n||'بدون اسم')+'</b> <small>'+dt(c.t)+'</small><br>'+esc(c.m)+'</div><button class="btn sm gh" data-c="'+i+'">حذف</button></div>'}).join(''):'<p class="mute" style="margin:0">لا توجد شكاوى محفوظة.</p>';
+  document.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){D.comp.splice(+b.dataset.c,1);save();complaints()}});
+}
+
+$('csend').onclick=function(){
+  var m=$('cm').value.trim();if(!m)return;var n=$('cn').value.trim();
+  D.comp.unshift({n:n,m:m,t:Date.now()});save();
+  window.open('https://wa.me/967781325909?text='+encodeURIComponent('شكوى أو اقتراح (قسم الذكاء الاصطناعي)'+(n?' من '+n:'')+':\n'+m),'_blank');
+  $('cm').value='';$('cn').value='';complaints();
+};
+
+draw();
+</script>
+</body>
+</html>
