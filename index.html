@@ -51,8 +51,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',s
 #app{max-width:560px;margin:0 auto;padding:14px 14px 50px}
 h1{font-size:21px;font-weight:800;margin:0;line-height:1.35}
 h2{font-size:18px;font-weight:800;margin:0 0 10px}
-.tabs{display:flex;gap:8px;margin-bottom:14px}
-.tab{flex:1;padding:10px 2px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{flex:1;min-width:66px;padding:10px 4px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
 .tab.on{background:var(--acc);border-color:var(--acc);color:var(--accink);box-shadow:0 4px 12px rgba(220,38,38,.28)}
 .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
 input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
@@ -217,6 +217,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
     <button class="tab" data-t="2">الطلاب 🔒</button>
     <button class="tab" data-t="3">السجل</button>
     <button class="tab" data-t="4">الشكاوى</button>
+    <button class="tab" data-t="5">المندوب 🔐</button>
   </div>
 
   <section id="s1">
@@ -299,6 +300,49 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
     <div class="card"><h2>الشكاوى المحفوظة</h2><div id="clist"></div></div>
   </section>
 
+  <section id="s5" hidden>
+    <div class="card" id="repLockCard">
+      <h2>🔐 لوحة المندوب / المندوبة</h2>
+      <p class="mute" style="margin:0 0 10px;font-size:14px">أدخل كلمة السر الخاصة بالمندوب / المندوبة لفتح أدوات الإدارة والنسخ الاحتياطي والإحصائيات.</p>
+      <input id="repPinInput" type="password" inputmode="numeric" placeholder="أدخل كلمة السر">
+      <button class="btn" id="repUnlockBtn">دخول لوحة المندوب</button>
+      <div id="repLockMsg"></div>
+    </div>
+
+    <div id="repPanel" hidden>
+      <div class="card">
+        <div class="row" style="align-items:center;margin-bottom:8px">
+          <h2 style="margin:0">📝 تخصيص ترويسة التقرير</h2>
+          <button class="btn sm gh" id="repLockNowBtn" style="flex:0 0 auto">🔒 قفل</button>
+        </div>
+        <input id="hdrDoc" placeholder="اسم الدكتور / أستاذ المقرر (اختياري)">
+        <div class="row">
+          <input id="hdrSec" placeholder="الشعبة (اختياري)">
+          <input id="hdrHall" placeholder="القاعة (اختياري)">
+        </div>
+        <button class="btn" id="saveHdrBtn">حفظ بيانات الترويسة</button>
+        <div id="hdrMsg"></div>
+        <p class="mute" style="margin:8px 0 0;font-size:13px">تُضاف تلقائياً إلى تقارير الواتساب وكشوفات الطباعة وملفات Excel.</p>
+      </div>
+
+      <div class="card">
+        <h2>💾 نسخ احتياطي واستعادة (JSON)</h2>
+        <p class="mute" style="margin:0 0 10px;font-size:14px">احفظ نسخة كاملة من الطلاب والمحاضرات السابقة والشكاوى، أو استعدها في أي وقت.</p>
+        <div class="row">
+          <button class="btn" id="expJsonBtn">تصدير نسخة JSON</button>
+          <button class="btn gh" id="impJsonBtn">استعادة نسخة JSON</button>
+        </div>
+        <input type="file" id="jsonFileInput" accept=".json,application/json" hidden>
+        <div id="bakMsg"></div>
+      </div>
+
+      <div class="card">
+        <h2>📊 إحصائيات الحضور والغياب لكل طالب</h2>
+        <div id="studentStatsList"></div>
+      </div>
+    </div>
+  </section>
+
   <div class="foot">
     <svg class="hero-bg" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="25" r="4" fill="#fff"/><circle cx="150" cy="90" r="3" fill="#fff"/>
@@ -314,10 +358,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
 <div id="psheet"></div>
 
 <script>
-var STORAGE_KEY='ai_hajjah_s1_attendance_v4';
+var STORAGE_KEY='ai_hajjah_s1_attendance_v5';
 var THEME_KEY='ai_hajjah_theme_v1';
 var PIN_KEY='ai_hajjah_admin_pin_v1';
-var D={students:[],cur:null,hist:[]},stream=null,det=null,timer=null,seen={},pending=null,unlocked=false;
+var D={students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''}},stream=null,det=null,timer=null,seen={},pending=null,unlocked=false,repUnlocked=false;
 
 function $(i){return document.getElementById(i)}
 
@@ -328,7 +372,7 @@ function setPin(p){
   try{localStorage.setItem(PIN_KEY,p)}catch(e){}
 }
 function verifyAdminPin(actionLabel){
-  if(unlocked)return true;
+  if(unlocked||repUnlocked)return true;
   var entered=prompt('أدخل رمز مرور المندوب لمتابعة ('+actionLabel+'):');
   if(entered===null)return false;
   if(entered.trim()===getPin()){
@@ -356,7 +400,14 @@ $('tbtn').onclick=function(){
   applyTheme(next);
 };
 
-try{var raw=localStorage.getItem(STORAGE_KEY);if(raw)D=JSON.parse(raw)}catch(e){}
+try{
+  var raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('ai_hajjah_s1_attendance_v4');
+  if(raw){
+    var parsed=JSON.parse(raw);
+    D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''}},parsed);
+    D.meta=Object.assign({doctor:'',section:'',hall:''},D.meta||{});
+  }
+}catch(e){}
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D))}catch(e){}}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function tm(t){return new Date(t).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'})}
@@ -366,21 +417,31 @@ function beep(ok){try{var a=new (window.AudioContext||window.webkitAudioContext)
 
 document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){
   document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x==b)});
-  for(var i=1;i<=4;i++)$('s'+i).hidden=(i!=b.dataset.t);
+  for(var i=1;i<=5;i++)$('s'+i).hidden=(i!=b.dataset.t);
   if(b.dataset.t!='1')stopCam();draw()}});
 
-function draw(){lecture();stats();recent();students();logs();complaints()}
+function draw(){lecture();stats();recent();students();logs();complaints();repSection()}
+
+function getMetaLine(L){
+  var m=(L&&L.meta)||D.meta||{};
+  var parts=[];
+  if(m.doctor)parts.push('الدكتور: '+m.doctor);
+  if(m.section)parts.push('الشعبة: '+m.section);
+  if(m.hall)parts.push('القاعة: '+m.hall);
+  return parts.join(' · ');
+}
 
 function lecture(){
   var h='';
   if(!D.cur){
     h='<h2>بدء محاضرة جديدة</h2><input id="ln" placeholder="اسم المقرر أو المحاضرة"><input id="ll" type="number" inputmode="numeric" value="10" min="0"><p class="mute" style="margin:0 0 10px;font-size:14px">الرقم أعلاه هو عدد الدقائق المسموحة قبل احتساب الطالب متأخراً.</p><button class="btn" id="lgo">بدء المحاضرة الآن</button>';
   }else{
-    h='<h2>'+esc(D.cur.name)+'</h2><p class="mute" style="margin:0 0 10px">بدأت '+tm(D.cur.start)+' · التأخر بعد '+D.cur.late+' دقيقة · حضر '+D.cur.rec.length+' من '+D.students.length+'</p><button class="btn rd" id="lend">إنهاء المحاضرة</button>';
+    var mline=getMetaLine(D.cur);
+    h='<h2>'+esc(D.cur.name)+'</h2>'+(mline?'<p class="mute" style="margin:0 0 6px;font-size:13px">'+esc(mline)+'</p>':'')+'<p class="mute" style="margin:0 0 10px">بدأت '+tm(D.cur.start)+' · التأخر بعد '+D.cur.late+' دقيقة · حضر '+D.cur.rec.length+' من '+D.students.length+'</p><button class="btn rd" id="lend">إنهاء المحاضرة</button>';
   }
   $('lec').innerHTML=h;
   if($('lgo'))$('lgo').onclick=function(){
-    D.cur={id:Date.now(),name:$('ln').value.trim()||'محاضرة ذكاء اصطناعي',start:Date.now(),late:Math.max(0,parseInt($('ll').value)||0),rec:[]};
+    D.cur={id:Date.now(),name:$('ln').value.trim()||'محاضرة ذكاء اصطناعي',start:Date.now(),late:Math.max(0,parseInt($('ll').value)||0),rec:[],meta:Object.assign({},D.meta||{})};
     save();draw()};
   if($('lend'))$('lend').onclick=function(){
     stopCam();var c=D.cur,here={};c.rec.forEach(function(r){here[r.c]=1});
@@ -435,7 +496,7 @@ $('cbtn').onclick=async function(){
   timer=setInterval(function(){
     if(!v.videoWidth)return;
     if(det){det.detect(v).then(function(a){if(a.length)got(a[0].rawValue)}).catch(function(){})}
-    else if(window.jsQR){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);if(r&&r.data)got(r.data)}
+    else if(window.jsQR){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,cv.height);if(r&&r.data)got(r.data)}
   },250);
   if(!det&&!window.jsQR)msg('هذا المتصفح لا يدعم قراءة الباركود. استخدم Chrome أو اكتب الرمز يدوياً.','bad');
 };
@@ -493,6 +554,8 @@ $('sadd').onclick=function(){var n=$('sn').value.trim(),c=$('sc').value.trim();i
 function waReport(L,abs){
   var o='🎓 *كشف حضور وغياب — قسم الذكاء الاصطناعي*\n';
   o+='📚 *المقرر:* '+L.name+'\n';
+  var mline=getMetaLine(L);
+  if(mline)o+='🏫 *بيانات المحاضرة:* '+mline+'\n';
   o+='📅 *التاريخ:* '+dt(L.start)+'\n';
   o+='───────────────\n';
   o+='✅ *الحضور ('+L.rec.length+'):*\n';
@@ -568,7 +631,8 @@ function lecRows(){
 $('pr').onclick=function(){
   if(!verifyAdminPin('طباعة الكشف'))return;
   var d=lecRows();if(!d||!d.rows.length){alert('لا توجد محاضرة أو طلاب للطباعة.');return}
-  $('psheet').innerHTML='<div class="ph"><b>الجمهورية اليمنية · جامعة حجة</b><br><b>كلية الهندسة وتكنولوجيا المعلومات · قسم الذكاء الاصطناعي</b><br><b>المستوى الأول · العام الجامعي 2026–2027م</b><h1>كشف حضور وغياب الطلاب</h1><p>'+esc(d.L.name)+' · '+dt(d.L.start)+'</p></div><table><thead><tr><th>م</th><th>رقم القيد</th><th>اسم الطالب</th><th>الحالة</th><th>وقت الحضور</th><th>التوقيع</th></tr></thead><tbody>'+d.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+esc(r[2])+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td></td></tr>'}).join('')+'</tbody></table><p class="pf">إعداد وتطوير: يوسف وليد المروني · مندوب قسم الذكاء الاصطناعي · للاستفسار: 781325909</p>';
+  var mline=getMetaLine(d.L);
+  $('psheet').innerHTML='<div class="ph"><b>الجمهورية اليمنية · جامعة حجة</b><br><b>كلية الهندسة وتكنولوجيا المعلومات · قسم الذكاء الاصطناعي</b><br><b>المستوى الأول · العام الجامعي 2026–2027م</b><h1>كشف حضور وغياب الطلاب</h1><p>'+esc(d.L.name)+' · '+dt(d.L.start)+'</p>'+(mline?'<p>'+esc(mline)+'</p>':'')+'</div><table><thead><tr><th>م</th><th>رقم القيد</th><th>اسم الطالب</th><th>الحالة</th><th>وقت الحضور</th><th>التوقيع</th></tr></thead><tbody>'+d.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+esc(r[2])+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td></td></tr>'}).join('')+'</tbody></table><p class="pf">إعداد وتطوير: يوسف وليد المروني · مندوب قسم الذكاء الاصطناعي · للاستفسار: 781325909</p>';
   window.print();
 };
 
@@ -576,10 +640,11 @@ $('xl').onclick=function(){
   if(!verifyAdminPin('تصدير Excel'))return;
   var d=lecRows();if(!d||!d.rows.length){alert('لا توجد محاضرة أو طلاب للتصدير.');return}
   if(!window.XLSX){alert('تعذّر تحميل مكتبة Excel. تأكد من الاتصال بالإنترنت وحدّث الصفحة.');return}
+  var mline=getMetaLine(d.L);
   var data=[
     ['الجمهورية اليمنية - جامعة حجة - كلية الهندسة وتكنولوجيا المعلومات'],
     ['قسم الذكاء الاصطناعي - المستوى الأول (2026-2027م)'],
-    ['كشف حضور وغياب - '+d.L.name+' ('+dt(d.L.start)+')'],
+    ['كشف حضور وغياب - '+d.L.name+' ('+dt(d.L.start)+')'+(mline?' | '+mline:'')],
     [],
     ['م','رقم القيد','اسم الطالب','الحالة','وقت الحضور']
   ].concat(d.rows);
@@ -599,6 +664,116 @@ $('csend').onclick=function(){
   window.open('https://wa.me/967781325909?text='+encodeURIComponent('شكوى أو اقتراح (قسم الذكاء الاصطناعي)'+(n?' من '+n:'')+':\n'+m),'_blank');
   $('cm').value='';$('cn').value='';complaints();
 };
+
+/* تبويب المندوب / المندوبة */
+$('repUnlockBtn').onclick=function(){
+  var entered=$('repPinInput').value.trim();
+  if(entered===getPin()){
+    repUnlocked=true;
+    $('repPinInput').value='';
+    $('repLockMsg').innerHTML='';
+    repSection();
+  }else{
+    $('repLockMsg').innerHTML='<div class="msg bad">كلمة السر غير صحيحة!</div>';
+  }
+};
+$('repPinInput').onkeydown=function(e){if(e.key=='Enter')$('repUnlockBtn').click()};
+$('repLockNowBtn').onclick=function(){
+  repUnlocked=false;
+  repSection();
+};
+
+$('saveHdrBtn').onclick=function(){
+  D.meta={
+    doctor:($('hdrDoc').value||'').trim(),
+    section:($('hdrSec').value||'').trim(),
+    hall:($('hdrHall').value||'').trim()
+  };
+  save();
+  $('hdrMsg').innerHTML='<div class="msg ok">✓ تم حفظ بيانات الترويسة بنجاح.</div>';
+  setTimeout(function(){if($('hdrMsg'))$('hdrMsg').innerHTML=''},2500);
+  lecture();
+};
+
+$('expJsonBtn').onclick=function(){
+  var payload={
+    exportedAt:new Date().toISOString(),
+    app:'ai_attendance_hajjah_s1',
+    data:D
+  };
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='ai_attendance_backup_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  $('bakMsg').innerHTML='<div class="msg ok">✓ تم تصدير ملف النسخة الاحتياطية JSON بنجاح.</div>';
+};
+
+$('impJsonBtn').onclick=function(){
+  $('jsonFileInput').click();
+};
+$('jsonFileInput').onchange=function(){
+  var f=this.files[0];this.value='';if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var parsed=JSON.parse(rd.result);
+      var src=(parsed&&parsed.data)?parsed.data:parsed;
+      if(!src||!Array.isArray(src.students)){
+        $('bakMsg').innerHTML='<div class="msg bad">ملف JSON غير صالح أو لا يحتوي على بيانات الطلاب.</div>';
+        return;
+      }
+      D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''}},src);
+      D.meta=Object.assign({doctor:'',section:'',hall:''},D.meta||{});
+      save();
+      draw();
+      $('bakMsg').innerHTML='<div class="msg ok">✓ تمت استعادة النسخة الاحتياطية بنجاح.</div>';
+    }catch(e){
+      $('bakMsg').innerHTML='<div class="msg bad">تعذّر قراءة ملف النسخة الاحتياطية.</div>';
+    }
+  };
+  rd.readAsText(f);
+};
+
+function renderStudentStats(){
+  var sessions=(D.hist||[]).concat(D.cur?[D.cur]:[]);
+  var totalSessions=sessions.length;
+  if(!D.students.length){
+    $('studentStatsList').innerHTML='<p class="mute" style="margin:0">لا يوجد طلاب مسجّلون بعد.</p>';
+    return;
+  }
+  $('studentStatsList').innerHTML=D.students.map(function(s){
+    var p=0,l=0,a=0;
+    sessions.forEach(function(L){
+      var recList=L.rec||[];
+      var found=recList.filter(function(r){return r.c==s.c})[0];
+      if(found){
+        if(found.s=='متأخر')l++;
+        else p++;
+      }else if(L!==D.cur){
+        a++;
+      }
+    });
+    var attended=p+l;
+    var pct=totalSessions>0?Math.round((attended/totalSessions)*100):0;
+    return '<div class="li"><div><b>'+esc(s.n)+'</b><br><small>حضور: '+p+' · تأخر: '+l+' · غياب: '+a+'</small></div><span class="tag'+(pct<75?' l':'')+'">'+pct+'%</span></div>';
+  }).join('');
+}
+
+function repSection(){
+  $('repLockCard').hidden=repUnlocked;
+  $('repPanel').hidden=!repUnlocked;
+  if(!repUnlocked)return;
+  var m=D.meta||{};
+  if($('hdrDoc')&&document.activeElement!==$('hdrDoc'))$('hdrDoc').value=m.doctor||'';
+  if($('hdrSec')&&document.activeElement!==$('hdrSec'))$('hdrSec').value=m.section||'';
+  if($('hdrHall')&&document.activeElement!==$('hdrHall'))$('hdrHall').value=m.hall||'';
+  renderStudentStats();
+}
 
 draw();
 </script>
