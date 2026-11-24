@@ -1,1145 +1,1252 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>منصة التحضير الذكي — قسم الذكاء الاصطناعي</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-:root{
-  --bg:#FDF8F8;
-  --card:#FFFFFF;
-  --ink:#230B0E;
-  --mute:#6E4E52;
-  --acc:#DC2626;
-  --acc-dark:#8B0000;
-  --accink:#FFFFFF;
-  --ok:#16A34A;
-  --warn:#D97706;
-  --bad:#991B1B;
-  --line:#EEDADB;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#13080A;
-    --card:#1E0E11;
-    --ink:#FDF2F2;
-    --mute:#B89498;
-    --acc:#EF4444;
-    --acc-dark:#991B1B;
-    --accink:#FFFFFF;
-    --line:#3A1D22;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#13080A;
-  --card:#1E0E11;
-  --ink:#FDF2F2;
-  --mute:#B89498;
-  --acc:#EF4444;
-  --acc-dark:#991B1B;
-  --accink:#FFFFFF;
-  --line:#3A1D22;
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',system-ui,sans-serif;font-size:16px;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
-#app{max-width:560px;margin:0 auto;padding:14px 14px 50px}
-h1{font-size:21px;font-weight:800;margin:0;line-height:1.35}
-h2{font-size:18px;font-weight:800;margin:0 0 10px}
-.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.tab{flex:1;min-width:66px;padding:10px 4px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-.tab.on{background:var(--acc);border-color:var(--acc);color:var(--accink);box-shadow:0 4px 12px rgba(220,38,38,.28)}
-.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
-input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
-.row{display:flex;gap:8px}.row>*{flex:1}
-.btn{display:block;width:100%;padding:13px;border:0;border-radius:12px;background:var(--acc);color:var(--accink);font:inherit;font-weight:800;font-size:16px;cursor:pointer;transition:.15s}
-.btn:active{transform:scale(.99)}
-.btn.sm{width:auto;padding:8px 14px;font-size:14px}
-.btn.gh{background:transparent;border:2px solid var(--line);color:var(--ink)}
-.btn.rd{background:#7F1D1D;color:#fff}
-.btn.wa{background:#15803D;color:#fff}
-.cam{position:relative;border-radius:14px;overflow:hidden;background:#000;margin-bottom:10px;display:none;aspect-ratio:4/3}
-.cam video{width:100%;height:100%;object-fit:cover}
-.cam i{position:absolute;inset:22% 12%;border:3px solid #fff;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.4)}
-.msg{border-radius:12px;padding:12px 14px;margin:10px 0;font-weight:700;line-height:1.5}
-.msg.ok{background:rgba(22,163,74,.16);border:1px solid rgba(22,163,74,.3)}
-.msg.warn{background:rgba(217,119,6,.18);border:1px solid rgba(217,119,6,.3)}
-.msg.bad{background:rgba(220,38,38,.16);border:1px solid rgba(220,38,38,.3)}
-.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
-.li:last-child{border:0}.li small{color:var(--mute)}
-.tag{font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(22,163,74,.16);color:var(--ok)}
-.tag.l{background:rgba(217,119,6,.2);color:var(--warn)}
-.tag.b{background:rgba(220,38,38,.18);color:var(--acc)}
-textarea{width:100%;height:150px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:10px;margin-top:8px}
-.mute{color:var(--mute)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المنصة الذكية للتحضير والغياب | إعداد يوسف وليد المروني</title>
+  <style>
+    :root {
+      --bg-main: #090612;
+      --bg-card: #130c24;
+      --bg-elevated: #1b1133;
+      --text-main: #f5f3ff;
+      --text-muted: #b6add6;
+      --accent: #a855f7;
+      --accent-2: #eab308;
+      --border: rgba(234, 179, 8, 0.25);
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warn: #f59e0b;
+      --ornament-opacity: 0.14;
+    }
 
-/* Hero with White Neural Brain SVG & Red Gradient */
-.hero{
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  color:#fff;
-  border-radius:22px;
-  padding:18px 16px;
-  margin-bottom:14px;
-  background:linear-gradient(135deg,#7F0909 0%,#C81E1E 55%,#DC2626 100%);
-  box-shadow:0 8px 22px rgba(185,28,28,.28);
-}
-.hero-bg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  opacity:.18;
-}
-.hero-main{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-.hero h1{color:#fff}
-.hero p{margin:4px 0 0;opacity:.95;font-size:13px;font-weight:500}
-.hl{
-  flex:none;
-  width:56px;
-  height:56px;
-  border-radius:16px;
-  background:rgba(255,255,255,.16);
-  border:1.5px solid rgba(255,255,255,.35);
-  display:grid;
-  place-items:center;
-  backdrop-filter:blur(4px);
-}
-.theme-btn{
-  position:relative;
-  z-index:1;
-  flex:none;
-  width:40px;
-  height:40px;
-  border-radius:12px;
-  border:1.5px solid rgba(255,255,255,.35);
-  background:rgba(255,255,255,.15);
-  color:#fff;
-  font-size:18px;
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-}
+    /* 1. هوية وتشكيلات قسم الذكاء الاصطناعي (محفوظة كما هي دون تغيير) */
+    body.dept-ai {
+      --bg-main: #090612;
+      --bg-card: #140d26;
+      --bg-elevated: #1f133b;
+      --accent: #9333ea;
+      --accent-2: #facc15;
+      --border: rgba(250, 204, 21, 0.28);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(147, 51, 234, 0.22), transparent 42%),
+        radial-gradient(circle at 85% 80%, rgba(250, 204, 21, 0.12), transparent 45%);
+    }
 
-/* Stats */
-.st{display:flex;gap:8px;margin-bottom:12px}
-.st div{flex:1;border-radius:14px;padding:10px 4px;text-align:center;font-weight:700}
-.st b{display:block;font-size:26px}
-.st .g{background:rgba(22,163,74,.18);color:var(--ok)}
-.st .y{background:rgba(217,119,6,.2);color:var(--warn)}
-.st .r{background:rgba(153,27,27,.18);color:var(--acc)}
+    /* 2. هوية وتشكيلات فخمة دقيقة لقسم الأمن السيبراني */
+    body.dept-cyber {
+      --bg-main: #030e12;
+      --bg-card: #071920;
+      --bg-elevated: #0c2630;
+      --text-main: #ecfeff;
+      --text-muted: #8bd3e6;
+      --accent: #06b6d4;
+      --accent-2: #38bdf8;
+      --border: rgba(34, 211, 238, 0.36);
+      background-image:
+        repeating-linear-gradient(0deg, rgba(34, 211, 238, 0.045) 0px, rgba(34, 211, 238, 0.045) 1px, transparent 1px, transparent 28px),
+        repeating-linear-gradient(90deg, rgba(34, 211, 238, 0.045) 0px, rgba(34, 211, 238, 0.045) 1px, transparent 1px, transparent 28px),
+        radial-gradient(circle at 85% 12%, rgba(6, 182, 212, 0.22), transparent 42%),
+        radial-gradient(circle at 12% 88%, rgba(16, 185, 129, 0.12), transparent 45%);
+    }
 
-/* Footer */
-.foot{
-  position:relative;
-  overflow:hidden;
-  text-align:center;
-  margin-top:18px;
-  padding:18px 16px;
-  border-radius:20px;
-  background:linear-gradient(135deg,#7F0909 0%,#C81E1E 100%);
-  color:#fff;
-  box-shadow:0 6px 18px rgba(185,28,28,.22);
-}
-.foot p{margin:10px 0 0;font-size:14px;opacity:.95;position:relative;z-index:1}
-.foot b{position:relative;z-index:1}
-.call{
-  position:relative;
-  z-index:1;
-  display:inline-block;
-  margin-top:10px;
-  background:#fff;
-  color:#991B1B;
-  font-weight:800;
-  text-decoration:none;
-  padding:10px 24px;
-  border-radius:99px;
-  font-size:17px;
-  direction:ltr;
-  box-shadow:0 4px 12px rgba(0,0,0,.15);
-}
+    body.dept-cyber .card {
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(34, 211, 238, 0.12);
+    }
 
-#psheet{display:none}
-@media print{
-  html,body{background:#fff!important}
-  #app{display:none!important}
-  #psheet{display:block;direction:rtl;color:#000;font-family:'Tajawal',sans-serif}
-  #psheet table{width:100%;border-collapse:collapse}
-  #psheet th,#psheet td{border:1px solid #444;padding:7px 8px;text-align:right}
-  #psheet th{background:#FDE8E8;color:#7F0909}
-  .ph{text-align:center;margin-bottom:12px}
-  .ph h1{margin:4px 0;font-size:21px;color:#7F0909}
-  .ph p{margin:4px 0}
-  .pf{text-align:center;margin-top:16px;font-size:12px}
-}
-</style>
+    body.dept-cyber .card::before {
+      content: "◈ SECURITY MATRIX • ZERO-TRUST NODE • ENCRYPTED SESSION ◈";
+      position: absolute;
+      top: 10px;
+      left: 16px;
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      color: rgba(56, 189, 248, 0.34);
+      pointer-events: none;
+    }
+
+    body.dept-cyber .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      background: linear-gradient(125deg, transparent 40%, rgba(34, 211, 238, 0.06) 50%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* 3. هوية وتشكيلات فخمة دقيقة لقسم الحاسوب */
+    body.dept-cs {
+      --bg-main: #060b16;
+      --bg-card: #0c1528;
+      --bg-elevated: #13203b;
+      --text-main: #f8fafc;
+      --text-muted: #9fb3d9;
+      --accent: #3b82f6;
+      --accent-2: #c084fc;
+      --border: rgba(96, 165, 250, 0.35);
+      background-image:
+        radial-gradient(rgba(147, 197, 253, 0.11) 1.15px, transparent 1.15px),
+        radial-gradient(circle at 18% 18%, rgba(59, 130, 246, 0.20), transparent 44%),
+        radial-gradient(circle at 86% 78%, rgba(192, 132, 252, 0.16), transparent 46%);
+      background-size: 22px 22px, 100% 100%, 100% 100%;
+    }
+
+    body.dept-cs .card {
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(2, 6, 23, 0.6), inset 0 1px 0 rgba(192, 132, 252, 0.18);
+    }
+
+    body.dept-cs .card::before {
+      content: "{ CPU • ALGORITHMS • KERNEL • COMPILER }";
+      position: absolute;
+      top: 10px;
+      left: 16px;
+      font-size: 0.7rem;
+      letter-spacing: 1.2px;
+      color: rgba(192, 132, 252, 0.34);
+      pointer-events: none;
+    }
+
+    * { box-sizing: border-box; font-family: "Tajawal", "Cairo", sans-serif; }
+    body {
+      margin: 0;
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 20px 14px 64px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero-title {
+      margin: 0 0 6px;
+      font-size: 1.45rem;
+      color: var(--accent-2);
+    }
+
+    .muted { color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; }
+
+    .gate-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .dept-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button, input, select {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      font-size: 0.96rem;
+      color: var(--text-main);
+      background: var(--bg-elevated);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s ease, opacity 0.2s ease, background 0.2s ease;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #090612;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+    }
+
+    .btn-warn {
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid var(--warn);
+      color: #fde68a;
+    }
+
+    .btn-dept {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      font-size: 1.05rem;
+      text-align: right;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      margin-left: 4px;
+      margin-top: 4px;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .timer-box {
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--border);
+      margin-top: 12px;
+    }
+
+    .timer-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--success);
+    }
+
+    .timer-num.warn { color: var(--warn); }
+    .timer-num.closed { color: var(--danger); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .stat-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-val { font-size: 1.3rem; font-weight: 800; color: var(--accent-2); }
+
+    .record-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .suspicious-box {
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.08);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .tag-ok { color: #86efac; font-weight: 700; }
+    .tag-warn { color: #fde047; font-weight: 700; }
+    .tag-bad { color: #fca5a5; font-weight: 700; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.86rem;
+    }
+
+    th, td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 9px;
+      text-align: right;
+      vertical-align: middle;
+    }
+
+    th { background: rgba(255, 255, 255, 0.06); }
+
+    .hidden { display: none !important; }
+    .alert {
+      padding: 11px 14px;
+      border-radius: 12px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff !important; color: #000 !important; }
+      .card, .record-card { background: #fff !important; color: #000 !important; border: 1px solid #ccc !important; box-shadow: none !important; }
+    }
+  </style>
 </head>
-<body>
-<div id="app">
-  <div class="hero">
-    <svg class="hero-bg" viewBox="0 0 400 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="40" cy="30" r="4" fill="#fff"/><circle cx="110" cy="20" r="3" fill="#fff"/>
-      <circle cx="90" cy="85" r="5" fill="#fff"/><circle cx="170" cy="50" r="3" fill="#fff"/>
-      <circle cx="260" cy="25" r="4" fill="#fff"/><circle cx="330" cy="40" r="5" fill="#fff"/>
-      <circle cx="360" cy="105" r="4" fill="#fff"/><circle cx="290" cy="115" r="3" fill="#fff"/>
-      <circle cx="210" cy="100" r="4" fill="#fff"/><circle cx="30" cy="115" r="3" fill="#fff"/>
-      <path d="M40 30L110 20L170 50L90 85L40 30ZM90 85L30 115M170 50L260 25L330 40L360 105L290 115L210 100L170 50ZM260 25L210 100" stroke="#fff" stroke-width="1.3"/>
-    </svg>
-    <div class="hero-main">
-      <div class="hl" aria-hidden="true">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
-          <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
-          <circle cx="8.5" cy="9" r="1" fill="#fff"/><circle cx="15.5" cy="9" r="1" fill="#fff"/>
-          <circle cx="8.5" cy="14" r="1" fill="#fff"/><circle cx="15.5" cy="14" r="1" fill="#fff"/>
-        </svg>
+<body class="dept-ai">
+  <div class="container">
+
+    <!-- 1. البوابة الأولى: الدخول بالإنترنت أو بدون إنترنت -->
+    <section id="gateScreen" class="card">
+      <div class="badge">جامعة حجة • كلية الهندسة وتكنولوجيا المعلومات • إعداد يوسف وليد المروني</div>
+      <h1 class="hero-title" style="margin-top:10px;">المنصة الذكية لتحضير وغياب الطلاب</h1>
+      <p class="muted">بوابة دخول مباشرة للانتقال إلى الأقسام الهندسية، مع دعم العمل المزدوج (أونلاين وأوفلاين)، وحساب الفارق الزمني بين وقت التسجيل ووقت فتح الإنترنت تلقائياً.</p>
+
+      <div class="gate-buttons">
+        <button class="btn-primary" onclick="enterWithMode('online')">🌐 دخول باستخدام الإنترنت</button>
+        <button class="btn-secondary" onclick="enterWithMode('offline')">📴 دخول بدون إنترنت</button>
       </div>
-      <div>
-        <h1>منصة التحضير الذكي — قسم الذكاء الاصطناعي</h1>
-        <p>إعداد: يوسف وليد المروني · مندوب قسم الذكاء الاصطناعي</p>
+      <div id="gateMsg" class="alert hidden"></div>
+    </section>
+
+    <!-- 2. شاشة اختيار الأقسام بأزرار عمودية -->
+    <section id="deptScreen" class="card hidden">
+      <div class="topbar">
+        <div>
+          <h2 class="hero-title" style="font-size:1.25rem;">اختر القسم الأكاديمي</h2>
+          <div class="muted">الوضع المحدد: <strong id="currentModeLabel"></strong></div>
+        </div>
+        <button class="btn-secondary" onclick="backToGate()">↩ تغيير وضع الدخول</button>
       </div>
-    </div>
-    <button class="theme-btn" id="tbtn" title="تبديل المظهر">🌙</button>
+
+      <div class="dept-stack">
+        <button class="btn-dept btn-secondary" onclick="selectDepartment('ai')">
+          <span>🤖 قسم الذكاء الاصطناعي</span>
+          <span class="badge">الهوية الأصلية • 44 طالباً</span>
+        </button>
+        <button class="btn-dept btn-secondary" onclick="selectDepartment('cyber')">
+          <span>🛡️ قسم الأمن السيبراني</span>
+          <span class="badge">تشكيلات سيبرانية • 54 طالباً</span>
+        </button>
+        <button class="btn-dept btn-secondary" onclick="selectDepartment('cs')">
+          <span>💻 قسم الحاسوب</span>
+          <span class="badge">تشكيلات برمجية • 19 طالباً</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. واجهة القسم المختار -->
+    <section id="deptWorkspace" class="hidden">
+      <div class="card no-print">
+        <div class="topbar">
+          <div>
+            <h2 id="deptTitle" class="hero-title" style="font-size:1.25rem;"></h2>
+            <div>
+              <span id="deptModeBadge" class="badge"></span>
+              <span id="deptNetStatus" class="badge"></span>
+              <span id="deptWeekBadge" class="badge"></span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-secondary" onclick="syncOfflineRecordsNow()">🔄 مزامنة الأوفلاين الآن</button>
+            <button class="btn-secondary" onclick="backToDeptScreen()">الأقسام</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button id="tabStudentBtn" class="tab-btn active" onclick="switchTab('student')">🎓 تسجيل حضور الطالب</button>
+          <button id="tabRepBtn" class="tab-btn" onclick="switchTab('rep')">🧑‍💼 تبويب المندوب</button>
+          <button id="tabLogsBtn" class="tab-btn" onclick="switchTab('logs')">📁 السجل (دكتور / مقرر)</button>
+        </div>
+      </div>
+
+      <!-- تبويب الطالب (بدون إظهار أسماء الطلاب أو أرقام القيد) -->
+      <div id="studentTab" class="card no-print">
+        <h3 style="margin-top:0;">تسجيل الحضور خلال أول 10 دقائق من المحاضرة</h3>
+        <p class="muted">أدخل اسمك ورقم قيدك ورمز المحاضرة المكوّن من 4 أرقام وقت المحاضرة. لا يتم عرض قوائم الطلاب للعامة.</p>
+
+        <div class="grid-2">
+          <div>
+            <label class="muted">الاسم الكامل للطالب</label>
+            <input id="stuNameInput" type="text" placeholder="اكتب اسمك الكامل كما في القيد" style="width:100%; margin-top:6px;" />
+          </div>
+          <div>
+            <label class="muted">رقم القيد الجامعي</label>
+            <input id="stuIdInput" type="text" inputmode="numeric" placeholder="مثال: 2704091" style="width:100%; margin-top:6px;" />
+          </div>
+          <div>
+            <label class="muted">المحاضرة / المجموعة</label>
+            <select id="stuLectureSelect" style="width:100%; margin-top:6px;" onchange="refreshWindowUI()"></select>
+          </div>
+          <div>
+            <label class="muted">رمز التحضير (4 أرقام)</label>
+            <input id="stuCodeInput" type="text" inputmode="numeric" maxlength="4" placeholder="••••" style="width:100%; margin-top:6px; letter-spacing:4px; text-align:center;" />
+          </div>
+        </div>
+
+        <div class="timer-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div>
+              <div class="muted" id="studentWindowStatus">جاري فحص حالة المحاضرة...</div>
+              <div class="muted" id="studentNextLectureHint" style="font-size:0.83rem;"></div>
+            </div>
+            <div id="studentCountdown" class="timer-num">10:00</div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <button id="submitAttendanceBtn" class="btn-primary" style="width:100%;" onclick="submitStudentAttendance()">✅ تأكيد تسجيل الحضور</button>
+        </div>
+        <div id="studentFeedback" class="alert hidden"></div>
+      </div>
+
+      <!-- تبويب المندوب -->
+      <div id="repTab" class="card no-print hidden">
+        <div id="repAuthBox">
+          <h3 style="margin-top:0;">دخول المندوب (محمي بكلمة مرور)</h3>
+          <p class="muted">أدخل كلمة المرور للوصول إلى الرمز الرباعي الخاص بالمحاضرة، حالة المحاضرة الآن، قائمة الطلاب وأرقام القيد، والتسجيل الاستثنائي المؤكد.</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <input id="repPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
+            <button class="btn-primary" onclick="unlockRepPanel()">دخول المندوب</button>
+          </div>
+          <div id="repAuthMsg" class="alert hidden"></div>
+        </div>
+
+        <div id="repPanel" class="hidden">
+          <div class="topbar">
+            <h3 style="margin:0;">لوحة المندوب — حالة المحاضرة الآن</h3>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn-secondary" onclick="changeSystemPassword()">🔑 تغيير كلمة المرور</button>
+              <button class="btn-secondary" onclick="exportBackupJSON()">💾 نسخ احتياطي JSON</button>
+              <button class="btn-secondary" onclick="lockRepPanel()">🔒 قفل</button>
+            </div>
+          </div>
+
+          <div class="timer-box" id="repLiveLectureBox">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div>
+                <div id="repActiveTitle" style="font-weight:700; font-size:1.05rem;">لا توجد محاضرة نشطة حالياً</div>
+                <div id="repActiveMeta" class="muted">يظهر الرمز الرباعي للمندوب وقت المحاضرة المجدولة فقط.</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="muted" style="font-size:0.8rem;">رمز المحاضرة (4 أرقام)</div>
+                <div id="repCurrentCode" style="font-size:1.6rem; font-weight:800; letter-spacing:5px; color:var(--accent-2);">----</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="muted" style="font-size:0.8rem;">نافذة الـ 10 دقائق</div>
+                <div id="repCountdown" class="timer-num">10:00</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="repStatsGrid" class="stats-grid"></div>
+
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <label class="muted">تخصيص ترويسة التقارير</label>
+              <input id="reportHeaderInput" type="text" style="width:100%; margin-top:6px;" onchange="saveReportHeader()" />
+            </div>
+            <div>
+              <label class="muted">الأسبوع النشط لدورة الرموز المحفوظة</label>
+              <select id="weekSelector" style="width:100%; margin-top:6px;" onchange="changeWeekIndex()">
+                <option value="0">الأسبوع 1 (W1)</option>
+                <option value="1">الأسبوع 2 (W2)</option>
+                <option value="2">الأسبوع 3 (W3)</option>
+                <option value="3">الأسبوع 4 (W4)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- تأكيد مزدوج للحالات الاستثنائية للمندوب -->
+          <div class="record-card" style="margin-top:14px;">
+            <h4 style="margin:0 0 8px;">⚡ تسجيل حالة استثنائية (تأكيد مزدوج)</h4>
+            <p class="muted" style="margin:0 0 10px;">يُستخدم عند وجود عذر تقني أو استثناء معتمد من المندوب ويتطلب تأكيداً مزدوجاً قبل الاعتماد.</p>
+            <div class="grid-2">
+              <input id="excStudentId" type="text" placeholder="رقم قيد الطالب" />
+              <input id="excReason" type="text" placeholder="سبب الحالة الاستثنائية (مثال: عطل جهاز/انقطاع شبكة)" />
+            </div>
+            <div style="margin-top:10px;">
+              <button class="btn-warn" onclick="startExceptionalEntry()">إضافة حالة استثنائية (يتطلب تأكيداً مزدوجاً)</button>
+            </div>
+            <div id="excConfirmBox" class="alert hidden"></div>
+          </div>
+
+          <div style="margin-top:14px;">
+            <button class="btn-secondary" onclick="toggleRosterVisibility()">👥 عرض / إخفاء قائمة الطلاب وأرقام القيد (للمندوب فقط)</button>
+            <div id="repRosterBox" class="hidden" style="margin-top:10px; overflow-x:auto;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- تبويب السجل: كشوفات مستقلة حسب اسم الدكتور والمقرر + الشفافية الزمنية للأوفلاين + التنبيهات -->
+      <div id="logsTab" class="card hidden">
+        <div id="logsAuthBox" class="no-print">
+          <h3 style="margin-top:0;">قسم السجل (كشوفات الدكتور والمقرر)</h3>
+          <p class="muted">أدخل كلمة المرور لعرض الكشوفات المستقلة لكل دكتور ومقرر، وكشف الفروقات الزمنية للأوفلاين، وتنبيهات التحضير المشبوه/المكرر.</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <input id="logsPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
+            <button class="btn-primary" onclick="unlockLogsPanel()">فتح السجل</button>
+          </div>
+          <div id="logsAuthMsg" class="alert hidden"></div>
+        </div>
+
+        <div id="logsPanel" class="hidden">
+          <div class="topbar">
+            <div>
+              <h3 id="activeReportHeader" style="margin:0;">كشوفات الحضور والغياب حسب الدكتور والمقرر</h3>
+              <div class="muted" style="font-size:0.84rem;">يشمل الفارق الزمني الدقيق بين (وقت التسجيل) و(وقت فتح الإنترنت) لطلاب الأوفلاين.</div>
+            </div>
+            <div class="no-print" style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn-secondary" onclick="protectedExportCSV()">📊 تصدير Excel/CSV</button>
+              <button class="btn-secondary" onclick="protectedPrint()">🖨️ طباعة الكشوفات</button>
+              <button class="btn-secondary" onclick="lockLogsPanel()">🔒 قفل السجل</button>
+            </div>
+          </div>
+
+          <div id="suspiciousAlertsSection"></div>
+          <div id="doctorCourseSheets"></div>
+        </div>
+      </div>
+    </section>
+
   </div>
-
-  <!-- الواجهة الأولى: اختيار الدخول بالإنترنت أو بدون إنترنت -->
-  <div class="card" id="entryGateCard">
-    <h2>بوابة الدخول</h2>
-    <p class="mute" style="margin:0 0 12px;font-size:14px">اختر «دخول باستخدام الإنترنت» إذا كان الإنترنت مفعلاً، أو «دخول بدون إنترنت» ليتم تسجيل الحضور أو الغياب مع وقت التسجيل وإرساله لتبويب المندوب مع تسجيل وقت فتح الإنترنت فور عودته.</p>
-    <button class="btn" id="btnEnterOnline">🌐 دخول باستخدام الإنترنت</button>
-    <button class="btn gh" id="btnEnterOffline" style="margin-top:8px">📴 دخول بدون إنترنت</button>
-    <div id="gateAlert"></div>
-  </div>
-
-  <div id="mainWorkspace" hidden>
-    <div class="row" style="align-items:center;margin-bottom:10px">
-      <div id="modeBadgeBox" class="mute" style="font-size:13px;font-weight:700"></div>
-      <button class="btn sm gh" id="btnChangeMode" style="flex:0 0 auto">تغيير وضع الدخول</button>
-    </div>
-
-    <div class="tabs">
-      <button class="tab on" data-t="1">التحضير</button>
-      <button class="tab" data-t="2">الطلاب 🔒</button>
-      <button class="tab" data-t="3">السجل</button>
-      <button class="tab" data-t="4">الشكاوى</button>
-      <button class="tab" data-t="5">المندوب 🔐</button>
-    </div>
-
-    <section id="s1">
-      <div class="card" id="lec"></div>
-      <div id="stats"></div>
-      <div class="card">
-        <div class="cam" id="cb"><video id="v" playsinline muted></video><i></i></div>
-        <button class="btn" id="cbtn">فتح الكاميرا للتحضير</button>
-        <button class="btn gh" id="pbtn" style="margin-top:8px">التقاط صورة للباركود</button>
-        <input type="file" id="pf" accept="image/*" capture="environment" hidden>
-        <div class="row" style="margin-top:10px">
-          <input id="man" placeholder="أو اكتب رمز التحضير يدوياً" inputmode="text">
-          <button class="btn sm" id="mbtn" style="flex:0 0 auto;margin-bottom:8px">تحضير</button>
-        </div>
-        <div id="msg"></div>
-      </div>
-      <div class="card"><h2>آخر من حضر</h2><div id="recent"></div></div>
-    </section>
-
-    <section id="s2" hidden>
-      <div class="card" id="lockCard">
-        <h2>🔒 قسم الطلاب مقفل لحماية الخصوصية</h2>
-        <p class="mute" style="margin:0 0 10px;font-size:14px">عرض الأسماء وأرقام القيد والإدارة متاح للمندوب فقط برمز المرور.</p>
-        <input id="pinInput" type="password" inputmode="numeric" placeholder="أدخل رمز مرور المندوب">
-        <button class="btn" id="unlockBtn">فتح قسم الطلاب</button>
-        <div id="lockMsg"></div>
-      </div>
-
-      <div id="studentsPanel" hidden>
-        <div class="card">
-          <div class="row" style="align-items:center;margin-bottom:8px">
-            <h2 style="margin:0">إضافة طالب</h2>
-            <button class="btn sm gh" id="lockNowBtn" style="flex:0 0 auto">🔒 قفل القسم</button>
-          </div>
-          <input id="sn" placeholder="اسم الطالب">
-          <input id="sc" placeholder="رقم القيد / رمز الباركود">
-          <button class="btn" id="sadd">حفظ الطالب</button>
-          <p class="mute" style="margin:10px 0 0;font-size:14px">يمكنك أيضاً مسح بطاقة طالب جديد أثناء التحضير، وسيطلب منك التطبيق كتابة اسمه مرة واحدة فقط.</p>
-        </div>
-
-        <div class="card">
-          <h2 id="sh">الطلاب</h2>
-          <input id="ssearch" placeholder="🔍 ابحث بالاسم أو رقم القيد..." inputmode="search">
-          <div id="slist"></div>
-        </div>
-
-        <div class="card">
-          <h2>🔑 تغيير رمز مرور المندوب</h2>
-          <input id="newPin" type="password" inputmode="numeric" placeholder="اكتب رمز المرور الجديد">
-          <button class="btn gh" id="savePinBtn">حفظ الرمز الجديد</button>
-          <div id="pinSaveMsg"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="s3" hidden>
-      <div class="card"><h2>المحاضرة الحالية</h2><div id="curlog"></div></div>
-      <div class="card">
-        <h2>طباعة وتصدير ومشاركة</h2>
-        <div class="row" style="margin-bottom:8px">
-          <button class="btn" id="pr">🔒 طباعة الكشف</button>
-          <button class="btn gh" id="xl">🔒 تصدير Excel</button>
-        </div>
-        <div class="card" id="expPinBox" hidden style="margin:10px 0;padding:12px">
-          <h2 style="font-size:16px">🔐 التحقق من كلمة السر</h2>
-          <p class="mute" style="margin:0 0 10px;font-size:13px" id="expPinDesc">أدخل كلمة السر الخاصة بالمندوب / المندوبة لإظهار أرقام القيد الرسمية.</p>
-          <input id="expPinInput" type="password" inputmode="numeric" placeholder="أدخل كلمة السر">
-          <div class="row">
-            <button class="btn" id="expPinConfirmBtn">تأكيد والمتابعة</button>
-            <button class="btn gh" id="expPinCancelBtn">إلغاء</button>
-          </div>
-          <div id="expPinMsg"></div>
-        </div>
-        <div id="expUnlockedBar" hidden style="margin-bottom:8px">
-          <button class="btn sm gh" id="expLockBtn">🔒 قفل صلاحية الطباعة وExcel</button>
-        </div>
-        <button class="btn wa" id="wacopy">📋 نسخ التقرير المنسق لقروب الواتساب</button>
-        <div id="cmsg"></div>
-        <p class="mute" style="font-size:14px;margin:10px 0 0">يظهر في السجل والواتساب الأسماء فقط دون رقم القيد، بينما يتطلب كشف الطباعة وExcel كلمة سر المندوب لإظهار أرقام القيد الرسمية.</p>
-      </div>
-      <div class="card"><h2>المحاضرات السابقة</h2><div id="hist"></div></div>
-      <textarea id="rt" readonly hidden></textarea>
-    </section>
-
-    <section id="s4" hidden>
-      <div class="card">
-        <h2>صندوق الشكاوى والمقترحات</h2>
-        <input id="cn" placeholder="اسمك (اختياري)">
-        <textarea id="cm" style="height:110px;margin:0 0 8px" placeholder="اكتب شكواك أو اقتراحك هنا"></textarea>
-        <button class="btn" id="csend">حفظ وإرسال عبر واتساب</button>
-        <p class="mute" style="margin:10px 0 0;font-size:14px">تُحفظ نسخة على جوالك، ثم يفتح واتساب لإرسالها إلى مندوب القسم يوسف المروني.</p>
-      </div>
-      <div class="card"><h2>الشكاوى المحفوظة</h2><div id="clist"></div></div>
-    </section>
-
-    <section id="s5" hidden>
-      <div class="card" id="repLockCard">
-        <h2>🔐 لوحة المندوب / المندوبة</h2>
-        <p class="mute" style="margin:0 0 10px;font-size:14px">أدخل كلمة السر الخاصة بالمندوب / المندوبة لفتح أدوات الإدارة والنسخ الاحتياطي والإحصائيات.</p>
-        <input id="repPinInput" type="password" inputmode="numeric" placeholder="أدخل كلمة السر">
-        <button class="btn" id="repUnlockBtn">دخول لوحة المندوب</button>
-        <div id="repLockMsg"></div>
-      </div>
-
-      <div id="repPanel" hidden>
-        <div class="card">
-          <div class="row" style="align-items:center;margin-bottom:8px">
-            <h2 style="margin:0">📡 سجل المزامنة (أونلاين / أوفلاين)</h2>
-            <button class="btn sm gh" id="repLockNowBtn" style="flex:0 0 auto">🔒 قفل</button>
-          </div>
-          <p class="mute" style="margin:0 0 10px;font-size:13px">يعرض الاسم، الحالة، وقت التسجيل، ووقت فتح الإنترنت عند المزامنة.</p>
-          <div id="offlineSyncList"></div>
-        </div>
-
-        <div class="card">
-          <h2 style="margin:0 0 8px">🚨 تنبيهات التحضير (مشبوه / خارج الوقت / مكرر)</h2>
-          <p class="mute" style="margin:0 0 10px;font-size:13px">تظهر هنا الحالات غير المعتادة للمراجعة السريعة دون إظهارها في الواجهة العامة.</p>
-          <div id="suspiciousAlertsList"></div>
-        </div>
-
-        <div class="card">
-          <h2>✅ تأكيد مزدوج للطلاب الجدد والحالات الاستثنائية</h2>
-          <p class="mute" style="margin:0 0 10px;font-size:13px">الطلاب غير المسجّلين مسبقاً أو المسجّلون يدوياً بعد وقت طويل من بدء المحاضرة تتطلب تأكيدك قبل اعتماد الكشف.</p>
-          <div id="exceptionalConfirmList"></div>
-        </div>
-
-        <div class="card">
-          <h2 style="margin:0 0 8px">📝 تخصيص ترويسة التقرير</h2>
-          <input id="hdrDoc" placeholder="اسم الدكتور / أستاذ المقرر (اختياري)">
-          <div class="row">
-            <input id="hdrSec" placeholder="الشعبة (اختياري)">
-            <input id="hdrHall" placeholder="القاعة (اختياري)">
-          </div>
-          <button class="btn" id="saveHdrBtn">حفظ بيانات الترويسة</button>
-          <div id="hdrMsg"></div>
-          <p class="mute" style="margin:8px 0 0;font-size:13px">تُضاف تلقائياً إلى تقارير الواتساب وكشوفات الطباعة وملفات Excel.</p>
-        </div>
-
-        <div class="card">
-          <h2>💾 نسخ احتياطي واستعادة (JSON)</h2>
-          <p class="mute" style="margin:0 0 10px;font-size:14px">احفظ نسخة كاملة من الطلاب والمحاضرات السابقة والشكاوى، أو استعدها في أي وقت.</p>
-          <div class="row">
-            <button class="btn" id="expJsonBtn">تصدير نسخة JSON</button>
-            <button class="btn gh" id="impJsonBtn">استعادة نسخة JSON</button>
-          </div>
-          <input type="file" id="jsonFileInput" accept=".json,application/json" hidden>
-          <div id="bakMsg"></div>
-        </div>
-
-        <div class="card">
-          <h2>📊 إحصائيات الحضور والغياب لكل طالب</h2>
-          <div id="studentStatsList"></div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <div class="foot">
-    <svg class="hero-bg" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="25" r="4" fill="#fff"/><circle cx="150" cy="90" r="3" fill="#fff"/>
-      <circle cx="270" cy="30" r="4" fill="#fff"/><circle cx="350" cy="85" r="5" fill="#fff"/>
-      <path d="M50 25L150 90L270 30L350 85" stroke="#fff" stroke-width="1.3"/>
-    </svg>
-    <b>للاستفسار والدعم والتواصل مع المندوب</b><br>
-    <a class="call" href="tel:+967781325909">📞 781325909</a>
-    <p>تصميم وتطوير: يوسف وليد المروني — مندوب قسم الذكاء الاصطناعي</p>
-  </div>
-</div>
-
-<div id="psheet"></div>
-
-<script>
-var STORAGE_KEY='ai_hajjah_s1_attendance_v8';
-var THEME_KEY='ai_hajjah_theme_v1';
-var PIN_KEY='ai_hajjah_admin_pin_v1';
-var CLOUD_ENDPOINT=''; // سنربط رابط قاعدة البيانات هنا في الخطوة القادمة
-
-var D={students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},
-    stream=null,det=null,timer=null,seen={},pending=null,unlocked=false,repUnlocked=false,exportUnlocked=false,pendingExportAction=null,entryMode=null;
-
-function $(i){return document.getElementById(i)}
-
-function getPin(){
-  try{return localStorage.getItem(PIN_KEY)||'2026'}catch(e){return '2026'}
-}
-function setPin(p){
-  try{localStorage.setItem(PIN_KEY,p)}catch(e){}
-}
-
-function applyTheme(t){
-  if(t==='dark'||t==='light'){
-    document.documentElement.setAttribute('data-theme',t);
-    $('tbtn').textContent=(t==='dark'?'☀️':'🌙');
-  }else{
-    var sysDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;
-    $('tbtn').textContent=(sysDark?'☀️':'🌙');
-  }
-}
-try{var savedTheme=localStorage.getItem(THEME_KEY);applyTheme(savedTheme)}catch(e){}
-$('tbtn').onclick=function(){
-  var cur=document.documentElement.getAttribute('data-theme');
-  var sysDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;
-  var next=(cur==='dark'||(!cur&&sysDark))?'light':'dark';
-  try{localStorage.setItem(THEME_KEY,next)}catch(e){}
-  applyTheme(next);
-};
-
-try{
-  var raw=localStorage.getItem(STORAGE_KEY)||localStorage.getItem('ai_hajjah_s1_attendance_v7')||localStorage.getItem('ai_hajjah_s1_attendance_v6')||localStorage.getItem('ai_hajjah_s1_attendance_v5')||localStorage.getItem('ai_hajjah_s1_attendance_v4');
-  if(raw){
-    var parsed=JSON.parse(raw);
-    D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},parsed);
-    D.meta=Object.assign({doctor:'',section:'',hall:''},D.meta||{});
-    D.alerts=Array.isArray(D.alerts)?D.alerts:[];
-    D.syncQueue=Array.isArray(D.syncQueue)?D.syncQueue:[];
-  }
-}catch(e){}
-function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D))}catch(e){}}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function tm(t){return t?new Date(t).toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'}):'لم يُفتح بعد'}
-function dt(t){return new Date(t).toLocaleDateString('ar',{day:'numeric',month:'short'})+' '+tm(t)}
-function msg(t,k){$('msg').innerHTML='<div class="msg '+k+'">'+t+'</div>'}
-function beep(ok){try{var a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=ok?880:300;g.gain.value=.15;o.start();o.stop(a.currentTime+.15)}catch(e){}if(navigator.vibrate)navigator.vibrate(ok?80:[60,40,60])}
-
-/* فحص توفر الإنترنت الفعلي */
-async function hasRealInternet(){
-  if(typeof navigator!=='undefined' && navigator.onLine===false)return false;
-  try{
-    var ctrl=new AbortController();
-    var timerId=setTimeout(function(){ctrl.abort()},3500);
-    await fetch('https://clients3.google.com/generate_204',{mode:'no-cors',cache:'no-store',signal:ctrl.signal});
-    clearTimeout(timerId);
-    return true;
-  }catch(e){
-    return false;
-  }
-}
-
-async function pushSyncToCloud(item){
-  if(!CLOUD_ENDPOINT)return true;
-  try{
-    var res=await fetch(CLOUD_ENDPOINT,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(item)
-    });
-    return res.ok;
-  }catch(e){
-    return false;
-  }
-}
-
-function recordSyncEntry(studentName,statusText,recordedAt,isOnlineNow){
-  var entry={
-    id:recordedAt+'_'+Math.random().toString(36).slice(2,6),
-    studentName:studentName,
-    status:statusText,
-    mode:entryMode||'online',
-    recordedAt:recordedAt,
-    onlineOpenedAt:isOnlineNow?recordedAt:null,
-    synced:false
-  };
-  D.syncQueue=D.syncQueue||[];
-  D.syncQueue.unshift(entry);
-  if(D.syncQueue.length>200)D.syncQueue=D.syncQueue.slice(0,200);
-  save();
-  if(isOnlineNow){
-    pushSyncToCloud(entry).then(function(ok){
-      if(ok){
-        entry.synced=true;
-        save();
-        if(repUnlocked)renderOfflineSyncList();
-      }
-    });
-  }
-  if(repUnlocked)renderOfflineSyncList();
-}
-
-async function syncOfflineQueue(){
-  var online=await hasRealInternet();
-  if(!online)return;
-  var openedAt=Date.now();
-  var changed=false;
-  for(var i=0;i<(D.syncQueue||[]).length;i++){
-    var item=D.syncQueue[i];
-    if(!item.synced){
-      if(!item.onlineOpenedAt)item.onlineOpenedAt=openedAt;
-      var sent=await pushSyncToCloud(item);
-      if(sent){
-        item.synced=true;
-        changed=true;
-      }
-    }
-  }
-  if(changed){
-    save();
-    if(repUnlocked)renderOfflineSyncList();
-  }
-}
-
-function enterWorkspace(mode){
-  entryMode=mode;
-  $('entryGateCard').hidden=true;
-  $('mainWorkspace').hidden=false;
-  $('modeBadgeBox').textContent=(mode==='online'?'🌐 الدخول باستخدام الإنترنت':'📴 الدخول بدون إنترنت (سيُزامن عند فتح الإنترنت)');
-  draw();
-}
-
-$('btnEnterOnline').onclick=async function(){
-  $('gateAlert').innerHTML='<div class="msg warn">جاري التحقق من توفر الإنترنت...</div>';
-  var online=await hasRealInternet();
-  if(!online){
-    $('gateAlert').innerHTML='<div class="msg bad">تعذّر الدخول باستخدام الإنترنت لأن الإنترنت مغلق لديك. شغّل الإنترنت ثم أعد المحاولة، أو اختر «دخول بدون إنترنت».</div>';
-    return;
-  }
-  $('gateAlert').innerHTML='';
-  enterWorkspace('online');
-  await syncOfflineQueue();
-};
-
-$('btnEnterOffline').onclick=function(){
-  $('gateAlert').innerHTML='';
-  enterWorkspace('offline');
-};
-
-$('btnChangeMode').onclick=function(){
-  stopCam();
-  entryMode=null;
-  $('mainWorkspace').hidden=true;
-  $('entryGateCard').hidden=false;
-};
-
-window.addEventListener('online',function(){
-  syncOfflineQueue();
-});
-
-function addAlert(type,studentName,detail,lectureId){
-  D.alerts=D.alerts||[];
-  var exists=D.alerts.some(function(al){
-    return !al.resolved && al.type===type && al.studentName===studentName && al.lectureId===lectureId && al.detail===detail;
-  });
-  if(exists)return;
-  D.alerts.unshift({
-    id:Date.now()+'_'+Math.random().toString(36).slice(2,6),
-    type:type,
-    studentName:studentName,
-    detail:detail,
-    lectureId:lectureId||null,
-    t:Date.now(),
-    resolved:false
-  });
-  if(D.alerts.length>120)D.alerts=D.alerts.slice(0,120);
-}
-
-function getStudentPatternNote(code){
-  var past=D.hist||[];
-  if(past.length<2)return null;
-  var checked=0,lateCount=0;
-  past.forEach(function(L){
-    var rec=L.rec||[];
-    var found=rec.filter(function(r){return r.c==code})[0];
-    if(found){
-      checked++;
-      if(found.s=='متأخر')lateCount++;
-    }
-  });
-  if(checked>=2 && lateCount===0){
-    return 'اختلاف عن النمط المعتاد (كان منتظماً في آخر '+checked+' محاضرات)';
-  }
-  return null;
-}
-
-document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){
-  document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x==b)});
-  for(var i=1;i<=5;i++)$('s'+i).hidden=(i!=b.dataset.t);
-  if(b.dataset.t!='1')stopCam();draw()}});
-
-function draw(){lecture();stats();recent();students();logs();complaints();repSection();syncExportLockUI()}
-
-function getMetaLine(L){
-  var m=(L&&L.meta)||D.meta||{};
-  var parts=[];
-  if(m.doctor)parts.push('الدكتور: '+m.doctor);
-  if(m.section)parts.push('الشعبة: '+m.section);
-  if(m.hall)parts.push('القاعة: '+m.hall);
-  return parts.join(' · ');
-}
-
-function lecture(){
-  var h='';
-  if(!D.cur){
-    h='<h2>بدء محاضرة جديدة</h2><input id="ln" placeholder="اسم المقرر أو المحاضرة"><input id="ll" type="number" inputmode="numeric" value="10" min="0"><p class="mute" style="margin:0 0 10px;font-size:14px">الرقم أعلاه هو عدد الدقائق المسموحة قبل احتساب الطالب متأخراً.</p><button class="btn" id="lgo">بدء المحاضرة الآن</button>';
-  }else{
-    var mline=getMetaLine(D.cur);
-    h='<h2>'+esc(D.cur.name)+'</h2>'+(mline?'<p class="mute" style="margin:0 0 6px;font-size:13px">'+esc(mline)+'</p>':'')+'<p class="mute" style="margin:0 0 10px">بدأت '+tm(D.cur.start)+' · التأخر بعد '+D.cur.late+' دقيقة · حضر '+D.cur.rec.length+' من '+D.students.length+'</p><button class="btn rd" id="lend">إنهاء المحاضرة</button>';
-  }
-  $('lec').innerHTML=h;
-  if($('lgo'))$('lgo').onclick=function(){
-    D.cur={id:Date.now(),name:$('ln').value.trim()||'محاضرة ذكاء اصطناعي',start:Date.now(),late:Math.max(0,parseInt($('ll').value)||0),rec:[],meta:Object.assign({},D.meta||{})};
-    save();draw()};
-  if($('lend'))$('lend').onclick=function(){
-    stopCam();var c=D.cur,here={};c.rec.forEach(function(r){here[r.c]=1});
-    c.end=Date.now();c.abs=D.students.filter(function(s){return!here[s.c]}).map(function(s){return s.n});
-    var nowEnd=Date.now();
-    var isOnlineEnd=(entryMode==='online') && navigator.onLine;
-    c.abs.forEach(function(absName){
-      recordSyncEntry(absName,'غائب',nowEnd,isOnlineEnd);
-    });
-    D.hist.unshift(c);D.cur=null;save();$('msg').innerHTML='';draw()};
-}
-
-function recent(){
-  var r=D.cur?D.cur.rec.slice().reverse().slice(0,6):[];
-  $('recent').innerHTML=r.length?r.map(function(x){return '<div class="li"><div><b>'+esc(x.n)+'</b><br><small>'+tm(x.t)+'</small></div><span class="tag'+(x.s=='متأخر'?' l':'')+'">'+x.s+'</span></div>'}).join(''):'<p class="mute" style="margin:0">لم يحضر أحد بعد.</p>';
-}
-
-function mark(code,opts){
-  opts=opts||{};
-  code=String(code).trim();if(!code)return;
-  if(!D.cur){msg('ابدأ المحاضرة أولاً قبل التحضير.','warn');return}
-  var s=D.students.filter(function(x){return x.c==code})[0];
-  if(!s){pending=code;
-    $('msg').innerHTML='<div class="msg warn">رمز جديد غير مسجّل: '+esc(code)+'<br>اكتب اسم الطالب لتسجيله وتحضيره.<input id="pn" placeholder="اسم الطالب" style="margin-top:8px"><button class="btn" id="pok">حفظ وتحضير</button></div>';
-    $('pok').onclick=function(){var n=$('pn').value.trim();if(!n)return;D.students.push({c:pending,n:n});pending=null;save();mark(code,{isNewStudent:true,method:'manual'})};
-    beep(false);return}
-  var ex=D.cur.rec.filter(function(x){return x.c==code})[0];
-  if(ex){
-    addAlert('مكرر',s.n,'محاولة تحضير مكررة (سُجّل مسبقاً الساعة '+tm(ex.t)+')',D.cur.id);
-    save();
-    msg('تم تحضير '+esc(s.n)+' مسبقاً الساعة '+tm(ex.t),'warn');beep(false);return}
-  var now=Date.now();
-  var minsElapsed=(now-D.cur.start)/60000;
-  var late=minsElapsed>D.cur.late;
-  var veryLate=minsElapsed>Math.max(D.cur.late*2,25);
-  var isManualLate=!opts.isNewStudent && opts.method==='manual' && minsElapsed>25;
-  var needsConfirm=Boolean(opts.isNewStudent || isManualLate);
-  var statusText=late?'متأخر':'حاضر';
-
-  if(veryLate){
-    addAlert('خارج الوقت',s.n,'تسجيل متأخر جداً ('+Math.round(minsElapsed)+' دقيقة من بدء المحاضرة)',D.cur.id);
-  }
-  var pat=getStudentPatternNote(code);
-  if(late && pat){
-    addAlert('مشبوه',s.n,pat,D.cur.id);
-  }
-  if(needsConfirm){
-    addAlert('تأكيد مزدوج',s.n,opts.isNewStudent?'طالب جديد أُضيف أثناء المحاضرة':'تحضير يدوي بعد أكثر من 25 دقيقة من بدء المحاضرة',D.cur.id);
-  }
-
-  D.cur.rec.push({
-    c:code,
-    n:s.n,
-    t:now,
-    s:statusText,
-    needsConfirm:needsConfirm,
-    confirmed:false
-  });
-  recordSyncEntry(s.n,statusText,now,(entryMode==='online') && navigator.onLine);
-  save();
-  msg('✓ تم تحضير '+esc(s.n)+' الساعة '+tm(now)+(late?' (متأخر)':''),late?'warn':'ok');beep(true);draw();
-}
-$('mbtn').onclick=function(){mark($('man').value,{method:'manual'});$('man').value=''};
-$('pbtn').onclick=function(){if(!D.cur){msg('ابدأ المحاضرة أولاً.','warn');return}$('pf').click()};
-$('pf').onchange=async function(){
-  var f=this.files[0];this.value='';if(!f)return;
-  try{
-    var bm=await createImageBitmap(f),code=null;
-    if('BarcodeDetector' in window){var a=await new BarcodeDetector().detect(bm);if(a.length)code=a[0].rawValue}
-    if(!code&&window.jsQR){var sc=Math.min(1,1280/bm.width),cv=document.createElement('canvas');cv.width=Math.round(bm.width*sc);cv.height=Math.round(bm.height*sc);var cx=cv.getContext('2d');cx.drawImage(bm,0,0,cv.width,cv.height);var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);if(r)code=r.data}
-    if(code)mark(code,{method:'photo'});else{msg('لم أستطع قراءة الباركود من الصورة. قرّب الكاميرا وأعد التقاط الصورة.','bad');beep(false)}
-  }catch(e){msg('تعذّرت قراءة الصورة.','bad')}
-};
-$('man').onkeydown=function(e){if(e.key=='Enter')$('mbtn').click()};
-
-function got(c){var n=Date.now();if(pending||(seen[c]&&n-seen[c]<4000))return;seen[c]=n;mark(c,{method:'camera'})}
-function stopCam(){if(timer)clearInterval(timer);timer=null;if(stream)stream.getTracks().forEach(function(t){t.stop()});stream=null;$('cb').style.display='none';$('cbtn').textContent='فتح الكاميرا للتحضير'}
-$('cbtn').onclick=async function(){
-  if(stream){stopCam();return}
-  if(!D.cur){msg('ابدأ المحاضرة أولاً ثم افتح الكاميرا.','warn');return}
-  var er=null;
-  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false})}
-  catch(e1){er=e1;try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});er=null}catch(e2){er=e2}}
-  if(!stream){var nm=(er&&er.name)||'خطأ';msg('تعذّر فتح الكاميرا ('+esc(nm)+'). '+(nm=='NotAllowedError'?'الإذن مرفوض لهذا الموقع: اضغط أيقونة الإعدادات يسار عنوان الموقع، ثم الأذونات، ثم الكاميرا، واختر سماح.':nm=='NotReadableError'?'الكاميرا مشغولة بتطبيق آخر. أغلقه وأعد المحاولة.':nm=='NotFoundError'?'لم يتم العثور على كاميرا.':'جرّب زر «التقاط صورة للباركود» بدلاً منها.'),'bad');return}
-  var v=$('v');v.srcObject=stream;await v.play();$('cb').style.display='block';$('cbtn').textContent='إيقاف الكاميرا';
-  try{if('BarcodeDetector' in window)det=new BarcodeDetector()}catch(e){det=null}
-  var cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
-  timer=setInterval(function(){
-    if(!v.videoWidth)return;
-    if(det){det.detect(v).then(function(a){if(a.length)got(a[0].rawValue)}).catch(function(){})}
-    else if(window.jsQR){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);var d=cx.getImageData(0,0,cv.width,cv.height),r=jsQR(d.data,d.width,d.height);if(r&&r.data)got(r.data)}
-  },250);
-  if(!det&&!window.jsQR)msg('هذا المتصفح لا يدعم قراءة الباركود. استخدم Chrome أو اكتب الرمز يدوياً.','bad');
-};
-
-/* قفل وإدارة قسم الطلاب */
-$('unlockBtn').onclick=function(){
-  var entered=$('pinInput').value.trim();
-  if(entered===getPin()){
-    unlocked=true;
-    $('pinInput').value='';
-    $('lockMsg').innerHTML='';
-    students();
-    syncExportLockUI();
-  }else{
-    $('lockMsg').innerHTML='<div class="msg bad">رمز المرور غير صحيح!</div>';
-  }
-};
-$('pinInput').onkeydown=function(e){if(e.key=='Enter')$('unlockBtn').click()};
-$('lockNowBtn').onclick=function(){
-  unlocked=false;
-  students();
-  syncExportLockUI();
-};
-$('savePinBtn').onclick=function(){
-  var np=$('newPin').value.trim();
-  if(!np||np.length<4){
-    $('pinSaveMsg').innerHTML='<div class="msg warn">اكتب رمز مرور من 4 خانات أو أكثر.</div>';
-    return;
-  }
-  setPin(np);
-  $('newPin').value='';
-  $('pinSaveMsg').innerHTML='<div class="msg ok">✓ تم تحديث رمز مرور المندوب بنجاح.</div>';
-};
-
-function students(){
-  $('lockCard').hidden=unlocked;
-  $('studentsPanel').hidden=!unlocked;
-  if(!unlocked){
-    $('slist').innerHTML='';
-    return;
-  }
-  var q=($('ssearch')?$('ssearch').value.trim():'');
-  var list=D.students.map(function(s,idx){return {n:s.n,c:s.c,idx:idx}}).filter(function(s){
-    return !q || s.n.indexOf(q)!==-1 || s.c.indexOf(q)!==-1;
-  });
-  $('sh').textContent='طلاب قسم الذكاء الاصطناعي ('+list.length+(q?' من '+D.students.length:'')+')';
-  $('slist').innerHTML=list.length?list.map(function(s){
-    return '<div class="li"><div><b>'+esc(s.n)+'</b><br><small dir="ltr">رقم القيد: '+esc(s.c)+'</small></div><button class="btn sm gh" data-d="'+s.idx+'">حذف</button></div>';
-  }).join(''):'<p class="mute" style="margin:0">لا توجد نتائج مطابقة.</p>';
-  document.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){D.students.splice(+b.dataset.d,1);save();draw()}});
-}
-if($('ssearch'))$('ssearch').oninput=students;
-$('sadd').onclick=function(){var n=$('sn').value.trim(),c=$('sc').value.trim();if(!n||!c)return;
-  if(D.students.some(function(s){return s.c==c}))return;D.students.push({n:n,c:c});$('sn').value='';$('sc').value='';save();draw()};
-
-/* التقارير المنسقة للواتساب والسجل (بالأسماء فقط دون رقم القيد) */
-function waReport(L,abs){
-  var o='🎓 *كشف حضور وغياب — قسم الذكاء الاصطناعي*\n';
-  o+='📚 *المقرر:* '+L.name+'\n';
-  var mline=getMetaLine(L);
-  if(mline)o+='🏫 *بيانات المحاضرة:* '+mline+'\n';
-  o+='📅 *التاريخ:* '+dt(L.start)+'\n';
-  o+='───────────────\n';
-  o+='✅ *الحضور ('+L.rec.length+'):*\n';
-  if(L.rec.length){
-    L.rec.forEach(function(r,i){o+=(i+1)+'. '+r.n+' ('+tm(r.t)+' - '+r.s+')\n'});
-  }else{
-    o+='لا يوجد\n';
-  }
-  o+='\n❌ *الغياب ('+abs.length+'):*\n';
-  if(abs.length){
-    abs.forEach(function(n,i){o+=(i+1)+'. '+n+'\n'});
-  }else{
-    o+='لا يوجد غياب 🎉\n';
-  }
-  o+='───────────────\n';
-  o+='👤 *مندوب القسم:* يوسف وليد المروني';
-  return o;
-}
-function copyText(t,feedbackEl){
-  var a=$('rt');a.hidden=false;a.value=t;a.select();
-  try{navigator.clipboard.writeText(t)}catch(e){}
-  a.hidden=true;
-  if(feedbackEl){
-    feedbackEl.innerHTML='<div class="msg ok">✓ تم نسخ التقرير المنسق بنجاح، يمكنك لصقه الآن في قروب الواتساب!</div>';
-    setTimeout(function(){feedbackEl.innerHTML=''},3500);
-  }
-}
-$('wacopy').onclick=function(){
-  var L=D.cur||D.hist[0];
-  if(!L){$('cmsg').innerHTML='<div class="msg warn">لا توجد محاضرة جارية أو سابقة لنسخ تقريرها.</div>';return}
-  var abs=[];
-  if(L===D.cur){
-    var here={};L.rec.forEach(function(r){here[r.c]=1});
-    abs=D.students.filter(function(s){return!here[s.c]}).map(function(s){return s.n});
-  }else{
-    abs=L.abs||[];
-  }
-  copyText(waReport(L,abs),$('cmsg'));
-};
-
-function logs(){
-  if(!D.cur)$('curlog').innerHTML='<p class="mute" style="margin:0">لا توجد محاضرة جارية.</p>';
-  else{var here={};D.cur.rec.forEach(function(r){here[r.c]=1});
-    var ab=D.students.filter(function(s){return!here[s.c]}).map(function(s){return s.n});
-    $('curlog').innerHTML='<p style="margin:0 0 8px"><b>'+esc(D.cur.name)+'</b> · حضر '+D.cur.rec.length+' · غائب '+ab.length+'</p>'+D.cur.rec.map(function(x){return '<div class="li"><span>'+esc(x.n)+' <small>'+tm(x.t)+'</small></span><span class="tag'+(x.s=='متأخر'?' l':'')+'">'+x.s+'</span></div>'}).join('')+(ab.length?'<p class="mute" style="margin:10px 0 0">لم يحضروا: '+ab.map(esc).join('، ')+'</p>':'')+'<button class="btn gh" style="margin-top:10px" id="cc">نسخ تقرير المحاضرة</button>';
-    if($('cc'))$('cc').onclick=function(){copyText(waReport(D.cur,ab),$('cmsg'))}}
-  $('hist').innerHTML=D.hist.length?D.hist.map(function(L,i){return '<div class="li"><div><b>'+esc(L.name)+'</b><br><small>'+dt(L.start)+' · حضر '+L.rec.length+' · غاب '+(L.abs||[]).length+'</small></div><button class="btn sm gh" data-h="'+i+'">نسخ</button></div>'}).join(''):'<p class="mute" style="margin:0">لا توجد محاضرات منتهية.</p>';
-  document.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){var L=D.hist[+b.dataset.h];copyText(waReport(L,L.abs||[]),$('cmsg'))}});
-}
-
-var PRE_V=1,PRE='2704093|ابراهيم علي حمود علي حدادي\n2704080|اريام مقبل مقبل القحمي\n2704053|اغصان احمد علي علي بدر\n2704124|امنة عبده علي مهدي الهاتف\n2704152|ايمان صالح محمد جهلان الحسام\n2704070|بسمة عامر حسن محمد الجبر\n2704024|بندر يحيى معيض السمد\n2704086|بهاء الدين محمد يحيى علي العفاري\n2704113|خالد علي حزام قايد صعصعه\n2704144|رامي احمد محمد عبده الحجي\n2704131|رقية عبد الله عبد الله محمد الظفيري\n2704051|رهف قيس علي سعيد القيسي\n2704134|رياض عبد الرحمن عبد الله علي ماهوب\n2704161|زيد علي عبدالله القطيب\n2704023|زيد ماجد زيد العظهي\n2704098|زين العابدين علي هراش احمد سفيان\n2704085|شهاب محمد صالح مقبل لطف الله\n2704101|ضياء الدين احمد محمد التام\n2704118|عبد الباري عبد الله احمد المصوبع\n2704035|عبد المجيد يحيى عبد الله الكحلاني\n2704071|عبد الملك عبد الله يحيى العمري\n2704121|عبد الوهاب عبد الله ناصر مسعود\n2704126|علاء عبد الوهاب علي بخيت القراعي\n2704049|علاء وليد راجح النخيف\n2704092|علي حسين ناصر علي الشرفي\n2704076|علي رسام علي رسام\n2704107|علي محمد علي حسين المحطوري\n2704063|علياء مصطفى عبد الله محمد الشرفي\n2704135|عمرو خالد محمد ابو صالح\n2704140|عمرو خالد ناصر المهدي\n2704022|فهد حسن احمد القطبي\n2704123|محمد بشير صالح حسين البطري\n2704129|حسن هادي صولان\n2704060|محمد حمود صالح عودين\n2704119|محمد عبد الله محمد\n2704128|محمد عبده صالح احمد سوار\n2704097|مستور علي يحيى كعدش\n2704164|مصطفى هلال ناجي حسين الغزي\n2704075|ملاك ابراهيم علي عبدالله البقع\n2704136|ميلاد باسم محمد مطهر حميد\n2704027|نسيبة علي حسن عبدالله شريف\n2704062|نواف عبد العزيز محمد حسن سودي\n2704154|يحيى محمد يحيى النخيف\n2704091|يوسف وليد محمد المروني'.split('\n').map(function(l){var p=l.split('|');return {c:p[0],n:p[1]}});
-
-if((D.pre||0)<PRE_V){
-  PRE.forEach(function(p){if(!D.students.some(function(x){return x.c==p.c}))D.students.push(p)});
-  var ord={};PRE.forEach(function(p,i){ord[p.c]=i});
-  D.students.sort(function(a,b){return (ord[a.c]===undefined?9999:ord[a.c])-(ord[b.c]===undefined?9999:ord[b.c])});
-  D.pre=PRE_V;save();
-}
-D.comp=D.comp||[];
-
-function stats(){
-  var p=0,l=0;if(D.cur)D.cur.rec.forEach(function(r){if(r.s=='متأخر')l++;else p++});
-  var a=Math.max(0,D.students.length-p-l);
-  $('stats').innerHTML=D.cur?'<div class="st"><div class="g"><b>'+p+'</b>حاضر</div><div class="y"><b>'+l+'</b>متأخر</div><div class="r"><b>'+a+'</b>غائب</div></div>':'';
-}
-
-function lecRows(){
-  var L=D.cur||D.hist[0];if(!L)return null;
-  var map={};L.rec.forEach(function(r){map[r.c]=r});
-  return {L:L,rows:D.students.map(function(s,i){var r=map[s.c];return [i+1,s.c,s.n,r?r.s:'غائب',r?tm(r.t):'—']})};
-}
-
-function runPrint(){
-  var d=lecRows();if(!d||!d.rows.length){$('cmsg').innerHTML='<div class="msg warn">لا توجد محاضرة أو طلاب للطباعة.</div>';return}
-  var mline=getMetaLine(d.L);
-  $('psheet').innerHTML='<div class="ph"><b>الجمهورية اليمنية · جامعة حجة</b><br><b>كلية الهندسة وتكنولوجيا المعلومات · قسم الذكاء الاصطناعي</b><br><b>المستوى الأول · العام الجامعي 2026–2027م</b><h1>كشف حضور وغياب الطلاب</h1><p>'+esc(d.L.name)+' · '+dt(d.L.start)+'</p>'+(mline?'<p>'+esc(mline)+'</p>':'')+'</div><table><thead><tr><th>م</th><th>رقم القيد</th><th>اسم الطالب</th><th>الحالة</th><th>وقت الحضور</th><th>التوقيع</th></tr></thead><tbody>'+d.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+esc(r[2])+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td></td></tr>'}).join('')+'</tbody></table><p class="pf">إعداد وتطوير: يوسف وليد المروني · مندوب قسم الذكاء الاصطناعي · للاستفسار: 781325909</p>';
-  window.print();
-}
-
-function runExcel(){
-  var d=lecRows();if(!d||!d.rows.length){$('cmsg').innerHTML='<div class="msg warn">لا توجد محاضرة أو طلاب للتصدير.</div>';return}
-  if(!window.XLSX){$('cmsg').innerHTML='<div class="msg bad">تعذّر تحميل مكتبة Excel. تأكد من الاتصال بالإنترنت وحدّث الصفحة.</div>';return}
-  var mline=getMetaLine(d.L);
-  var data=[
-    ['الجمهورية اليمنية - جامعة حجة - كلية الهندسة وتكنولوجيا المعلومات'],
-    ['قسم الذكاء الاصطناعي - المستوى الأول (2026-2027م)'],
-    ['كشف حضور وغياب - '+d.L.name+' ('+dt(d.L.start)+')'+(mline?' | '+mline:'')],
-    [],
-    ['م','رقم القيد','اسم الطالب','الحالة','وقت الحضور']
-  ].concat(d.rows);
-  var ws=XLSX.utils.aoa_to_sheet(data);ws['!cols']=[{wch:5},{wch:12},{wch:34},{wch:12},{wch:14}];
-  var wb=XLSX.utils.book_new();wb.Workbook={Views:[{RTL:true}]};XLSX.utils.book_append_sheet(wb,ws,'الحضور');
-  XLSX.writeFile(wb,'ai_level1_attendance.xlsx');
-}
-
-function hasExportAccess(){
-  return unlocked || repUnlocked || exportUnlocked;
-}
-
-function syncExportLockUI(){
-  var openAccess=hasExportAccess();
-  if($('pr'))$('pr').textContent=(openAccess?'🖨️ طباعة الكشف':'🔒 طباعة الكشف');
-  if($('xl'))$('xl').textContent=(openAccess?'📊 تصدير Excel':'🔒 تصدير Excel');
-  if($('expUnlockedBar'))$('expUnlockedBar').hidden=!exportUnlocked || unlocked || repUnlocked;
-}
-
-function requestProtectedExport(actionType){
-  if(hasExportAccess()){
-    if(actionType==='print')runPrint();
-    else if(actionType==='excel')runExcel();
-    return;
-  }
-  pendingExportAction=actionType;
-  $('expPinBox').hidden=false;
-  $('expPinMsg').innerHTML='';
-  $('expPinInput').value='';
-  $('expPinDesc').textContent=(actionType==='print'?'أدخل كلمة السر الخاصة بالمندوب / المندوبة لفتح طباعة الكشف الرسمي.':'أدخل كلمة السر الخاصة بالمندوب / المندوبة لفتح تصدير ملف Excel الرسمي.');
-  $('expPinInput').focus();
-}
-
-$('pr').onclick=function(){requestProtectedExport('print')};
-$('xl').onclick=function(){requestProtectedExport('excel')};
-
-$('expPinConfirmBtn').onclick=function(){
-  var entered=($('expPinInput').value||'').trim();
-  if(entered===getPin()){
-    exportUnlocked=true;
-    $('expPinBox').hidden=true;
-    $('expPinMsg').innerHTML='';
-    $('expPinInput').value='';
-    syncExportLockUI();
-    var act=pendingExportAction;
-    pendingExportAction=null;
-    if(act==='print')runPrint();
-    else if(act==='excel')runExcel();
-  }else{
-    $('expPinMsg').innerHTML='<div class="msg bad">كلمة السر غير صحيحة!</div>';
-  }
-};
-$('expPinInput').onkeydown=function(e){if(e.key=='Enter')$('expPinConfirmBtn').click()};
-$('expPinCancelBtn').onclick=function(){
-  pendingExportAction=null;
-  $('expPinBox').hidden=true;
-  $('expPinMsg').innerHTML='';
-  $('expPinInput').value='';
-};
-$('expLockBtn').onclick=function(){
-  exportUnlocked=false;
-  syncExportLockUI();
-};
-
-function complaints(){
-  $('clist').innerHTML=D.comp.length?D.comp.map(function(c,i){return '<div class="li"><div><b>'+esc(c.n||'بدون اسم')+'</b> <small>'+dt(c.t)+'</small><br>'+esc(c.m)+'</div><button class="btn sm gh" data-c="'+i+'">حذف</button></div>'}).join(''):'<p class="mute" style="margin:0">لا توجد شكاوى محفوظة.</p>';
-  document.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){D.comp.splice(+b.dataset.c,1);save();complaints()}});
-}
-
-$('csend').onclick=function(){
-  var m=$('cm').value.trim();if(!m)return;var n=$('cn').value.trim();
-  D.comp.unshift({n:n,m:m,t:Date.now()});save();
-  window.open('https://wa.me/967781325909?text='+encodeURIComponent('شكوى أو اقتراح (قسم الذكاء الاصطناعي)'+(n?' من '+n:'')+':\n'+m),'_blank');
-  $('cm').value='';$('cn').value='';complaints();
-};
-
-/* تبويب المندوب / المندوبة */
-$('repUnlockBtn').onclick=function(){
-  var entered=$('repPinInput').value.trim();
-  if(entered===getPin()){
-    repUnlocked=true;
-    $('repPinInput').value='';
-    $('repLockMsg').innerHTML='';
-    repSection();
-    syncExportLockUI();
-  }else{
-    $('repLockMsg').innerHTML='<div class="msg bad">كلمة السر غير صحيحة!</div>';
-  }
-};
-$('repPinInput').onkeydown=function(e){if(e.key=='Enter')$('repUnlockBtn').click()};
-$('repLockNowBtn').onclick=function(){
-  repUnlocked=false;
-  repSection();
-  syncExportLockUI();
-};
-
-function renderOfflineSyncList(){
-  var q=D.syncQueue||[];
-  if(!q.length){
-    $('offlineSyncList').innerHTML='<p class="mute" style="margin:0">لا توجد سجلات مزامنة بعد.</p>';
-    return;
-  }
-  $('offlineSyncList').innerHTML=q.map(function(item){
-    var diffSec=(item.onlineOpenedAt && item.mode==='offline')?Math.max(0,Math.round((item.onlineOpenedAt-item.recordedAt)/1000)):null;
-    var tagCls=(item.mode==='offline'?' l':'');
-    return '<div class="li"><div><b>'+esc(item.studentName)+'</b> · الحالة: <b>'+esc(item.status)+'</b> <span class="tag'+tagCls+'">'+(item.mode==='offline'?'أوفلاين':'أونلاين')+'</span><br><small>وقت التسجيل: '+tm(item.recordedAt)+' · وقت فتح الإنترنت: '+tm(item.onlineOpenedAt)+(diffSec!==null?' (فارق '+diffSec+' ثانية)':'')+'</small></div><span class="tag">'+(item.synced?'مزامن':'بانتظار النت')+'</span></div>';
-  }).join('');
-}
-
-function renderSuspiciousAlerts(){
-  var openAlerts=(D.alerts||[]).filter(function(al){return !al.resolved && al.type!=='تأكيد مزدوج'});
-  if(!openAlerts.length){
-    $('suspiciousAlertsList').innerHTML='<p class="mute" style="margin:0">لا توجد تنبيهات تحضير غير معتادة حالياً.</p>';
-    return;
-  }
-  $('suspiciousAlertsList').innerHTML=openAlerts.map(function(al){
-    var tagCls=(al.type==='مشبوه'?' b':' l');
-    return '<div class="li"><div><b>'+esc(al.studentName)+'</b> <span class="tag'+tagCls+'">'+esc(al.type)+'</span><br><small>'+esc(al.detail)+' · '+dt(al.t)+'</small></div><button class="btn sm gh" data-resolve="'+esc(al.id)+'">تجاهل / مراجع</button></div>';
-  }).join('');
-  document.querySelectorAll('[data-resolve]').forEach(function(btn){
-    btn.onclick=function(){
-      var id=btn.getAttribute('data-resolve');
-      (D.alerts||[]).forEach(function(al){if(al.id===id)al.resolved=true});
-      save();
-      renderSuspiciousAlerts();
-    };
-  });
-}
-
-function renderExceptionalConfirmations(){
-  var pendingItems=[];
-  if(D.cur && Array.isArray(D.cur.rec)){
-    D.cur.rec.forEach(function(r,idx){
-      if(r.needsConfirm && !r.confirmed){
-        pendingItems.push({
-          idx:idx,
-          name:r.n,
-          time:r.t,
-          status:r.s
-        });
-      }
-    });
-  }
-  if(!pendingItems.length){
-    $('exceptionalConfirmList').innerHTML='<p class="mute" style="margin:0">لا توجد حالات جديدة أو استثنائية بانتظار التأكيد.</p>';
-    return;
-  }
-  $('exceptionalConfirmList').innerHTML=pendingItems.map(function(item){
-    return '<div class="li"><div><b>'+esc(item.name)+'</b> <span class="tag b">بانتظار التأكيد</span><br><small>الحالة: '+esc(item.status)+' · الساعة '+tm(item.time)+'</small></div><button class="btn sm" data-confirm-idx="'+item.idx+'">تأكيد ✓</button></div>';
-  }).join('');
-  document.querySelectorAll('[data-confirm-idx]').forEach(function(btn){
-    btn.onclick=function(){
-      var idx=+btn.getAttribute('data-confirm-idx');
-      if(D.cur && D.cur.rec[idx]){
-        var targetName=D.cur.rec[idx].n;
-        D.cur.rec[idx].confirmed=true;
-        (D.alerts||[]).forEach(function(al){
-          if(al.type==='تأكيد مزدوج' && al.studentName===targetName && al.lectureId===D.cur.id){
-            al.resolved=true;
-          }
-        });
-        save();
-        renderExceptionalConfirmations();
-        renderSuspiciousAlerts();
+  <script>
+    // =========================================================================
+    // 1. بيانات الأقسام الثلاثة الكاملة (الطلاب + الجداول + رموز W1..W4)
+    // ملاحظة: ربط Supabase (جدول attendance_sync) مؤجل للمرحلة اللاحقة.
+    // =========================================================================
+    const DEPARTMENTS = {
+      ai: {
+        id: 'ai',
+        name: 'قسم الذكاء الاصطناعي',
+        bodyClass: 'dept-ai',
+        defaultHeader: 'الجمهورية اليمنية - جامعة حجة - كلية الهندسة وتكنولوجيا المعلومات - قسم الذكاء الاصطناعي (المستوى الأول)',
+        students: [
+          { id: '2704093', name: 'ابراهيم علي حمود علي حدادي' },
+          { id: '2704080', name: 'اريام مقبل مقبل القحمي' },
+          { id: '2704053', name: 'اغصان احمد علي علي بدر' },
+          { id: '2704124', name: 'امنة عبده علي مهدي الهاتف' },
+          { id: '2704152', name: 'ایمان صالح محمد جهلان الحسام' },
+          { id: '2704070', name: 'بسمة عامر حسن محمد الجبر' },
+          { id: '2704024', name: 'بندر يحيى معيض السمد' },
+          { id: '2704086', name: 'بهاء الدين محمد يحيى علي العفاري' },
+          { id: '2704113', name: 'خالد علي حزام قايد صعصعه' },
+          { id: '2704144', name: 'رامي احمد محمد عبده الحجي' },
+          { id: '2704131', name: 'رقية عبد الله عبد الله محمد الظفيري' },
+          { id: '2704051', name: 'رهف قيس علي سعيد القيسي' },
+          { id: '2704134', name: 'رياض عبد الرحمن عبد الله علي ماهوب' },
+          { id: '2704161', name: 'زيد علي عبدالله القطيب' },
+          { id: '2704023', name: 'زيد ماجد زيد العظهي' },
+          { id: '2704098', name: 'زين العابدين علي هراش احمد سفيان' },
+          { id: '2704085', name: 'شهاب محمد صالح مقبل لطف الله' },
+          { id: '2704101', name: 'ضياء الدين احمد محمد التام' },
+          { id: '2704118', name: 'عبد الباري عبد الله احمد المصوبع' },
+          { id: '2704035', name: 'عبد المجيد يحيى عبد الله الكحلاني' },
+          { id: '2704071', name: 'عبد الملك عبد الله يحيى العمري' },
+          { id: '2704121', name: 'عبد الوهاب عبد الله ناصر مسعود' },
+          { id: '2704126', name: 'علاء عبد الوهاب علي بخيت القراعي' },
+          { id: '2704049', name: 'علاء وليد راجح النخيف' },
+          { id: '2704092', name: 'علي حسين ناصر علي الشرفي' },
+          { id: '2704076', name: 'علي رسام علي رسام' },
+          { id: '2704107', name: 'علي محمد علي حسين المحطوري' },
+          { id: '2704063', name: 'علياء مصطفى عبد الله محمد الشرفي' },
+          { id: '2704135', name: 'عمرو خالد محمد ابو صالح' },
+          { id: '2704140', name: 'عمرو خالد ناصر المهدي' },
+          { id: '2704022', name: 'فهد حسن احمد القطبي' },
+          { id: '2704123', name: 'محمد بشير صالح حسين البطري' },
+          { id: '2704129', name: 'محمد حسن هادي صولان' },
+          { id: '2704060', name: 'محمد حمود صالح عودين' },
+          { id: '2704119', name: 'محمد عبد الله محمد سوار' },
+          { id: '2704128', name: 'محمد عبده صالح احمد سوار' },
+          { id: '2704097', name: 'مستور علي يحيى كعدش' },
+          { id: '2704164', name: 'مصطفى هلال ناجي حسين الغزي' },
+          { id: '2704075', name: 'ملاك ابراهيم علي عبدالله البقع' },
+          { id: '2704136', name: 'میلاد باسم محمد مطهر حمید' },
+          { id: '2704027', name: 'نسيبة علي حسن عبدالله شريف' },
+          { id: '2704062', name: 'نواف عبد العزيز محمد حسن سودي' },
+          { id: '2704154', name: 'يحيى محمد يحيى النخيف' },
+          { id: '2704091', name: 'يوسف وليد محمد المروني' }
+        ],
+        lectures: [
+          { id: 'ai_sat_1', day: 6, start: '08:00', end: '10:00', course: 'تصميم وبرمجة مواقع', doctor: 'أ. سوسن الشرسى', venue: 'قاعة القدس', codes: ['1142', '2389', '3914', '4726'] },
+          { id: 'ai_sat_2', day: 6, start: '10:00', end: '11:00', course: 'اليوم الثقافي', doctor: 'لجنة الأنشطة', venue: 'الجامعة', codes: ['1253', '2491', '3518', '4839'] },
+          { id: 'ai_sat_3', day: 6, start: '12:00', end: '13:00', course: 'اللغة الانجليزية ٢', doctor: 'د. محمد سالم', venue: 'قاعة غزة', codes: ['1364', '2572', '3629', '4915'] },
+          { id: 'ai_sun_1', day: 0, start: '11:00', end: '12:00', course: 'مهارات اللغة العربية', doctor: 'د. عبدالله جحاف', venue: 'قاعة القدس', codes: ['1475', '2683', '3741', '5027'] },
+          { id: 'ai_sun_2', day: 0, start: '13:00', end: '14:00', course: 'التصميم المنطقي الرقمي', doctor: 'د. خالد زكي', venue: 'الزيادي', codes: ['1586', '2794', '3852', '5138'] },
+          { id: 'ai_mon_1', day: 1, start: '09:00', end: '11:00', course: 'الاحصاء والاحتمالات', doctor: 'د. خالد زكي', venue: 'الزيادي', codes: ['1697', '2815', '3963', '5249'] },
+          { id: 'ai_wed_1', day: 3, start: '11:00', end: '12:00', course: 'برمجة الحاسوب ٢', doctor: 'د. ضياء القدمي', venue: 'قاعة غزة', codes: ['1718', '2926', '4074', '5351'] },
+          { id: 'ai_wed_2', day: 3, start: '13:00', end: '14:00', course: 'الرياضيات ٢', doctor: 'د. خالد زكي', venue: 'ق. الشهيد الرباعي', codes: ['1829', '3037', '4185', '5462'] },
+          { id: 'ai_thu_a1', day: 4, start: '08:00', end: '09:00', course: 'برمجة ٢ عملي (مجموعة A)', doctor: 'أ. هيثم حمزة', venue: 'معمل السيبراني', codes: ['1931', '3148', '4296', '5573'] },
+          { id: 'ai_thu_a2', day: 4, start: '09:00', end: '10:00', course: 'تصميم الويب - عملي (مجموعة A)', doctor: 'أ. ياسمين الغني', venue: 'معمل السيبراني', codes: ['2042', '3259', '4317', '5684'] },
+          { id: 'ai_thu_b1', day: 4, start: '09:00', end: '10:00', course: 'برمجة ٢ عملي (مجموعة B)', doctor: 'أ. هيثم حمزة', venue: 'معمل التقنية', codes: ['2153', '3361', '4428', '5795'] },
+          { id: 'ai_thu_b2', day: 4, start: '10:00', end: '11:00', course: 'تصميم الويب - عملي (مجموعة B)', doctor: 'أ. ياسمين الغني', venue: 'معمل التقنية', codes: ['2264', '3472', '4539', '5816'] }
+        ]
+      },
+
+      cyber: {
+        id: 'cyber',
+        name: 'قسم الأمن السيبراني',
+        bodyClass: 'dept-cyber',
+        defaultHeader: 'الجمهورية اليمنية - جامعة حجة - كلية الهندسة وتكنولوجيا المعلومات - قسم الأمن السيبراني (المستوى الأول)',
+        students: [
+          { id: '2704061', name: 'ابراهيم حسن شوعي محمد جربان' },
+          { id: '2704074', name: 'احمد احمد احمد منصور القطف' },
+          { id: '2704079', name: 'احمد عبد الله محمد محمد عواض' },
+          { id: '2704153', name: 'احمد علي محمد عثمان' },
+          { id: '2704038', name: 'الاء فؤاد عبد الله حزام العليي' },
+          { id: '2704069', name: 'امین احمد عبدالله احمد الخيواني' },
+          { id: '2704114', name: 'انور محمد عبده حسن الشهاري' },
+          { id: '2704012', name: 'باسم مجاهد محمد الجمال' },
+          { id: '2704011', name: 'بشار صالح علي القفلي' },
+          { id: '2704083', name: 'حسام يحيى حليصي محمد جربان' },
+          { id: '2704010', name: 'حسن محمد ناصر يحيى راصع' },
+          { id: '2704052', name: 'حسین محمد حسين حسين المغربي' },
+          { id: '2704103', name: 'حمدان احمد يحيى الحداد' },
+          { id: '2704156', name: 'رشاد قايد علي علي شايع' },
+          { id: '2704054', name: 'رهام عبد الرحمن علي علي راشد' },
+          { id: '2704157', name: 'زیاد مهيوب حسین سراع' },
+          { id: '2704003', name: 'شجاع احمد شوعي علي الزلامي' },
+          { id: '2704004', name: 'شريف محمد علي محمد هيج' },
+          { id: '2704095', name: 'شهاب محمد حسين علي العفاري' },
+          { id: '2704142', name: 'شيماء فواز علي الملاهي' },
+          { id: '2704009', name: 'عاصم محمد علي احمد ابوهميل' },
+          { id: '2704102', name: 'عبد الحكيم عبدالله احمد ماهوب' },
+          { id: '2704048', name: 'عبد الرؤوف عباس يحيى الغماري' },
+          { id: '2704149', name: 'عبد الرحمن عصام محمد علي الهاتف' },
+          { id: '2704090', name: 'عبد الكريم سعد صادق احمد الخيواني' },
+          { id: '2704057', name: 'عبد الله احمد يحيى محمد الخزان' },
+          { id: '2704021', name: 'عبد الله حسین قاسم هادي ادريس' },
+          { id: '2704150', name: 'عبدالله عزام صالح محمد الرعود' },
+          { id: '2704132', name: 'عبد المجيد عبد الله عبدالله محمد جحاف' },
+          { id: '2704145', name: 'عبد المجيد محمد يحيى محمد الهادي' },
+          { id: '2704066', name: 'عبد الملك قاسم محمد البوني' },
+          { id: '2704040', name: 'عبده علي حسن حسن جباره' },
+          { id: '2704115', name: 'عدنان ناصر علي عايض دميش' },
+          { id: '2704147', name: 'علي هادي احمد علي القيسي' },
+          { id: '2704008', name: 'عمرو خالد محمد سوید' },
+          { id: '2704104', name: 'عمرو عادل حزام عبد الله العنس' },
+          { id: '2704001', name: 'غيداء عصام محمد المسهلي' },
+          { id: '2704116', name: 'فضل خالد يحيى احمد السواري' },
+          { id: '2704007', name: 'كمال احمد عبد الله احمد ابوهادي' },
+          { id: '2704006', name: 'لؤي جابر محمد محمد وهبان' },
+          { id: '2704002', name: 'محمد ابراهيم محمد ناوي' },
+          { id: '2704005', name: 'محمد احمد حمود حسن الزكي' },
+          { id: '2704065', name: 'محمد خالد علي صالح سريع' },
+          { id: '2704013', name: 'محمد محمد عبد الله صالح الهلاني' },
+          { id: '2704036', name: 'محمود يحيى صالح القاضي' },
+          { id: '2704105', name: 'مطهر يحيى مطهر حمود العنس' },
+          { id: '2704055', name: 'منصور محمد احمد احمد المدومي' },
+          { id: '2704158', name: 'منى عبد الرحمن محمد احمد العذيبي' },
+          { id: '2704050', name: 'نايف محمد علي حسين جراد' },
+          { id: '2704108', name: 'نجم حسين ناصر علي البغومي' },
+          { id: '2704125', name: 'نصر الله كمال احمد حسن الوشلي' },
+          { id: '2704133', name: 'نورة عبد الله علي حسين الهلاني' },
+          { id: '2704067', name: 'هيثم عبد الله يحيى عبد الله الظمري' },
+          { id: '2704096', name: 'وائل يحيى عمر حكيم' }
+        ],
+        lectures: [
+          { id: 'cy_sat_1', day: 6, start: '08:00', end: '10:00', course: 'الرياضيات ٢', doctor: 'د. خالد زكي', venue: 'ق. الصماد', codes: ['6101', '7102', '8103', '9104'] },
+          { id: 'cy_sat_2', day: 6, start: '10:00', end: '11:00', course: 'اليوم الثقافي', doctor: 'لجنة الأنشطة', venue: 'الجامعة', codes: ['6205', '7206', '8207', '9208'] },
+          { id: 'cy_sat_3', day: 6, start: '12:00', end: '13:00', course: 'مهارات اللغة العربية', doctor: 'أ. تهاني القاسمي', venue: 'الشهيد الحمزي', codes: ['6309', '7310', '8311', '9312'] },
+          { id: 'cy_sun_1', day: 0, start: '11:00', end: '12:00', course: 'التصميم المنطقي الرقمي', doctor: 'د. خالد زكي', venue: 'قاعة غزة', codes: ['6413', '7414', '8415', '9416'] },
+          { id: 'cy_mon_1', day: 1, start: '09:00', end: '10:00', course: 'اللغة الانجليزية ٢', doctor: 'د. يحيى قلفاح', venue: 'قاعة غزة', codes: ['6517', '7518', '8519', '9520'] },
+          { id: 'cy_mon_2', day: 1, start: '10:00', end: '11:00', course: 'الاحصاء والاحتمالات', doctor: 'د. خالد زكي', venue: 'قاعة غزة', codes: ['6621', '7622', '8623', '9624'] },
+          { id: 'cy_wed_1', day: 3, start: '09:00', end: '10:00', course: 'اساسيات الامن السيبراني', doctor: 'د. مطهر حميد', venue: 'قاعة القدس', codes: ['6725', '7726', '8727', '9728'] },
+          { id: 'cy_wed_2', day: 3, start: '09:00', end: '10:00', course: 'برمجة الحاسوب ٢', doctor: 'د. ضياء القدمي', venue: 'الزيادي', codes: ['6829', '7830', '8831', '9832'] },
+          { id: 'cy_wed_3', day: 3, start: '12:00', end: '13:00', course: 'التصميم المنطقي الرقمي - عملي (A)', doctor: 'أ. حسن العليي', venue: 'معمل التقنية', codes: ['6933', '7934', '8935', '9936'] },
+          { id: 'cy_wed_4', day: 3, start: '13:00', end: '14:00', course: 'برمجة ٢ عملي (A)', doctor: 'أ. هيثم حمزة', venue: 'معمل السيبراني', codes: ['7037', '8038', '9039', '6040'] },
+          { id: 'cy_wed_5', day: 3, start: '13:00', end: '14:00', course: 'التصميم المنطقي الرقمي - عملي (B)', doctor: 'أ. حسن العليي', venue: 'معمل التقنية', codes: ['7041', '8042', '9043', '6044'] },
+          { id: 'cy_wed_6', day: 3, start: '14:00', end: '15:00', course: 'برمجة ٢ عملي (B)', doctor: 'أ. هيثم حمزة', venue: 'معمل السيبراني', codes: ['7045', '8046', '9047', '6048'] }
+        ]
+      },
+
+      cs: {
+        id: 'cs',
+        name: 'قسم الحاسوب',
+        bodyClass: 'dept-cs',
+        defaultHeader: 'الجمهورية اليمنية - جامعة حجة - كلية الهندسة وتكنولوجيا المعلومات - قسم الحاسوب (المستوى الأول)',
+        students: [
+          { id: '2704056', name: 'احمد عباس يحيى علي جباره' },
+          { id: '2704072', name: 'احمد محمد صالح الاهنومي' },
+          { id: '2704163', name: 'امة الخالق خالد شوعي حسن سهل' },
+          { id: '2704058', name: 'أمة الله ابوطالب عبدالرحمن علي شرف الدين' },
+          { id: '2704143', name: 'بدر عادل عبد الله المعظي' },
+          { id: '2704100', name: 'بسام عادل حسین نصر' },
+          { id: '2704025', name: 'تهاني محمد علي الحجوري' },
+          { id: '2704099', name: 'رغد فهد احمد حسين مهدي' },
+          { id: '2704137', name: 'زين العابدين علي قايد حسين الزبادي' },
+          { id: '2704064', name: 'زينب ماجد احمد يحيى المدومي' },
+          { id: '2704151', name: 'عاصم عبد الكريم يحيى محمد الجرباني' },
+          { id: '2704077', name: 'عبد اللطيف عبد الكريم محمد حمود العفاري' },
+          { id: '2704042', name: 'عبد الله علي عبد الله علي محيي' },
+          { id: '2704039', name: 'غسان محمد حزام مقبل التركي' },
+          { id: '2704018', name: 'محمد ابراهيم محمد سليمان' },
+          { id: '2704017', name: 'محمد عبد الله يحيى صالح العوبلي' },
+          { id: '2704081', name: 'مدى علي محمد مهيم' },
+          { id: '2704028', name: 'معاذ بشير احمد محمد العرشي' },
+          { id: '2704020', name: 'وسیم صادق شوعي كحيل' }
+        ],
+        lectures: [
+          { id: 'cs_sat_1', day: 6, start: '10:00', end: '11:00', course: 'اليوم الثقافي', doctor: 'لجنة الأنشطة', venue: 'الجامعة', codes: ['3101', '4102', '5103', '6104'] },
+          { id: 'cs_sat_2', day: 6, start: '12:00', end: '13:00', course: 'مهارات اللغة العربية', doctor: 'أ. تهاني القاسمي', venue: 'الشهيد الحمزي', codes: ['3205', '4206', '5207', '6208'] },
+          { id: 'cs_sun_1', day: 0, start: '09:00', end: '10:00', course: 'مقدمة حاسوب - عملي', doctor: 'أ. أسامة الدرواني', venue: 'معمل الحاسوب', codes: ['3309', '4310', '5311', '6312'] },
+          { id: 'cs_sun_2', day: 0, start: '11:00', end: '12:00', course: 'التصميم المنطقي الرقمي', doctor: 'د. خالد زكي', venue: 'قاعة غزة', codes: ['3413', '4414', '5415', '6416'] },
+          { id: 'cs_mon_1', day: 1, start: '09:00', end: '10:00', course: 'اللغة الانجليزية ٢', doctor: 'د. يحيى قلفاح', venue: 'قاعة غزة', codes: ['3517', '4518', '5519', '6520'] },
+          { id: 'cs_mon_2', day: 1, start: '10:00', end: '11:00', course: 'الاحصاء والاحتمالات', doctor: 'د. خالد زكي', venue: 'قاعة غزة', codes: ['3621', '4622', '5623', '6624'] },
+          { id: 'cs_wed_1', day: 3, start: '09:00', end: '10:00', course: 'التصميم المنطقي الرقمي - عملي', doctor: 'أ. أسامة الدرواني', venue: 'معمل التقنية', codes: ['3725', '4726', '5727', '6728'] },
+          { id: 'cs_wed_2', day: 3, start: '11:00', end: '12:00', course: 'مقدمة حاسوب', doctor: 'د. مطهر حميد', venue: 'ق. الصماد', codes: ['3829', '4830', '5831', '6832'] },
+          { id: 'cs_wed_3', day: 3, start: '13:00', end: '14:00', course: 'الرياضيات ٢', doctor: 'د. خالد زكي', venue: 'ق. الشهيد الرباعي', codes: ['3933', '4934', '5935', '6936'] },
+          { id: 'cs_thu_1', day: 4, start: '09:00', end: '10:00', course: 'برمجة الحاسوب ٢', doctor: 'د. ضياء القدمي', venue: 'الزيادي', codes: ['4037', '5038', '6039', '7040'] },
+          { id: 'cs_thu_2', day: 4, start: '13:00', end: '14:00', course: 'برمجة الحاسوب ٢ - عملي', doctor: 'أ. هيثم حمزة', venue: 'معمل التقنية', codes: ['4041', '5042', '6043', '7044'] }
+        ]
       }
     };
-  });
-}
 
-$('saveHdrBtn').onclick=function(){
-  D.meta={
-    doctor:($('hdrDoc').value||'').trim(),
-    section:($('hdrSec').value||'').trim(),
-    hall:($('hdrHall').value||'').trim()
-  };
-  save();
-  $('hdrMsg').innerHTML='<div class="msg ok">✓ تم حفظ بيانات الترويسة بنجاح.</div>';
-  setTimeout(function(){if($('hdrMsg'))$('hdrMsg').innerHTML=''},2500);
-  lecture();
-};
+    // =========================================================================
+    // 2. حالة التطبيق والتخزين المحلي
+    // =========================================================================
+    const STORAGE_KEY = 'hajjah_smart_attendance_v3';
+    let state = loadState();
+    let currentEntryMode = 'online'; // 'online' | 'offline'
+    let currentDeptKey = 'ai';
+    let repUnlocked = false;
+    let logsUnlocked = false;
+    let pendingExceptionDraft = null;
 
-$('expJsonBtn').onclick=function(){
-  var payload={
-    exportedAt:new Date().toISOString(),
-    app:'ai_attendance_hajjah_s1',
-    data:D
-  };
-  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;
-  a.download='ai_attendance_backup_'+new Date().toISOString().slice(0,10)+'.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(function(){URL.revokeObjectURL(url)},1000);
-  $('bakMsg').innerHTML='<div class="msg ok">✓ تم تصدير ملف النسخة الاحتياطية JSON بنجاح.</div>';
-};
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            password: parsed.password || '2026',
+            weekIndex: Number.isInteger(parsed.weekIndex) ? parsed.weekIndex : 0,
+            headers: {
+              ai: parsed.headers?.ai || DEPARTMENTS.ai.defaultHeader,
+              cyber: parsed.headers?.cyber || DEPARTMENTS.cyber.defaultHeader,
+              cs: parsed.headers?.cs || DEPARTMENTS.cs.defaultHeader
+            },
+            records: Array.isArray(parsed.records) ? parsed.records : [],
+            alerts: Array.isArray(parsed.alerts) ? parsed.alerts : []
+          };
+        }
+      } catch (e) {}
+      return {
+        password: '2026',
+        weekIndex: 0,
+        headers: {
+          ai: DEPARTMENTS.ai.defaultHeader,
+          cyber: DEPARTMENTS.cyber.defaultHeader,
+          cs: DEPARTMENTS.cs.defaultHeader
+        },
+        records: [],
+        alerts: []
+      };
+    }
 
-$('impJsonBtn').onclick=function(){
-  $('jsonFileInput').click();
-};
-$('jsonFileInput').onchange=function(){
-  var f=this.files[0];this.value='';if(!f)return;
-  var rd=new FileReader();
-  rd.onload=function(){
-    try{
-      var parsed=JSON.parse(rd.result);
-      var src=(parsed&&parsed.data)?parsed.data:parsed;
-      if(!src||!Array.isArray(src.students)){
-        $('bakMsg').innerHTML='<div class="msg bad">ملف JSON غير صالح أو لا يحتوي على بيانات الطلاب.</div>';
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function verifyPassword(inputVal) {
+      return (inputVal || '').trim() === String(state.password || '2026');
+    }
+
+    function normalizeArabic(str) {
+      return (str || '')
+        .replace(/[إأآا]/g, 'ا')
+        .replace(/ى/g, 'ي')
+        .replace(/ة/g, 'ه')
+        .replace(/[\u064B-\u065F]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    // =========================================================================
+    // 3. البوابة الأولى واختيار الأقسام
+    // =========================================================================
+    function enterWithMode(mode) {
+      const msgEl = document.getElementById('gateMsg');
+      msgEl.classList.add('hidden');
+
+      if (mode === 'online' && !navigator.onLine) {
+        msgEl.textContent = '⚠️ لا يوجد اتصال بالإنترنت حالياً. فعّل الإنترنت ثم أعد المحاولة، أو اختر «دخول بدون إنترنت».';
+        msgEl.classList.remove('hidden');
         return;
       }
-      D=Object.assign({students:[],cur:null,hist:[],comp:[],meta:{doctor:'',section:'',hall:''},alerts:[],syncQueue:[]},src);
-      D.meta=Object.assign({doctor:'',section:'',hall:''},D.meta||{});
-      D.alerts=Array.isArray(D.alerts)?D.alerts:[];
-      D.syncQueue=Array.isArray(D.syncQueue)?D.syncQueue:[];
-      save();
-      draw();
-      $('bakMsg').innerHTML='<div class="msg ok">✓ تمت استعادة النسخة الاحتياطية بنجاح.</div>';
-    }catch(e){
-      $('bakMsg').innerHTML='<div class="msg bad">تعذّر قراءة ملف النسخة الاحتياطية.</div>';
-    }
-  };
-  rd.readAsText(f);
-};
 
-function renderStudentStats(){
-  var sessions=(D.hist||[]).concat(D.cur?[D.cur]:[]);
-  var totalSessions=sessions.length;
-  if(!D.students.length){
-    $('studentStatsList').innerHTML='<p class="mute" style="margin:0">لا يوجد طلاب مسجّلون بعد.</p>';
-    return;
-  }
-  $('studentStatsList').innerHTML=D.students.map(function(s){
-    var p=0,l=0,a=0;
-    sessions.forEach(function(L){
-      var recList=L.rec||[];
-      var found=recList.filter(function(r){return r.c==s.c})[0];
-      if(found){
-        if(found.s=='متأخر')l++;
-        else p++;
-      }else if(L!==D.cur){
-        a++;
+      currentEntryMode = mode;
+      if (navigator.onLine) {
+        markPendingOfflineOpenedNow();
       }
+
+      document.getElementById('gateScreen').classList.add('hidden');
+      document.getElementById('deptScreen').classList.remove('hidden');
+      document.getElementById('currentModeLabel').textContent =
+        mode === 'online' ? 'دخول باستخدام الإنترنت' : 'دخول بدون إنترنت (أوفلاين)';
+    }
+
+    function backToGate() {
+      document.getElementById('deptScreen').classList.add('hidden');
+      document.getElementById('gateScreen').classList.remove('hidden');
+    }
+
+    function selectDepartment(deptKey) {
+      currentDeptKey = deptKey;
+      repUnlocked = false;
+      logsUnlocked = false;
+      pendingExceptionDraft = null;
+
+      const dept = DEPARTMENTS[deptKey];
+      document.body.className = dept.bodyClass;
+      document.getElementById('deptTitle').textContent = dept.name;
+
+      document.getElementById('deptScreen').classList.add('hidden');
+      document.getElementById('deptWorkspace').classList.remove('hidden');
+
+      populateLectureSelect();
+      syncTopBadges();
+      lockRepPanel();
+      lockLogsPanel();
+      switchTab('student');
+      refreshWindowUI();
+    }
+
+    function backToDeptScreen() {
+      document.getElementById('deptWorkspace').classList.add('hidden');
+      document.getElementById('deptScreen').classList.remove('hidden');
+    }
+
+    function syncTopBadges() {
+      document.getElementById('deptModeBadge').textContent =
+        currentEntryMode === 'online' ? 'الوضع: أونلاين' : 'الوضع: أوفلاين';
+      document.getElementById('deptNetStatus').textContent =
+        navigator.onLine ? 'الشبكة: متصلة' : 'الشبكة: غير متصلة';
+      document.getElementById('deptWeekBadge').textContent =
+        `دورة الرموز: الأسبوع ${Number(state.weekIndex) + 1}`;
+    }
+
+    // =========================================================================
+    // 4. توقيت المحاضرات، الرمز الرباعي المحفوظ، ونافذة أول 10 دقائق
+    // =========================================================================
+    function populateLectureSelect() {
+      const select = document.getElementById('stuLectureSelect');
+      const dept = DEPARTMENTS[currentDeptKey];
+      select.innerHTML = '';
+      dept.lectures.forEach(lec => {
+        const opt = document.createElement('option');
+        opt.value = lec.id;
+        opt.textContent = `${lec.course} (${lec.doctor}) — ${lec.start} إلى ${lec.end}`;
+        select.appendChild(opt);
+      });
+    }
+
+    function parseMinutes(hhmm) {
+      const [h, m] = hhmm.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function getLectureWindowStatus(lec, now = new Date()) {
+      const nowDay = now.getDay();
+      const nowMins = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+      const startMins = parseMinutes(lec.start);
+      const endMins = parseMinutes(lec.end);
+      const windowEndMins = startMins + 10;
+
+      const isToday = nowDay === lec.day;
+      const within10Min = isToday && nowMins >= startMins && nowMins <= windowEndMins;
+      const isLectureRunning = isToday && nowMins >= startMins && nowMins <= endMins;
+      const remainingSeconds = within10Min ? Math.max(0, Math.floor((windowEndMins - nowMins) * 60)) : 0;
+
+      return {
+        isToday,
+        within10Min,
+        isLectureRunning,
+        remainingSeconds,
+        code: lec.codes[state.weekIndex % lec.codes.length]
+      };
+    }
+
+    function formatMMSS(totalSec) {
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function refreshWindowUI() {
+      syncTopBadges();
+      const dept = DEPARTMENTS[currentDeptKey];
+      const now = new Date();
+      const selectedId = document.getElementById('stuLectureSelect').value || dept.lectures[0].id;
+      const selectedLec = dept.lectures.find(l => l.id === selectedId) || dept.lectures[0];
+      const win = getLectureWindowStatus(selectedLec, now);
+
+      const countEl = document.getElementById('studentCountdown');
+      const statusEl = document.getElementById('studentWindowStatus');
+      const nextHintEl = document.getElementById('studentNextLectureHint');
+      const submitBtn = document.getElementById('submitAttendanceBtn');
+
+      if (win.within10Min) {
+        countEl.textContent = formatMMSS(win.remainingSeconds);
+        countEl.className = win.remainingSeconds <= 120 ? 'timer-num warn' : 'timer-num';
+        statusEl.textContent = `✅ نافذة التحضير مفتوحة الآن لمقرر: ${selectedLec.course} (${selectedLec.doctor})`;
+        nextHintEl.textContent = `وقت المحاضرة: ${selectedLec.start} - ${selectedLec.end} | القاعة: ${selectedLec.venue}`;
+        submitBtn.disabled = false;
+      } else {
+        countEl.textContent = '00:00';
+        countEl.className = 'timer-num closed';
+        statusEl.textContent = `⛔ تسجيل الحضور متاح خلال أول 10 دقائق من بداية المحاضرة فقط (${selectedLec.start}).`;
+        nextHintEl.textContent = 'يتوقف التسجيل تلقائياً بعد أول 10 دقائق ولا يُفتح إلا في موعد المحاضرة التالية.';
+        submitBtn.disabled = true;
+      }
+
+      const activeLecture = dept.lectures.find(l => getLectureWindowStatus(l, now).isLectureRunning);
+      const repTitle = document.getElementById('repActiveTitle');
+      const repMeta = document.getElementById('repActiveMeta');
+      const repCode = document.getElementById('repCurrentCode');
+      const repCount = document.getElementById('repCountdown');
+
+      if (activeLecture) {
+        const aWin = getLectureWindowStatus(activeLecture, now);
+        repTitle.textContent = `🟢 محاضرة جارية: ${activeLecture.course} — ${activeLecture.doctor}`;
+        repMeta.textContent = `المكان: ${activeLecture.venue} | الوقت: ${activeLecture.start} - ${activeLecture.end}`;
+        repCode.textContent = aWin.code;
+        if (aWin.within10Min) {
+          repCount.textContent = formatMMSS(aWin.remainingSeconds);
+          repCount.className = aWin.remainingSeconds <= 120 ? 'timer-num warn' : 'timer-num';
+        } else {
+          repCount.textContent = 'مغلق';
+          repCount.className = 'timer-num closed';
+        }
+      } else {
+        repTitle.textContent = 'لا توجد محاضرة نشطة حالياً';
+        repMeta.textContent = 'يظهر الرمز الرباعي للمندوب تلقائياً وقت المحاضرة المجدولة فقط.';
+        repCode.textContent = '----';
+        repCount.textContent = '00:00';
+        repCount.className = 'timer-num closed';
+      }
+    }
+
+    // =========================================================================
+    // 5. تسجيل الحضور + الشفافية الزمنية للأوفلاين + رصد السلوك المشبوه/المكرر
+    // =========================================================================
+    function logSuspiciousAlert(type, detail, studentId, lectureId) {
+      state.alerts.push({
+        id: 'alt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        department: currentDeptKey,
+        lecture_id: lectureId || '',
+        student_id: studentId || '',
+        type,
+        detail,
+        at: new Date().toISOString()
+      });
+      saveState();
+    }
+
+    function submitStudentAttendance() {
+      const name = document.getElementById('stuNameInput').value.trim();
+      const stuId = document.getElementById('stuIdInput').value.trim();
+      const code = document.getElementById('stuCodeInput').value.trim();
+      const lecId = document.getElementById('stuLectureSelect').value;
+      const fb = document.getElementById('studentFeedback');
+      fb.classList.remove('hidden');
+
+      const dept = DEPARTMENTS[currentDeptKey];
+      const lec = dept.lectures.find(l => l.id === lecId);
+      const now = new Date();
+      const win = getLectureWindowStatus(lec, now);
+
+      if (!name || !stuId || !code) {
+        fb.textContent = '⚠️ يرجى إدخال الاسم الكامل ورقم القيد ورمز التحضير المكوّن من 4 أرقام.';
+        return;
+      }
+
+      if (!win.within10Min) {
+        logSuspiciousAlert('خارج نافذة الـ 10 دقائق', `محاولة تسجيل خارج أول 10 دقائق لمقرر (${lec.course}) برقم قيد (${stuId}).`, stuId, lec.id);
+        fb.textContent = '⛔ انتهت نافذة أول 10 دقائق من المحاضرة؛ لا يمكن تسجيل الحضور حتى موعد المحاضرة التالية.';
+        return;
+      }
+
+      if (!/^\d{4}$/.test(code) || code !== win.code) {
+        logSuspiciousAlert('رمز تحضير غير مطابق', `إدخال رمز غير مطابق (${code}) لمقرر (${lec.course}) في الأسبوع W${state.weekIndex + 1} برقم قيد (${stuId}).`, stuId, lec.id);
+        fb.textContent = '❌ رمز التحضير غير صحيح لهذه المحاضرة في الأسبوع الحالي.';
+        return;
+      }
+
+      const duplicate = state.records.find(r =>
+        r.department === currentDeptKey &&
+        r.lecture_id === lec.id &&
+        r.student_id === stuId &&
+        r.week_index === state.weekIndex + 1
+      );
+      if (duplicate) {
+        logSuspiciousAlert('تكرار تسجيل في نفس المحاضرة', `محاولة تكرار تسجيل رقم القيد (${stuId}) في مقرر (${lec.course}).`, stuId, lec.id);
+        fb.textContent = '⚠️ تم تسجيل حضور هذا الطالب مسبقاً في هذه المحاضرة وتم توثيق محاولة التكرار.';
+        return;
+      }
+
+      const matchedStudent = dept.students.find(s => s.id === stuId);
+      if (!matchedStudent) {
+        logSuspiciousAlert('رقم قيد غير مسجل بالقسم', `إدخال رقم قيد (${stuId}) باسم (${name}) غير موجود في قيد ${dept.name}.`, stuId, lec.id);
+      } else if (normalizeArabic(matchedStudent.name) !== normalizeArabic(name)) {
+        logSuspiciousAlert('اختلاف الاسم مع رقم القيد', `رقم القيد (${stuId}) مسجل باسم (${matchedStudent.name}) بينما أُدخل (${name}).`, stuId, lec.id);
+      }
+
+      const recentSameLecture = state.records.filter(r =>
+        r.department === currentDeptKey &&
+        r.lecture_id === lec.id &&
+        Math.abs(new Date(now.toISOString()).getTime() - new Date(r.recorded_at).getTime()) < 25000
+      );
+      if (recentSameLecture.length >= 2) {
+        logSuspiciousAlert('تسجيل متقارب وسريع', `رصد ${recentSameLecture.length + 1} عمليات تسجيل خلال أقل من 25 ثانية في مقرر (${lec.course}).`, stuId, lec.id);
+      }
+
+      const isOfflineRecord = currentEntryMode === 'offline' || !navigator.onLine;
+      const recordedAtIso = now.toISOString();
+      const onlineOpenedAtIso = (!isOfflineRecord && navigator.onLine) ? now.toISOString() : null;
+
+      const payload = {
+        id: 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        department: currentDeptKey,
+        lecture_id: lec.id,
+        course_name: lec.course,
+        doctor_name: lec.doctor,
+        week_index: state.weekIndex + 1,
+        code_used: code,
+        within_10min: true,
+        entry_mode: isOfflineRecord ? 'offline' : 'online',
+        recorded_at: recordedAtIso,
+        online_opened_at: onlineOpenedAtIso,
+        synced: Boolean(onlineOpenedAtIso),
+        exceptional: false,
+        exceptional_reason: '',
+        student_name: name,
+        student_id: stuId
+      };
+
+      state.records.push(payload);
+      saveState();
+
+      fb.textContent = isOfflineRecord
+        ? '✅ تم تسجيل حضورك محلياً (بدون إنترنت) مع حفظ وقت التسجيل؛ وسيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني عند عودة الشبكة.'
+        : '✅ تم تسجيل حضورك بنجاح وحفظ السجل.';
+
+      document.getElementById('stuCodeInput').value = '';
+      if (repUnlocked) renderRepStats();
+      if (logsUnlocked) renderDoctorCourseSheets();
+    }
+
+    function markPendingOfflineOpenedNow() {
+      if (!navigator.onLine) return;
+      const openedIso = new Date().toISOString();
+      let changed = false;
+      state.records.forEach(r => {
+        if (!r.online_opened_at) {
+          r.online_opened_at = openedIso;
+          r.synced = true;
+          changed = true;
+        }
+      });
+      if (changed) saveState();
+    }
+
+    function syncOfflineRecordsNow() {
+      if (!navigator.onLine) {
+        alert('الشبكة غير متصلة حالياً. سيتم تسجيل وقت فتح الإنترنت فور توفر الاتصال.');
+        return;
+      }
+      markPendingOfflineOpenedNow();
+      syncTopBadges();
+      if (repUnlocked) renderRepStats();
+      if (logsUnlocked) renderDoctorCourseSheets();
+      alert('تم تسجيل وقت فتح الإنترنت وتحديث الفروقات الزمنية لسجلات الأوفلاين بنجاح.');
+    }
+
+    window.addEventListener('online', () => {
+      markPendingOfflineOpenedNow();
+      syncTopBadges();
+      if (repUnlocked) renderRepStats();
+      if (logsUnlocked) renderDoctorCourseSheets();
     });
-    var attended=p+l;
-    var pct=totalSessions>0?Math.round((attended/totalSessions)*100):0;
-    return '<div class="li"><div><b>'+esc(s.n)+'</b><br><small>حضور: '+p+' · تأخر: '+l+' · غياب: '+a+'</small></div><span class="tag'+(pct<75?' l':'')+'">'+pct+'%</span></div>';
-  }).join('');
-}
 
-function repSection(){
-  $('repLockCard').hidden=repUnlocked;
-  $('repPanel').hidden=!repUnlocked;
-  if(!repUnlocked)return;
-  var m=D.meta||{};
-  if($('hdrDoc')&&document.activeElement!==$('hdrDoc'))$('hdrDoc').value=m.doctor||'';
-  if($('hdrSec')&&document.activeElement!==$('hdrSec'))$('hdrSec').value=m.section||'';
-  if($('hdrHall')&&document.activeElement!==$('hdrHall'))$('hdrHall').value=m.hall||'';
-  renderOfflineSyncList();
-  renderSuspiciousAlerts();
-  renderExceptionalConfirmations();
-  renderStudentStats();
-}
+    function computeTimeDiffInfo(rec) {
+      const recTime = new Date(rec.recorded_at).getTime();
+      if (!rec.online_opened_at) {
+        return {
+          diffText: 'بانتظار فتح الإنترنت',
+          diffSeconds: null,
+          badgeClass: 'tag-warn'
+        };
+      }
+      const openTime = new Date(rec.online_opened_at).getTime();
+      const diffSec = Math.max(0, Math.round((openTime - recTime) / 1000));
+      if (rec.entry_mode === 'online' && diffSec <= 5) {
+        return {
+          diffText: 'مباشر (أونلاين)',
+          diffSeconds: diffSec,
+          badgeClass: 'tag-ok'
+        };
+      }
+      const mins = Math.floor(diffSec / 60);
+      const secs = diffSec % 60;
+      const human = mins > 0 ? `${mins} د و ${secs} ث` : `${secs} ثانية`;
+      return {
+        diffText: `فارق المزامنة: ${human}`,
+        diffSeconds: diffSec,
+        badgeClass: diffSec > 600 ? 'tag-warn' : 'tag-ok'
+      };
+    }
 
-draw();
-syncOfflineQueue();
-</script>
-</body>
-</html>
+    // =========================================================================
+    // 6. تبويب المندوب (الإحصائيات + التأكيد المزدوج + القائمة)
+    // =========================================================================
+    function switchTab(tab) {
+      ['student', 'rep', 'logs'].forEach(t => {
+        document.getElementById(`${t}Tab`).classList.toggle('hidden', t !== tab);
+        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`).classList.toggle('active', t === tab);
+      });
+    }
+
+    function unlockRepPanel() {
+      const pass = document.getElementById('repPassInput').value;
+      const msg = document.getElementById('repAuthMsg');
+      if (!verifyPassword(pass)) {
+        msg.textContent = '❌ كلمة المرور غير صحيحة.';
+        msg.classList.remove('hidden');
+        return;
+      }
+      msg.classList.add('hidden');
+      repUnlocked = true;
+      document.getElementById('repAuthBox').classList.add('hidden');
+      document.getElementById('repPanel').classList.remove('hidden');
+      document.getElementById('reportHeaderInput').value = state.headers[currentDeptKey] || DEPARTMENTS[currentDeptKey].defaultHeader;
+      document.getElementById('weekSelector').value = String(state.weekIndex);
+      renderRepStats();
+      renderRosterTable();
+      refreshWindowUI();
+    }
+
+    function lockRepPanel() {
+      repUnlocked = false;
+      pendingExceptionDraft = null;
+      document.getElementById('excConfirmBox').classList.add('hidden');
+      document.getElementById('repPassInput').value = '';
+      document.getElementById('repPanel').classList.add('hidden');
+      document.getElementById('repAuthBox').classList.remove('hidden');
+      document.getElementById('repRosterBox').classList.add('hidden');
+    }
+
+    function renderRepStats() {
+      const dept = DEPARTMENTS[currentDeptKey];
+      const deptRecs = state.records.filter(r => r.department === currentDeptKey);
+      const offlineCount = deptRecs.filter(r => r.entry_mode === 'offline').length;
+      const pendingSync = deptRecs.filter(r => !r.online_opened_at).length;
+      const alertCount = state.alerts.filter(a => a.department === currentDeptKey).length;
+
+      document.getElementById('repStatsGrid').innerHTML = `
+        <div class="stat-box"><div class="muted">إجمالي طلاب القسم</div><div class="stat-val">${dept.students.length}</div></div>
+        <div class="stat-box"><div class="muted">إجمالي سجلات الحضور</div><div class="stat-val">${deptRecs.length}</div></div>
+        <div class="stat-box"><div class="muted">تسجيل أوفلاين</div><div class="stat-val">${offlineCount} (${pendingSync} بانتظار النت)</div></div>
+        <div class="stat-box"><div class="muted">تنبيهات الفحص</div><div class="stat-val">${alertCount}</div></div>
+      `;
+    }
+
+    function startExceptionalEntry() {
+      if (!repUnlocked) return;
+      const stuId = document.getElementById('excStudentId').value.trim();
+      const reason = document.getElementById('excReason').value.trim();
+      const confirmBox = document.getElementById('excConfirmBox');
+      confirmBox.classList.remove('hidden');
+
+      if (!stuId || !reason) {
+        confirmBox.textContent = '⚠️ يرجى إدخال رقم القيد وسبب الحالة الاستثنائية أولاً.';
+        return;
+      }
+
+      const dept = DEPARTMENTS[currentDeptKey];
+      const studentObj = dept.students.find(s => s.id === stuId);
+      const lecSelectId = document.getElementById('stuLectureSelect').value;
+      const lec = dept.lectures.find(l => l.id === lecSelectId) || dept.lectures[0];
+
+      pendingExceptionDraft = {
+        student_id: stuId,
+        student_name: studentObj ? studentObj.name : `طالب برقم قيد ${stuId}`,
+        reason,
+        lecture: lec
+      };
+
+      confirmBox.innerHTML = `
+        <div><strong>تأكيد مزدوج مطلوب:</strong> هل تؤكد اعتماد تسجيل استثنائي للطالب <strong>${pendingExceptionDraft.student_name}</strong> (${stuId}) في مقرر <strong>${lec.course}</strong> بسبب: «${reason}»؟</div>
+        <div style="margin-top:8px; display:flex; gap:8px;">
+          <button class="btn-primary" onclick="confirmExceptionalEntry()">✅ تأكيد نهائي (الخطوة 2/2)</button>
+          <button class="btn-secondary" onclick="cancelExceptionalEntry()">إلغاء</button>
+        </div>
+      `;
+    }
+
+    function cancelExceptionalEntry() {
+      pendingExceptionDraft = null;
+      document.getElementById('excConfirmBox').classList.add('hidden');
+    }
+
+    function confirmExceptionalEntry() {
+      if (!repUnlocked || !pendingExceptionDraft) return;
+      const now = new Date();
+      const d = pendingExceptionDraft;
+      state.records.push({
+        id: 'exc_' + Date.now(),
+        department: currentDeptKey,
+        lecture_id: d.lecture.id,
+        course_name: d.lecture.course,
+        doctor_name: d.lecture.doctor,
+        week_index: state.weekIndex + 1,
+        code_used: 'EXC-' + d.lecture.codes[state.weekIndex % d.lecture.codes.length],
+        within_10min: true,
+        entry_mode: navigator.onLine ? 'online' : 'offline',
+        recorded_at: now.toISOString(),
+        online_opened_at: navigator.onLine ? now.toISOString() : null,
+        synced: navigator.onLine,
+        exceptional: true,
+        exceptional_reason: d.reason,
+        student_name: d.student_name,
+        student_id: d.student_id
+      });
+      saveState();
+      pendingExceptionDraft = null;
+      document.getElementById('excStudentId').value = '';
