@@ -228,7 +228,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
       <button class="btn gh" id="pbtn" style="margin-top:8px">التقاط صورة للباركود</button>
       <input type="file" id="pf" accept="image/*" capture="environment" hidden>
       <div class="row" style="margin-top:10px">
-        <input id="man" placeholder="أو اكتب رقم قيد الطالب يدوياً" inputmode="text">
+        <input id="man" placeholder="أو اكتب رمز التحضير يدوياً" inputmode="text">
         <button class="btn sm" id="mbtn" style="flex:0 0 auto;margin-bottom:8px">تحضير</button>
       </div>
       <div id="msg"></div>
@@ -277,12 +277,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
     <div class="card">
       <h2>طباعة وتصدير ومشاركة</h2>
       <div class="row" style="margin-bottom:8px">
-        <button class="btn" id="pr">طباعة الكشف</button>
-        <button class="btn gh" id="xl">تصدير Excel</button>
+        <button class="btn" id="pr">🔒 طباعة الكشف</button>
+        <button class="btn gh" id="xl">🔒 تصدير Excel</button>
       </div>
       <button class="btn wa" id="wacopy">📋 نسخ التقرير المنسق لقروب الواتساب</button>
       <div id="cmsg"></div>
-      <p class="mute" style="font-size:14px;margin:10px 0 0">يشمل كل الطلاب المسجّلين مع حالة الحضور ووقته، ومن لم يحضر يظهر غائباً.</p>
+      <p class="mute" style="font-size:14px;margin:10px 0 0">يظهر في السجل والواتساب الأسماء فقط دون رقم القيد، بينما يتطلب كشف الطباعة وExcel رمز مرور المندوب لإظهار أرقام القيد الرسمية.</p>
     </div>
     <div class="card"><h2>المحاضرات السابقة</h2><div id="hist"></div></div>
     <textarea id="rt" readonly hidden></textarea>
@@ -314,7 +314,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
 <div id="psheet"></div>
 
 <script>
-var STORAGE_KEY='ai_hajjah_s1_attendance_v2';
+var STORAGE_KEY='ai_hajjah_s1_attendance_v4';
 var THEME_KEY='ai_hajjah_theme_v1';
 var PIN_KEY='ai_hajjah_admin_pin_v1';
 var D={students:[],cur:null,hist:[]},stream=null,det=null,timer=null,seen={},pending=null,unlocked=false;
@@ -326,6 +326,16 @@ function getPin(){
 }
 function setPin(p){
   try{localStorage.setItem(PIN_KEY,p)}catch(e){}
+}
+function verifyAdminPin(actionLabel){
+  if(unlocked)return true;
+  var entered=prompt('أدخل رمز مرور المندوب لمتابعة ('+actionLabel+'):');
+  if(entered===null)return false;
+  if(entered.trim()===getPin()){
+    return true;
+  }
+  alert('رمز المرور غير صحيح!');
+  return false;
 }
 
 function applyTheme(t){
@@ -388,11 +398,11 @@ function mark(code){
   if(!D.cur){msg('ابدأ المحاضرة أولاً قبل التحضير.','warn');return}
   var s=D.students.filter(function(x){return x.c==code})[0];
   if(!s){pending=code;
-    $('msg').innerHTML='<div class="msg warn">رقم قيد جديد: '+esc(code)+'<br>اكتب اسم الطالب لتسجيله وتحضيره.<input id="pn" placeholder="اسم الطالب" style="margin-top:8px"><button class="btn" id="pok">حفظ وتحضير</button></div>';
+    $('msg').innerHTML='<div class="msg warn">رمز جديد غير مسجّل: '+esc(code)+'<br>اكتب اسم الطالب لتسجيله وتحضيره.<input id="pn" placeholder="اسم الطالب" style="margin-top:8px"><button class="btn" id="pok">حفظ وتحضير</button></div>';
     $('pok').onclick=function(){var n=$('pn').value.trim();if(!n)return;D.students.push({c:pending,n:n});pending=null;save();mark(code)};
     beep(false);return}
   var ex=D.cur.rec.filter(function(x){return x.c==code})[0];
-  if(ex){msg(esc(s.n)+' حُضّر من قبل الساعة '+tm(ex.t),'warn');beep(false);return}
+  if(ex){msg('تم تحضير '+esc(s.n)+' مسبقاً الساعة '+tm(ex.t),'warn');beep(false);return}
   var now=Date.now(),late=(now-D.cur.start)/60000>D.cur.late;
   D.cur.rec.push({c:code,n:s.n,t:now,s:late?'متأخر':'حاضر'});save();
   msg('✓ تم تحضير '+esc(s.n)+' الساعة '+tm(now)+(late?' (متأخر)':''),late?'warn':'ok');beep(true);draw();
@@ -479,7 +489,7 @@ if($('ssearch'))$('ssearch').oninput=students;
 $('sadd').onclick=function(){var n=$('sn').value.trim(),c=$('sc').value.trim();if(!n||!c)return;
   if(D.students.some(function(s){return s.c==c}))return;D.students.push({n:n,c:c});$('sn').value='';$('sc').value='';save();draw()};
 
-/* التقارير المنسقة للواتساب والسجل */
+/* التقارير المنسقة للواتساب والسجل (بالأسماء فقط دون رقم القيد) */
 function waReport(L,abs){
   var o='🎓 *كشف حضور وغياب — قسم الذكاء الاصطناعي*\n';
   o+='📚 *المقرر:* '+L.name+'\n';
@@ -556,12 +566,14 @@ function lecRows(){
 }
 
 $('pr').onclick=function(){
+  if(!verifyAdminPin('طباعة الكشف'))return;
   var d=lecRows();if(!d||!d.rows.length){alert('لا توجد محاضرة أو طلاب للطباعة.');return}
   $('psheet').innerHTML='<div class="ph"><b>الجمهورية اليمنية · جامعة حجة</b><br><b>كلية الهندسة وتكنولوجيا المعلومات · قسم الذكاء الاصطناعي</b><br><b>المستوى الأول · العام الجامعي 2026–2027م</b><h1>كشف حضور وغياب الطلاب</h1><p>'+esc(d.L.name)+' · '+dt(d.L.start)+'</p></div><table><thead><tr><th>م</th><th>رقم القيد</th><th>اسم الطالب</th><th>الحالة</th><th>وقت الحضور</th><th>التوقيع</th></tr></thead><tbody>'+d.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+esc(r[2])+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td></td></tr>'}).join('')+'</tbody></table><p class="pf">إعداد وتطوير: يوسف وليد المروني · مندوب قسم الذكاء الاصطناعي · للاستفسار: 781325909</p>';
   window.print();
 };
 
 $('xl').onclick=function(){
+  if(!verifyAdminPin('تصدير Excel'))return;
   var d=lecRows();if(!d||!d.rows.length){alert('لا توجد محاضرة أو طلاب للتصدير.');return}
   if(!window.XLSX){alert('تعذّر تحميل مكتبة Excel. تأكد من الاتصال بالإنترنت وحدّث الصفحة.');return}
   var data=[
