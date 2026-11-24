@@ -187,7 +187,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
 <body>
 <div id="app">
   <div class="hero">
-    <!-- خلفية الشبكة العصبية باللون الأبيض -->
     <svg class="hero-bg" viewBox="0 0 400 140" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="30" r="4" fill="#fff"/><circle cx="110" cy="20" r="3" fill="#fff"/>
       <circle cx="90" cy="85" r="5" fill="#fff"/><circle cx="170" cy="50" r="3" fill="#fff"/>
@@ -197,7 +196,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
       <path d="M40 30L110 20L170 50L90 85L40 30ZM90 85L30 115M170 50L260 25L330 40L360 105L290 115L210 100L170 50ZM260 25L210 100" stroke="#fff" stroke-width="1.3"/>
     </svg>
     <div class="hero-main">
-      <!-- أيقونة العقل باللون الأبيض -->
       <div class="hl" aria-hidden="true">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
@@ -216,7 +214,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
 
   <div class="tabs">
     <button class="tab on" data-t="1">التحضير</button>
-    <button class="tab" data-t="2">الطلاب</button>
+    <button class="tab" data-t="2">الطلاب 🔒</button>
     <button class="tab" data-t="3">السجل</button>
     <button class="tab" data-t="4">الشكاوى</button>
   </div>
@@ -239,17 +237,38 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
   </section>
 
   <section id="s2" hidden>
-    <div class="card">
-      <h2>إضافة طالب</h2>
-      <input id="sn" placeholder="اسم الطالب">
-      <input id="sc" placeholder="رقم القيد / رمز الباركود">
-      <button class="btn" id="sadd">حفظ الطالب</button>
-      <p class="mute" style="margin:10px 0 0;font-size:14px">يمكنك أيضاً مسح بطاقة طالب جديد أثناء التحضير، وسيطلب منك التطبيق كتابة اسمه مرة واحدة فقط.</p>
+    <div class="card" id="lockCard">
+      <h2>🔒 قسم الطلاب مقفل لحماية الخصوصية</h2>
+      <p class="mute" style="margin:0 0 10px;font-size:14px">عرض الأسماء وأرقام القيد والإدارة متاح للمندوب فقط برمز المرور (الافتراضي: 2026).</p>
+      <input id="pinInput" type="password" inputmode="numeric" placeholder="أدخل رمز مرور المندوب">
+      <button class="btn" id="unlockBtn">فتح قسم الطلاب</button>
+      <div id="lockMsg"></div>
     </div>
-    <div class="card">
-      <h2 id="sh">الطلاب</h2>
-      <input id="ssearch" placeholder="🔍 ابحث بالاسم أو رقم القيد..." inputmode="search">
-      <div id="slist"></div>
+
+    <div id="studentsPanel" hidden>
+      <div class="card">
+        <div class="row" style="align-items:center;margin-bottom:8px">
+          <h2 style="margin:0">إضافة طالب</h2>
+          <button class="btn sm gh" id="lockNowBtn" style="flex:0 0 auto">🔒 قفل القسم</button>
+        </div>
+        <input id="sn" placeholder="اسم الطالب">
+        <input id="sc" placeholder="رقم القيد / رمز الباركود">
+        <button class="btn" id="sadd">حفظ الطالب</button>
+        <p class="mute" style="margin:10px 0 0;font-size:14px">يمكنك أيضاً مسح بطاقة طالب جديد أثناء التحضير، وسيطلب منك التطبيق كتابة اسمه مرة واحدة فقط.</p>
+      </div>
+
+      <div class="card">
+        <h2 id="sh">الطلاب</h2>
+        <input id="ssearch" placeholder="🔍 ابحث بالاسم أو رقم القيد..." inputmode="search">
+        <div id="slist"></div>
+      </div>
+
+      <div class="card">
+        <h2>🔑 تغيير رمز مرور المندوب</h2>
+        <input id="newPin" type="password" inputmode="numeric" placeholder="اكتب رمز المرور الجديد">
+        <button class="btn gh" id="savePinBtn">حفظ الرمز الجديد</button>
+        <div id="pinSaveMsg"></div>
+      </div>
     </div>
   </section>
 
@@ -295,11 +314,20 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-of
 <div id="psheet"></div>
 
 <script>
-var STORAGE_KEY='ai_hajjah_s1_attendance_v1';
+var STORAGE_KEY='ai_hajjah_s1_attendance_v2';
 var THEME_KEY='ai_hajjah_theme_v1';
-var D={students:[],cur:null,hist:[]},stream=null,det=null,timer=null,seen={},pending=null;
+var PIN_KEY='ai_hajjah_admin_pin_v1';
+var D={students:[],cur:null,hist:[]},stream=null,det=null,timer=null,seen={},pending=null,unlocked=false;
 
-/* إدارة المظهر الليلي والنهاري */
+function $(i){return document.getElementById(i)}
+
+function getPin(){
+  try{return localStorage.getItem(PIN_KEY)||'2026'}catch(e){return '2026'}
+}
+function setPin(p){
+  try{localStorage.setItem(PIN_KEY,p)}catch(e){}
+}
+
 function applyTheme(t){
   if(t==='dark'||t==='light'){
     document.documentElement.setAttribute('data-theme',t);
@@ -309,7 +337,6 @@ function applyTheme(t){
     $('tbtn').textContent=(sysDark?'☀️':'🌙');
   }
 }
-function $(i){return document.getElementById(i)}
 try{var savedTheme=localStorage.getItem(THEME_KEY);applyTheme(savedTheme)}catch(e){}
 $('tbtn').onclick=function(){
   var cur=document.documentElement.getAttribute('data-theme');
@@ -403,8 +430,41 @@ $('cbtn').onclick=async function(){
   if(!det&&!window.jsQR)msg('هذا المتصفح لا يدعم قراءة الباركود. استخدم Chrome أو اكتب الرمز يدوياً.','bad');
 };
 
-/* قائمة الطلاب مع البحث السريع */
+/* قفل وإدارة قسم الطلاب */
+$('unlockBtn').onclick=function(){
+  var entered=$('pinInput').value.trim();
+  if(entered===getPin()){
+    unlocked=true;
+    $('pinInput').value='';
+    $('lockMsg').innerHTML='';
+    students();
+  }else{
+    $('lockMsg').innerHTML='<div class="msg bad">رمز المرور غير صحيح!</div>';
+  }
+};
+$('pinInput').onkeydown=function(e){if(e.key=='Enter')$('unlockBtn').click()};
+$('lockNowBtn').onclick=function(){
+  unlocked=false;
+  students();
+};
+$('savePinBtn').onclick=function(){
+  var np=$('newPin').value.trim();
+  if(!np||np.length<4){
+    $('pinSaveMsg').innerHTML='<div class="msg warn">اكتب رمز مرور من 4 خانات أو أكثر.</div>';
+    return;
+  }
+  setPin(np);
+  $('newPin').value='';
+  $('pinSaveMsg').innerHTML='<div class="msg ok">✓ تم تحديث رمز مرور المندوب بنجاح.</div>';
+};
+
 function students(){
+  $('lockCard').hidden=unlocked;
+  $('studentsPanel').hidden=!unlocked;
+  if(!unlocked){
+    $('slist').innerHTML='';
+    return;
+  }
   var q=($('ssearch')?$('ssearch').value.trim():'');
   var list=D.students.map(function(s,idx){return {n:s.n,c:s.c,idx:idx}}).filter(function(s){
     return !q || s.n.indexOf(q)!==-1 || s.c.indexOf(q)!==-1;
@@ -473,7 +533,6 @@ function logs(){
   document.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){var L=D.hist[+b.dataset.h];copyText(waReport(L,L.abs||[]),$('cmsg'))}});
 }
 
-/* القائمة الرسمية لطلاب المستوى الأول - قسم الذكاء الاصطناعي (44 طالباً) */
 var PRE_V=1,PRE='2704093|ابراهيم علي حمود علي حدادي\n2704080|اريام مقبل مقبل القحمي\n2704053|اغصان احمد علي علي بدر\n2704124|امنة عبده علي مهدي الهاتف\n2704152|ايمان صالح محمد جهلان الحسام\n2704070|بسمة عامر حسن محمد الجبر\n2704024|بندر يحيى معيض السمد\n2704086|بهاء الدين محمد يحيى علي العفاري\n2704113|خالد علي حزام قايد صعصعه\n2704144|رامي احمد محمد عبده الحجي\n2704131|رقية عبد الله عبد الله محمد الظفيري\n2704051|رهف قيس علي سعيد القيسي\n2704134|رياض عبد الرحمن عبد الله علي ماهوب\n2704161|زيد علي عبدالله القطيب\n2704023|زيد ماجد زيد العظهي\n2704098|زين العابدين علي هراش احمد سفيان\n2704085|شهاب محمد صالح مقبل لطف الله\n2704101|ضياء الدين احمد محمد التام\n2704118|عبد الباري عبد الله احمد المصوبع\n2704035|عبد المجيد يحيى عبد الله الكحلاني\n2704071|عبد الملك عبد الله يحيى العمري\n2704121|عبد الوهاب عبد الله ناصر مسعود\n2704126|علاء عبد الوهاب علي بخيت القراعي\n2704049|علاء وليد راجح النخيف\n2704092|علي حسين ناصر علي الشرفي\n2704076|علي رسام علي رسام\n2704107|علي محمد علي حسين المحطوري\n2704063|علياء مصطفى عبد الله محمد الشرفي\n2704135|عمرو خالد محمد ابو صالح\n2704140|عمرو خالد ناصر المهدي\n2704022|فهد حسن احمد القطبي\n2704123|محمد بشير صالح حسين البطري\n2704129|حسن هادي صولان\n2704060|محمد حمود صالح عودين\n2704119|محمد عبد الله محمد\n2704128|محمد عبده صالح احمد سوار\n2704097|مستور علي يحيى كعدش\n2704164|مصطفى هلال ناجي حسين الغزي\n2704075|ملاك ابراهيم علي عبدالله البقع\n2704136|ميلاد باسم محمد مطهر حميد\n2704027|نسيبة علي حسن عبدالله شريف\n2704062|نواف عبد العزيز محمد حسن سودي\n2704154|يحيى محمد يحيى النخيف\n2704091|يوسف وليد محمد المروني'.split('\n').map(function(l){var p=l.split('|');return {c:p[0],n:p[1]}});
 
 if((D.pre||0)<PRE_V){
