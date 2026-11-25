@@ -128,7 +128,7 @@
 
     .dept-stack { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
 
-    button, input, select {
+    button, input, select, textarea {
       border-radius: 12px;
       border: 1px solid var(--border);
       padding: 12px 14px;
@@ -137,6 +137,8 @@
       background: var(--bg-elevated);
     }
 
+    textarea { resize: vertical; min-height: 95px; width: 100%; }
+
     button { cursor: pointer; font-weight: 700; transition: transform 0.15s ease, opacity 0.2s ease; }
     button:hover:not(:disabled) { transform: translateY(-1px); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -144,6 +146,7 @@
     .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #090612; border: none; }
     .btn-secondary { background: var(--bg-elevated); border: 1px solid var(--border); }
     .btn-warn { background: rgba(245, 158, 11, 0.16); border: 1px solid var(--warn); color: #fde68a; }
+    .btn-success { background: rgba(34, 197, 94, 0.18); border: 1px solid var(--success); color: #bbf7d0; }
     .btn-dept { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; font-size: 1.05rem; text-align: right; }
 
     .badge {
@@ -169,15 +172,29 @@
     .timer-num.closed { color: var(--danger); }
 
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 12px 0; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
     .stat-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
-    .stat-val { font-size: 1.3rem; font-weight: 800; color: var(--accent-2); }
+    .stat-val { font-size: 1.25rem; font-weight: 800; color: var(--accent-2); }
 
     .record-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
     .suspicious-box { border: 1px solid rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.08); border-radius: 14px; padding: 14px; margin-top: 14px; }
 
+    .contact-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.26);
+      border: 1px solid var(--border);
+      margin-top: 12px;
+    }
+
     .tag-ok { color: #86efac; font-weight: 700; }
     .tag-warn { color: #fde047; font-weight: 700; }
+    .tag-danger { color: #fca5a5; font-weight: 700; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.86rem; }
     th, td { border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 9px; text-align: right; vertical-align: middle; }
@@ -201,11 +218,26 @@
       <h1 class="hero-title" style="margin-top:10px;">المنصة الذكية لتحضير وغياب الطلاب</h1>
       <p class="muted">بوابة دخول مباشرة للانتقال إلى الأقسام الهندسية، مع دعم العمل المزدوج (أونلاين وأوفلاين)، وحساب الفارق الزمني بين وقت التسجيل ووقت فتح الإنترنت تلقائياً.</p>
 
+      <div id="quickResumeBox" class="alert hidden"></div>
+
       <div class="gate-buttons">
         <button id="btnOnline" type="button" class="btn-primary">دخول باستخدام الإنترنت</button>
         <button id="btnOffline" type="button" class="btn-secondary">دخول بدون إنترنت</button>
       </div>
       <div id="gateMsg" class="alert hidden"></div>
+
+      <div class="contact-bar">
+        <div>
+          <div style="font-weight:700;">تواصل مباشر مع المندوب / الدعم الفني: <span style="color:var(--accent-2);">+967781325909</span></div>
+          <div class="muted" style="font-size:0.82rem;">للاستفسارات، الملاحظات، والشكاوى أو الاقتراحات العاجلة عبر واتساب.</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="btnCopyPhoneGate" type="button" class="btn-secondary">نسخ الرقم</button>
+          <a id="btnWaGate" href="https://wa.me/967781325909" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+            <button type="button" class="btn-success">واتساب مباشر</button>
+          </a>
+        </div>
+      </div>
     </section>
 
     <section id="deptScreen" class="card hidden">
@@ -250,16 +282,24 @@
           </div>
         </div>
 
+        <div id="deptQuickSummary" class="stats-grid"></div>
+
         <div class="tabs">
-          <button id="tabStudentBtn" type="button" class="tab-btn active">تسجيل حضور الطالب</button>
+          <button id="tabStudentBtn" type="button" class="tab-btn active">تسجيل الحضور</button>
+          <button id="tabFeedbackBtn" type="button" class="tab-btn">الشكاوى والاقتراحات</button>
           <button id="tabRepBtn" type="button" class="tab-btn">تبويب المندوب</button>
           <button id="tabLogsBtn" type="button" class="tab-btn">السجل (دكتور / مقرر)</button>
         </div>
       </div>
 
       <div id="studentTab" class="card no-print">
-        <h3 style="margin-top:0;">تسجيل الحضور خلال أول 10 دقائق من المحاضرة</h3>
-        <p class="muted">أدخل اسمك ورقم قيدك ورمز المحاضرة المكوّن من 4 أرقام وقت المحاضرة. لا يتم عرض قوائم الطلاب للعامة.</p>
+        <div class="topbar">
+          <div>
+            <h3 style="margin:0;">تسجيل الحضور خلال أول 10 دقائق من المحاضرة</h3>
+            <p class="muted" style="margin:4px 0 0;">أدخل اسمك ورقم قيدك ورمز المحاضرة المكوّن من 4 أرقام وقت المحاضرة. لا يتم عرض قوائم الطلاب للعامة.</p>
+          </div>
+          <button id="btnSelectActiveLecture" type="button" class="btn-secondary">تحديد المحاضرة الجارية</button>
+        </div>
 
         <div class="grid-2">
           <div>
@@ -280,6 +320,8 @@
           </div>
         </div>
 
+        <div id="studentPersonalTracker" class="alert hidden"></div>
+
         <div class="timer-box">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <div>
@@ -294,6 +336,60 @@
           <button id="submitAttendanceBtn" type="button" class="btn-primary" style="width:100%;">تأكيد تسجيل الحضور</button>
         </div>
         <div id="studentFeedback" class="alert hidden"></div>
+      </div>
+
+      <div id="feedbackTab" class="card no-print hidden">
+        <h3 style="margin-top:0;">الشكاوى والاقتراحات — توجيه مباشر إلى واتساب</h3>
+        <p class="muted">أرسل شكواك أو اقتراحك أو ملاحظتك حول الحضور والرموز والمحاضرات ليتم توجيهها مباشرة إلى واتساب المندوب على الرقم <strong>+967781325909</strong>.</p>
+
+        <div class="grid-2">
+          <div>
+            <label class="muted">نوع الرسالة</label>
+            <select id="fbTypeSelect" style="width:100%; margin-top:6px;">
+              <option value="شكوى">شكوى</option>
+              <option value="اقتراح">اقتراح تطويري</option>
+              <option value="ملاحظة حضور / رمز">ملاحظة بخصوص حضور أو رمز</option>
+              <option value="استفسار عام">استفسار عام</option>
+            </select>
+          </div>
+          <div>
+            <label class="muted">المقرر المرتبط (اختياري)</label>
+            <select id="fbCourseSelect" style="width:100%; margin-top:6px;"></select>
+          </div>
+          <div>
+            <label class="muted">اسم الطالب (اختياري)</label>
+            <input id="fbNameInput" type="text" placeholder="اكتب اسمك أو اتركه فارغاً" style="width:100%; margin-top:6px;" />
+          </div>
+          <div>
+            <label class="muted">رقم القيد (اختياري)</label>
+            <input id="fbIdInput" type="text" inputmode="numeric" placeholder="مثال: 2704091" style="width:100%; margin-top:6px;" />
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <label class="muted">تفاصيل الشكوى أو الاقتراح</label>
+          <textarea id="fbMessageInput" placeholder="اكتب تفاصيل الشكوى أو الاقتراح بوضوح..." style="margin-top:6px;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+          <button id="btnSendFeedbackWa" type="button" class="btn-primary">إرسال مباشرة إلى واتساب (+967781325909)</button>
+          <button id="btnCopyFeedbackText" type="button" class="btn-secondary">نسخ نص الرسالة</button>
+        </div>
+        <div id="fbStatusMsg" class="alert hidden"></div>
+
+        <div class="contact-bar">
+          <div>
+            <strong>رقم التواصل المباشر:</strong> <span style="color:var(--accent-2);">+967781325909</span>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button id="btnCopyPhoneTab" type="button" class="btn-secondary">نسخ الرقم</button>
+            <a href="https://wa.me/967781325909" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+              <button type="button" class="btn-success">فتح واتساب مباشرة</button>
+            </a>
+          </div>
+        </div>
+
+        <div id="fbHistoryBox" style="margin-top:16px;"></div>
       </div>
 
       <div id="repTab" class="card no-print hidden">
@@ -311,6 +407,7 @@
           <div class="topbar">
             <h3 style="margin:0;">لوحة المندوب — حالة المحاضرة الآن</h3>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="btnCopyLectureSummary" type="button" class="btn-secondary">نسخ ملخص المحاضرة</button>
               <button id="btnChangePass" type="button" class="btn-secondary">تغيير كلمة المرور</button>
               <button id="btnExportJson" type="button" class="btn-secondary">نسخ احتياطي JSON</button>
               <button id="btnLockRep" type="button" class="btn-secondary">قفل</button>
@@ -404,6 +501,9 @@
 
   </div>
   <script>
+    const WHATSAPP_NUMBER = '967781325909';
+    const WHATSAPP_DISPLAY = '+967781325909';
+
     const DEPARTMENTS = {
       ai: {
         id: 'ai',
@@ -591,7 +691,7 @@
       }
     };
 
-    const STORAGE_KEY = 'hajjah_smart_attendance_v4';
+    const STORAGE_KEY = 'hajjah_smart_attendance_v5';
     let state = loadState();
     let currentEntryMode = 'online';
     let currentDeptKey = 'ai';
@@ -601,32 +701,38 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('hajjah_smart_attendance_v4');
         if (raw) {
           const parsed = JSON.parse(raw);
           return {
             password: parsed.password || '2026',
             weekIndex: Number.isInteger(parsed.weekIndex) ? parsed.weekIndex : 0,
+            lastDept: parsed.lastDept || 'ai',
+            lastMode: parsed.lastMode || 'online',
             headers: {
               ai: parsed.headers?.ai || DEPARTMENTS.ai.defaultHeader,
               cyber: parsed.headers?.cyber || DEPARTMENTS.cyber.defaultHeader,
               cs: parsed.headers?.cs || DEPARTMENTS.cs.defaultHeader
             },
             records: Array.isArray(parsed.records) ? parsed.records : [],
-            alerts: Array.isArray(parsed.alerts) ? parsed.alerts : []
+            alerts: Array.isArray(parsed.alerts) ? parsed.alerts : [],
+            feedbacks: Array.isArray(parsed.feedbacks) ? parsed.feedbacks : []
           };
         }
       } catch (e) {}
       return {
         password: '2026',
         weekIndex: 0,
+        lastDept: 'ai',
+        lastMode: 'online',
         headers: {
           ai: DEPARTMENTS.ai.defaultHeader,
           cyber: DEPARTMENTS.cyber.defaultHeader,
           cs: DEPARTMENTS.cs.defaultHeader
         },
         records: [],
-        alerts: []
+        alerts: [],
+        feedbacks: []
       };
     }
 
@@ -649,6 +755,24 @@
         .toLowerCase();
     }
 
+    function renderQuickResumeBox() {
+      const box = document.getElementById('quickResumeBox');
+      const lastDept = DEPARTMENTS[state.lastDept] || DEPARTMENTS.ai;
+      const modeText = state.lastMode === 'offline' ? 'بدون إنترنت (أوفلاين)' : 'باستخدام الإنترنت';
+      box.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div><strong>اختيارك السابق:</strong> ${lastDept.name} (${modeText})</div>
+          <button id="btnQuickResume" type="button" class="btn-secondary">دخول سريع للقسم السابق</button>
+        </div>
+      `;
+      box.classList.remove('hidden');
+      document.getElementById('btnQuickResume').addEventListener('click', () => {
+        currentEntryMode = state.lastMode || 'online';
+        if (navigator.onLine) markPendingOfflineOpenedNow();
+        selectDepartment(state.lastDept || 'ai');
+      });
+    }
+
     function enterWithMode(mode) {
       const msgEl = document.getElementById('gateMsg');
       msgEl.classList.add('hidden');
@@ -660,6 +784,9 @@
       }
 
       currentEntryMode = mode;
+      state.lastMode = mode;
+      saveState();
+
       if (navigator.onLine) {
         markPendingOfflineOpenedNow();
       }
@@ -673,10 +800,14 @@
     function backToGate() {
       document.getElementById('deptScreen').classList.add('hidden');
       document.getElementById('gateScreen').classList.remove('hidden');
+      renderQuickResumeBox();
     }
 
     function selectDepartment(deptKey) {
       currentDeptKey = deptKey;
+      state.lastDept = deptKey;
+      saveState();
+
       repUnlocked = false;
       logsUnlocked = false;
       pendingExceptionDraft = null;
@@ -688,12 +819,15 @@
       document.getElementById('deptScreen').classList.add('hidden');
       document.getElementById('deptWorkspace').classList.remove('hidden');
 
-      populateLectureSelect();
+      populateLectureSelects();
       syncTopBadges();
+      renderDeptQuickSummary();
+      renderFeedbackHistory();
       lockRepPanel();
       lockLogsPanel();
       switchTab('student');
       refreshWindowUI();
+      updateStudentTracker();
     }
 
     function backToDeptScreen() {
@@ -710,15 +844,41 @@
         `دورة الرموز: الأسبوع ${Number(state.weekIndex) + 1}`;
     }
 
-    function populateLectureSelect() {
-      const select = document.getElementById('stuLectureSelect');
+    function renderDeptQuickSummary() {
       const dept = DEPARTMENTS[currentDeptKey];
+      const deptRecs = state.records.filter(r => r.department === currentDeptKey);
+      const uniqueStudents = new Set(deptRecs.map(r => r.student_id)).size;
+      const pendingOffline = deptRecs.filter(r => !r.online_opened_at).length;
+      const totalLectures = dept.lectures.length || 1;
+      const avgRate = Math.min(100, Math.round((deptRecs.length / (dept.students.length * totalLectures)) * 100));
+
+      document.getElementById('deptQuickSummary').innerHTML = `
+        <div class="stat-box"><div class="muted">طلاب القسم</div><div class="stat-val">${dept.students.length}</div></div>
+        <div class="stat-box"><div class="muted">إجمالي التسجيلات</div><div class="stat-val">${deptRecs.length}</div></div>
+        <div class="stat-box"><div class="muted">طلاب حضروا مرة+</div><div class="stat-val">${uniqueStudents}</div></div>
+        <div class="stat-box"><div class="muted">بانتظار المزامنة</div><div class="stat-val">${pendingOffline}</div></div>
+        <div class="stat-box"><div class="muted">مؤشر النشاط</div><div class="stat-val">${avgRate}%</div></div>
+      `;
+    }
+
+    function populateLectureSelects() {
+      const select = document.getElementById('stuLectureSelect');
+      const fbSelect = document.getElementById('fbCourseSelect');
+      const dept = DEPARTMENTS[currentDeptKey];
+
       select.innerHTML = '';
+      fbSelect.innerHTML = '<option value="عام / غير محدد">عام / غير محدد</option>';
+
       dept.lectures.forEach(lec => {
         const opt = document.createElement('option');
         opt.value = lec.id;
         opt.textContent = `${lec.course} (${lec.doctor}) — ${lec.start} إلى ${lec.end}`;
         select.appendChild(opt);
+
+        const fbOpt = document.createElement('option');
+        fbOpt.value = `${lec.course} (${lec.doctor})`;
+        fbOpt.textContent = `${lec.course} —${lec.doctor}`;
+        fbSelect.appendChild(fbOpt);
       });
     }
 
@@ -754,6 +914,49 @@
       return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
+    function selectActiveLectureNow() {
+      const dept = DEPARTMENTS[currentDeptKey];
+      const now = new Date();
+      const active = dept.lectures.find(l => getLectureWindowStatus(l, now).isLectureRunning);
+      const fb = document.getElementById('studentFeedback');
+      fb.classList.remove('hidden');
+      if (active) {
+        document.getElementById('stuLectureSelect').value = active.id;
+        refreshWindowUI();
+        fb.textContent = `تم تحديد المحاضرة الجارية تلقائياً: ${active.course} (${active.doctor}).`;
+      } else {
+        fb.textContent = 'لا توجد محاضرة جارية في هذه اللحظة بحسب الجدول الزمني.';
+      }
+    }
+
+    function updateStudentTracker() {
+      const stuId = document.getElementById('stuIdInput').value.trim();
+      const trackerEl = document.getElementById('studentPersonalTracker');
+      if (!stuId) {
+        trackerEl.classList.add('hidden');
+        return;
+      }
+
+      const dept = DEPARTMENTS[currentDeptKey];
+      const matched = dept.students.find(s => s.id === stuId);
+      const stuRecords = state.records.filter(r => r.department === currentDeptKey && r.student_id === stuId);
+      const totalLectures = dept.lectures.length || 1;
+      const pct = Math.min(100, Math.round((stuRecords.length / totalLectures) * 100));
+
+      let warningText = '<span class="tag-ok">وضع الحضور جيد.</span>';
+      if (pct < 50 && stuRecords.length > 0) {
+        warningText = '<span class="tag-warn">تنبيه مبكر: نسبة الحضور أقل من 50%، يُنصح بالالتزام بالحضور.</span>';
+      } else if (stuRecords.length === 0) {
+        warningText = '<span class="tag-danger">لم يتم رصد تسجيلات حضور سابقة لهذا الرقم في سجلات هذا الجهاز.</span>';
+      }
+
+      trackerEl.innerHTML = `
+        <div><strong>متابعة الطالب:</strong> ${matched ? matched.name : 'رقم قيد غير مطابق للقسم'} (${stuId})</div>
+        <div class="muted" style="margin-top:4px;">عدد التسجيلات المرصودة: <strong>${stuRecords.length}</strong> من أصل ${totalLectures} محاضرات مجدولة (${pct}\%) —${warningText}</div>
+      `;
+      trackerEl.classList.remove('hidden');
+    }
+
     function refreshWindowUI() {
       if (document.getElementById('deptWorkspace').classList.contains('hidden')) return;
       syncTopBadges();
@@ -771,27 +974,12 @@
       if (win.within10Min) {
         countEl.textContent = formatMMSS(win.remainingSeconds);
         countEl.className = win.remainingSeconds <= 120 ? 'timer-num warn' : 'timer-num';
-        statusEl.textContent = `نافذة التحضير مفتوحة الآن لمقرر: ${selectedLec.course} (${selectedLec.doctor})`;
-        nextHintEl.textContent = `وقت المحاضرة: ${selectedLec.start} - ${selectedLec.end} | القاعة: ${selectedLec.venue}`;
+        statusEl.textContent = `نافذة التحضير مفتوحة الآن لمقرر: ${selectedLec.course} (${selectedLec.doctor})`; nextHintEl.textContent = `وقت المحاضرة: ${selectedLec.start} - ${selectedLec.end} \vert{} القاعة: ${selectedLec.venue}`;
         submitBtn.disabled = false;
       } else {
         countEl.textContent = '00:00';
         countEl.className = 'timer-num closed';
-        statusEl.textContent = `تسجيل الحضور متاح خلال أول 10 دقائق من بداية المحاضرة فقط (${selectedLec.start}).`;
-        nextHintEl.textContent = 'يتوقف التسجيل تلقائياً بعد أول 10 دقائق ولا يُفتح إلا في موعد المحاضرة التالية.';
-        submitBtn.disabled = true;
-      }
-
-      const activeLecture = dept.lectures.find(l => getLectureWindowStatus(l, now).isLectureRunning);
-      const repTitle = document.getElementById('repActiveTitle');
-      const repMeta = document.getElementById('repActiveMeta');
-      const repCode = document.getElementById('repCurrentCode');
-      const repCount = document.getElementById('repCountdown');
-
-      if (activeLecture) {
-        const aWin = getLectureWindowStatus(activeLecture, now);
-        repTitle.textContent = `محاضرة جارية: ${activeLecture.course} — ${activeLecture.doctor}`;
-        repMeta.textContent = `المكان: ${activeLecture.venue} | الوقت: ${activeLecture.start} - ${activeLecture.end}`;
+        statusEl.textContent = `تسجيل الحضور متاح خلال أول 10 دقائق من بداية المحاضرة فقط (${selectedLec.start}).`; nextHintEl.textContent = 'يتوقف التسجيل تلقائياً بعد أول 10 دقائق ولا يُفتح إلا في موعد المحاضرة التالية.'; submitBtn.disabled = true; }  const activeLecture = dept.lectures.find(l => getLectureWindowStatus(l, now).isLectureRunning); const repTitle = document.getElementById('repActiveTitle'); const repMeta = document.getElementById('repActiveMeta'); const repCode = document.getElementById('repCurrentCode'); const repCount = document.getElementById('repCountdown');  if (activeLecture) { const aWin = getLectureWindowStatus(activeLecture, now); repTitle.textContent = `محاضرة جارية: ${activeLecture.course} — ${activeLecture.doctor}`; repMeta.textContent = `المكان: ${activeLecture.venue} | الوقت: ${activeLecture.start} -${activeLecture.end}`;
         repCode.textContent = aWin.code;
         if (aWin.within10Min) {
           repCount.textContent = formatMMSS(aWin.remainingSeconds);
@@ -866,9 +1054,7 @@
 
       const matchedStudent = dept.students.find(s => s.id === stuId);
       if (!matchedStudent) {
-        logSuspiciousAlert('رقم قيد غير مسجل بالقسم', `إدخال رقم قيد (${stuId}) باسم (${name}) غير موجود في قيد ${dept.name}.`, stuId, lec.id);
-      } else if (normalizeArabic(matchedStudent.name) !== normalizeArabic(name)) {
-        logSuspiciousAlert('اختلاف الاسم مع رقم القيد', `رقم القيد (${stuId}) مسجل باسم (${matchedStudent.name}) بينما أُدخل (${name}).`, stuId, lec.id);
+        logSuspiciousAlert('رقم قيد غير مسجل بالقسم', `إدخال رقم قيد (${stuId}) باسم (${name}) غير موجود في قيد ${dept.name}.`, stuId, lec.id); } else if (normalizeArabic(matchedStudent.name) !== normalizeArabic(name)) { logSuspiciousAlert('اختلاف الاسم مع رقم القيد', `رقم القيد (${stuId}) مسجل باسم (${matchedStudent.name}) بينما أُدخل (${name}).`, stuId, lec.id);
       }
 
       const recentSameLecture = state.records.filter(r =>
@@ -909,8 +1095,72 @@
         : 'تم تسجيل حضورك بنجاح وحفظ السجل.';
 
       document.getElementById('stuCodeInput').value = '';
+      renderDeptQuickSummary();
+      updateStudentTracker();
       if (repUnlocked) renderRepStats();
       if (logsUnlocked) renderDoctorCourseSheets();
+    }
+
+    function buildFeedbackMessage() {
+      const dept = DEPARTMENTS[currentDeptKey];
+      const type = document.getElementById('fbTypeSelect').value;
+      const course = document.getElementById('fbCourseSelect').value;
+      const name = document.getElementById('fbNameInput').value.trim() || 'غير مذكور';
+      const stuId = document.getElementById('fbIdInput').value.trim() || 'غير مذكور';
+      const msg = document.getElementById('fbMessageInput').value.trim();
+
+      return {
+        msg,
+        formatted: [
+          `المنصة الذكية للتحضير والغياب - جامعة حجة`,
+          `النوع: ${type}`, `القسم: ${dept.name}`,
+          `المقرر: ${course}`, `الاسم: ${name}`,
+          `رقم القيد: ${stuId}`, `التفاصيل:`, msg ].join('\n') }; }  function sendFeedbackToWhatsApp() { const built = buildFeedbackMessage(); const statusEl = document.getElementById('fbStatusMsg'); statusEl.classList.remove('hidden');  if (!built.msg) { statusEl.textContent = 'يرجى كتابة نص الشكوى أو الاقتراح قبل التوجيه إلى واتساب.'; return; }  state.feedbacks.push({ id: 'fb_' + Date.now(), department: currentDeptKey, type: document.getElementById('fbTypeSelect').value, course: document.getElementById('fbCourseSelect').value, student_name: document.getElementById('fbNameInput').value.trim() \vert{}\vert{} 'غير مذكور', student_id: document.getElementById('fbIdInput').value.trim() \vert{}\vert{} 'غير مذكور', message: built.msg, at: new Date().toISOString() }); saveState(); renderFeedbackHistory();  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(built.formatted)}`; statusEl.innerHTML = `تم تجهيز الرسالة وتوجيهك إلى واتساب (${WHATSAPP_DISPLAY}). إذا لم يفتح تلقائياً اضغط <a href="${waUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-2); font-weight:700;">هنا لفتح واتساب</a>.`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    function copyFeedbackText() {
+      const built = buildFeedbackMessage();
+      const statusEl = document.getElementById('fbStatusMsg');
+      statusEl.classList.remove('hidden');
+      if (!built.msg) {
+        statusEl.textContent = 'اكتب نص الرسالة أولاً ليتم نسخه.';
+        return;
+      }
+      copyTextToClipboard(built.formatted, () => {
+        statusEl.textContent = 'تم نسخ نص الرسالة بالكامل.';
+      });
+    }
+
+    function renderFeedbackHistory() {
+      const box = document.getElementById('fbHistoryBox');
+      const list = state.feedbacks.filter(f => f.department === currentDeptKey).slice().reverse();
+      if (!list.length) {
+        box.innerHTML = '';
+        return;
+      }
+      const items = list.slice(0, 6).map(f => `
+        <div class="record-card" style="margin-bottom:8px; padding:10px 12px;">
+          <div><strong>[${f.type}]</strong> — <span class="muted">${f.course}</span> <span class="muted" style="font-size:0.8rem;">(${new Date(f.at).toLocaleString('ar-YE')})</span></div>
+          <div style="margin-top:4px; font-size:0.9rem;">${f.message}</div>
+        </div>
+      `).join('');
+      box.innerHTML = `<h4 style="margin:0 0 8px;">آخر الرسائل المرسلة من هذا الجهاز (${list.length})</h4>${items}`; }  function copyTextToClipboard(text, onSuccess) { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(() => { if (onSuccess) onSuccess(); }).catch(() => fallbackCopy(text, onSuccess)); } else { fallbackCopy(text, onSuccess); } }  function fallbackCopy(text, onSuccess) { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); if (onSuccess) onSuccess(); }  function copyPhoneNumber() { copyTextToClipboard(WHATSAPP_DISPLAY, () => { alert(`تم نسخ رقم المندوب: ${WHATSAPP_DISPLAY}`);
+      });
+    }
+
+    function copyLectureSummary() {
+      if (!repUnlocked) return;
+      const dept = DEPARTMENTS[currentDeptKey];
+      const now = new Date();
+      const active = dept.lectures.find(l => getLectureWindowStatus(l, now).isLectureRunning) || dept.lectures[0];
+      const lecRecs = state.records.filter(r => r.department === currentDeptKey && r.lecture_id === active.id);
+      const summary = [
+        `ملخص التحضير - ${dept.name}`, `المقرر: ${active.course} (${active.doctor})`, `عدد المسجلين: ${lecRecs.length} من ${dept.students.length}`, `التواصل / المندوب: ${WHATSAPP_DISPLAY}`
+      ].join('\n');
+      copyTextToClipboard(summary, () => {
+        alert('تم نسخ ملخص المحاضرة بنجاح.');
+      });
     }
 
     function markPendingOfflineOpenedNow() {
@@ -934,6 +1184,8 @@
       }
       markPendingOfflineOpenedNow();
       syncTopBadges();
+      renderDeptQuickSummary();
+      updateStudentTracker();
       if (repUnlocked) renderRepStats();
       if (logsUnlocked) renderDoctorCourseSheets();
       alert('تم تسجيل وقت فتح الإنترنت وتحديث الفروقات الزمنية لسجلات الأوفلاين بنجاح.');
@@ -942,6 +1194,8 @@
     window.addEventListener('online', () => {
       markPendingOfflineOpenedNow();
       syncTopBadges();
+      renderDeptQuickSummary();
+      updateStudentTracker();
       if (repUnlocked) renderRepStats();
       if (logsUnlocked) renderDoctorCourseSheets();
     });
@@ -958,14 +1212,12 @@
       }
       const mins = Math.floor(diffSec / 60);
       const secs = diffSec % 60;
-      const human = mins > 0 ? `${mins} د و ${secs} ث` : `${secs} ثانية`;
-      return { diffText: `فارق المزامنة: ${human}`, diffSeconds: diffSec, badgeClass: diffSec > 600 ? 'tag-warn' : 'tag-ok' };
+      const human = mins > 0 ? `${mins} د و ${secs} ث` : `${secs} ثانية`; return { diffText: `فارق المزامنة: ${human}`, diffSeconds: diffSec, badgeClass: diffSec > 600 ? 'tag-warn' : 'tag-ok' };
     }
 
     function switchTab(tab) {
-      ['student', 'rep', 'logs'].forEach(t => {
-        document.getElementById(`${t}Tab`).classList.toggle('hidden', t !== tab);
-        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`).classList.toggle('active', t === tab);
+      ['student', 'feedback', 'rep', 'logs'].forEach(t => {
+        document.getElementById(`${t}Tab`).classList.toggle('hidden', t !== tab); document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`).classList.toggle('active', t === tab);
       });
     }
 
@@ -1080,6 +1332,8 @@
       document.getElementById('excStudentId').value = '';
       document.getElementById('excReason').value = '';
       document.getElementById('excConfirmBox').innerHTML = 'تم اعتماد الحالة الاستثنائية وإضافتها إلى السجل.';
+      renderDeptQuickSummary();
+      updateStudentTracker();
       renderRepStats();
       if (logsUnlocked) renderDoctorCourseSheets();
     }
@@ -1127,10 +1381,12 @@
       if (!repUnlocked) return;
       const payload = {
         department: currentDeptKey,
+        contact: WHATSAPP_DISPLAY,
         header: state.headers[currentDeptKey],
         exported_at: new Date().toISOString(),
         records: state.records.filter(r => r.department === currentDeptKey),
-        alerts: state.alerts.filter(a => a.department === currentDeptKey)
+        alerts: state.alerts.filter(a => a.department === currentDeptKey),
+        feedbacks: state.feedbacks.filter(f => f.department === currentDeptKey)
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -1174,154 +1430,9 @@
         return;
       }
       const itemsHtml = deptAlerts.slice().reverse().map(a =>
-        `<li><strong>[${a.type}]</strong> ${a.detail} <span class="muted">(${new Date(a.at).toLocaleString('ar-YE')})</span></li>`
+        `<li><strong>[${a.type}]</strong>${a.detail} <span class="muted">(${new Date(a.at).toLocaleString('ar-YE')})</span></li>`
       ).join('');
       sec.innerHTML = `
         <div class="suspicious-box">
           <h4 style="margin:0 0 6px; color:#fca5a5;">تنبيهات التحضير المشبوه / المكرر / غير المطابق (${deptAlerts.length})</h4>
-          <ul style="margin:6px 0 0; padding-right:18px; line-height:1.7;">${itemsHtml}</ul>
-        </div>
-      `;
-    }
-
-    function renderDoctorCourseSheets() {
-      const dept = DEPARTMENTS[currentDeptKey];
-      const container = document.getElementById('doctorCourseSheets');
-      const deptRecords = state.records.filter(r => r.department === currentDeptKey);
-
-      const groups = {};
-      dept.lectures.forEach(lec => {
-        const key = `${lec.doctor} || ${lec.course}`;
-        if (!groups[key]) groups[key] = { doctor: lec.doctor, course: lec.course, items: [] };
-      });
-
-      deptRecords.forEach(rec => {
-        const key = `${rec.doctor_name} || ${rec.course_name}`;
-        if (!groups[key]) groups[key] = { doctor: rec.doctor_name, course: rec.course_name, items: [] };
-        groups[key].items.push(rec);
-      });
-
-      container.innerHTML = Object.values(groups).map(g => {
-        const presentCount = g.items.length;
-        const absentCount = Math.max(0, dept.students.length - presentCount);
-        const rate = dept.students.length ? Math.round((presentCount / dept.students.length) * 100) : 0;
-
-        const rowsHtml = g.items.length
-          ? g.items.map((it, i) => {
-              const diffInfo = computeTimeDiffInfo(it);
-              const modeLabel = it.exceptional
-                ? `<span class="tag-warn">استثنائي: ${it.exceptional_reason}</span>`
-                : (it.entry_mode === 'offline' ? '<span class="tag-warn">بدون إنترنت</span>' : '<span class="tag-ok">بالإنترنت</span>');
-
-              return `
-                <tr>
-                  <td>${i + 1}</td>
-                  <td>${it.student_name}</td>
-                  <td>${it.student_id}</td>
-                  <td>W${it.week_index} (${it.code_used})</td>
-                  <td>${modeLabel}</td>
-                  <td>${new Date(it.recorded_at).toLocaleTimeString('ar-YE')}</td>
-                  <td>${it.online_opened_at ? new Date(it.online_opened_at).toLocaleTimeString('ar-YE') : 'بانتظار النت'}</td>
-                  <td class="${diffInfo.badgeClass}">${diffInfo.diffText}</td>
-                </tr>
-              `;
-            }).join('')
-          : `<tr><td colspan="8" class="muted" style="text-align:center;">لا توجد سجلات حضور مسجلة لهذا الكشف حتى الآن.</td></tr>`;
-
-        return `
-          <div class="record-card">
-            <div class="topbar">
-              <div>
-                <strong>المقرر: ${g.course}</strong>
-                <div class="muted">الدكتور / الأستاذ: ${g.doctor}</div>
-              </div>
-              <div class="muted">
-                حاضرون: <strong>${presentCount}</strong> | غائبون تقديرياً: <strong>${absentCount}</strong> | النسبة: <strong>${rate}%</strong>
-              </div>
-            </div>
-            <div style="overflow-x:auto;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>الاسم</th>
-                    <th>رقم القيد</th>
-                    <th>الأسبوع / الرمز</th>
-                    <th>الوضع</th>
-                    <th>وقت التسجيل</th>
-                    <th>وقت فتح الإنترنت</th>
-                    <th>الفارق الزمني</th>
-                  </tr>
-                </thead>
-                <tbody>${rowsHtml}</tbody>
-              </table>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function protectedExportCSV() {
-      const p = prompt('أدخل كلمة المرور لتأكيد تصدير Excel/CSV:');
-      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
-      const rows = state.records.filter(r => r.department === currentDeptKey);
-      const header = [
-        'department,course_name,doctor_name,week_index,code_used,within_10min,entry_mode,recorded_at,online_opened_at,time_diff_seconds,exceptional,student_name,student_id'
-      ];
-      const body = rows.map(r => {
-        const diffSec = r.online_opened_at
-          ? Math.max(0, Math.round((new Date(r.online_opened_at).getTime() - new Date(r.recorded_at).getTime()) / 1000))
-          : '';
-        return [
-          r.department, r.course_name, r.doctor_name, r.week_index, r.code_used,
-          r.within_10min, r.entry_mode, r.recorded_at, r.online_opened_at || '',
-          diffSec, r.exceptional ? 'true' : 'false', r.student_name, r.student_id
-        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
-      });
-      const blob = new Blob(['\ufeff' + header.concat(body).join('\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `attendance_${currentDeptKey}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function protectedPrint() {
-      const p = prompt('أدخل كلمة المرور لتأكيد الطباعة:');
-      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
-      window.print();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('btnOnline').addEventListener('click', () => enterWithMode('online'));
-      document.getElementById('btnOffline').addEventListener('click', () => enterWithMode('offline'));
-      document.getElementById('btnBackGate').addEventListener('click', backToGate);
-      document.getElementById('btnDeptAi').addEventListener('click', () => selectDepartment('ai'));
-      document.getElementById('btnDeptCyber').addEventListener('click', () => selectDepartment('cyber'));
-      document.getElementById('btnDeptCs').addEventListener('click', () => selectDepartment('cs'));
-      document.getElementById('btnSyncNow').addEventListener('click', syncOfflineRecordsNow);
-      document.getElementById('btnBackDept').addEventListener('click', backToDeptScreen);
-      document.getElementById('tabStudentBtn').addEventListener('click', () => switchTab('student'));
-      document.getElementById('tabRepBtn').addEventListener('click', () => switchTab('rep'));
-      document.getElementById('tabLogsBtn').addEventListener('click', () => switchTab('logs'));
-      document.getElementById('stuLectureSelect').addEventListener('change', refreshWindowUI);
-      document.getElementById('submitAttendanceBtn').addEventListener('click', submitStudentAttendance);
-      document.getElementById('btnUnlockRep').addEventListener('click', unlockRepPanel);
-      document.getElementById('btnChangePass').addEventListener('click', changeSystemPassword);
-      document.getElementById('btnExportJson').addEventListener('click', exportBackupJSON);
-      document.getElementById('btnLockRep').addEventListener('click', lockRepPanel);
-      document.getElementById('reportHeaderInput').addEventListener('change', saveReportHeader);
-      document.getElementById('weekSelector').addEventListener('change', changeWeekIndex);
-      document.getElementById('btnStartExc').addEventListener('click', startExceptionalEntry);
-      document.getElementById('btnToggleRoster').addEventListener('click', toggleRosterVisibility);
-      document.getElementById('btnUnlockLogs').addEventListener('click', unlockLogsPanel);
-      document.getElementById('btnExportCsv').addEventListener('click', protectedExportCSV);
-      document.getElementById('btnPrintLogs').addEventListener('click', protectedPrint);
-      document.getElementById('btnLockLogs').addEventListener('click', lockLogsPanel);
-    });
-
-    setInterval(refreshWindowUI, 1000);
-  </script>
-</body>
-</html>
+          <ul style="margin:6px 0 0;
