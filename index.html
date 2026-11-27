@@ -97,7 +97,7 @@
       pointer-events: none;
     }
 
-    * { box-sizing: border-box; font-family: "Tajawal", "Cairo", sans-serif; }
+    * { box-sizing: border-box; font-family: "Tajawal", "Cairo", sans-serif; -webkit-tap-highlight-color: rgba(168, 85, 247, 0.25); }
     body {
       margin: 0;
       background: var(--bg-main);
@@ -139,7 +139,7 @@
 
     textarea { resize: vertical; min-height: 95px; width: 100%; }
 
-    button { cursor: pointer; font-weight: 700; transition: transform 0.15s ease, opacity 0.2s ease; }
+    button { cursor: pointer; font-weight: 700; transition: transform 0.15s ease, opacity 0.2s ease; touch-action: manipulation; }
     button:hover:not(:disabled) { transform: translateY(-1px); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -221,8 +221,8 @@
       <div id="quickResumeBox" class="alert hidden"></div>
 
       <div class="gate-buttons">
-        <button id="btnOnline" type="button" class="btn-primary">دخول باستخدام الإنترنت</button>
-        <button id="btnOffline" type="button" class="btn-secondary">دخول بدون إنترنت</button>
+        <button id="btnOnline" type="button" class="btn-primary" onclick="enterWithMode('online')">دخول باستخدام الإنترنت</button>
+        <button id="btnOffline" type="button" class="btn-secondary" onclick="enterWithMode('offline')">دخول بدون إنترنت</button>
       </div>
       <div id="gateMsg" class="alert hidden"></div>
 
@@ -232,7 +232,7 @@
           <div class="muted" style="font-size:0.82rem;">للاستفسارات، الملاحظات، والشكاوى أو الاقتراحات العاجلة عبر واتساب.</div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button id="btnCopyPhoneGate" type="button" class="btn-secondary">نسخ الرقم</button>
+          <button id="btnCopyPhoneGate" type="button" class="btn-secondary" onclick="copyPhoneNumber()">نسخ الرقم</button>
           <a id="btnWaGate" href="https://wa.me/967781325909" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
             <button type="button" class="btn-success">واتساب مباشر</button>
           </a>
@@ -240,32 +240,32 @@
       </div>
     </section>
 
-    <section id="deptScreen" class="card hidden">
+    <section id="deptScreen" class="card hidden" style="display:none;">
       <div class="topbar">
         <div>
           <h2 class="hero-title" style="font-size:1.25rem;">اختر القسم الأكاديمي</h2>
           <div class="muted">الوضع المحدد: <strong id="currentModeLabel"></strong></div>
         </div>
-        <button id="btnBackGate" type="button" class="btn-secondary">تغيير وضع الدخول</button>
+        <button id="btnBackGate" type="button" class="btn-secondary" onclick="backToGate()">تغيير وضع الدخول</button>
       </div>
 
       <div class="dept-stack">
-        <button id="btnDeptAi" type="button" class="btn-dept btn-secondary">
+        <button id="btnDeptAi" type="button" class="btn-dept btn-secondary" onclick="selectDepartment('ai')">
           <span>قسم الذكاء الاصطناعي</span>
           <span class="badge">الهوية الأصلية • 44 طالباً</span>
         </button>
-        <button id="btnDeptCyber" type="button" class="btn-dept btn-secondary">
+        <button id="btnDeptCyber" type="button" class="btn-dept btn-secondary" onclick="selectDepartment('cyber')">
           <span>قسم الأمن السيبراني</span>
           <span class="badge">تشكيلات سيبرانية • 54 طالباً</span>
         </button>
-        <button id="btnDeptCs" type="button" class="btn-dept btn-secondary">
+        <button id="btnDeptCs" type="button" class="btn-dept btn-secondary" onclick="selectDepartment('cs')">
           <span>قسم الحاسوب</span>
           <span class="badge">تشكيلات برمجية • 19 طالباً</span>
         </button>
       </div>
     </section>
 
-    <section id="deptWorkspace" class="hidden">
+    <section id="deptWorkspace" class="hidden" style="display:none;">
       <div class="card no-print">
         <div class="topbar">
           <div>
@@ -277,18 +277,18 @@
             </div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button id="btnSyncNow" type="button" class="btn-secondary">مزامنة الأوفلاين الآن</button>
-            <button id="btnBackDept" type="button" class="btn-secondary">الأقسام</button>
+            <button id="btnSyncNow" type="button" class="btn-secondary" onclick="syncOfflineRecordsNow()">مزامنة الأوفلاين الآن</button>
+            <button id="btnBackDept" type="button" class="btn-secondary" onclick="backToDeptScreen()">الأقسام</button>
           </div>
         </div>
 
         <div id="deptQuickSummary" class="stats-grid"></div>
 
         <div class="tabs">
-          <button id="tabStudentBtn" type="button" class="tab-btn active">تسجيل الحضور</button>
-          <button id="tabFeedbackBtn" type="button" class="tab-btn">الشكاوى والاقتراحات</button>
-          <button id="tabRepBtn" type="button" class="tab-btn">تبويب المندوب</button>
-          <button id="tabLogsBtn" type="button" class="tab-btn">السجل (دكتور / مقرر)</button>
+          <button id="tabStudentBtn" type="button" class="tab-btn active" onclick="switchTab('student')">تسجيل الحضور</button>
+          <button id="tabFeedbackBtn" type="button" class="tab-btn" onclick="switchTab('feedback')">الشكاوى والاقتراحات</button>
+          <button id="tabRepBtn" type="button" class="tab-btn" onclick="switchTab('rep')">تبويب المندوب</button>
+          <button id="tabLogsBtn" type="button" class="tab-btn" onclick="switchTab('logs')">السجل (دكتور / مقرر)</button>
         </div>
       </div>
 
@@ -298,7 +298,7 @@
             <h3 style="margin:0;">تسجيل الحضور خلال أول 10 دقائق من المحاضرة</h3>
             <p class="muted" style="margin:4px 0 0;">أدخل اسمك ورقم قيدك ورمز المحاضرة المكوّن من 4 أرقام وقت المحاضرة. لا يتم عرض قوائم الطلاب للعامة.</p>
           </div>
-          <button id="btnSelectActiveLecture" type="button" class="btn-secondary">تحديد المحاضرة الجارية</button>
+          <button id="btnSelectActiveLecture" type="button" class="btn-secondary" onclick="selectActiveLectureNow()">تحديد المحاضرة الجارية</button>
         </div>
 
         <div class="grid-2">
@@ -308,11 +308,11 @@
           </div>
           <div>
             <label class="muted">رقم القيد الجامعي</label>
-            <input id="stuIdInput" type="text" inputmode="numeric" placeholder="مثال: 2704091" style="width:100%; margin-top:6px;" />
+            <input id="stuIdInput" type="text" inputmode="numeric" placeholder="مثال: 2704091" style="width:100%; margin-top:6px;" oninput="updateStudentTracker()" />
           </div>
           <div>
             <label class="muted">المحاضرة / المجموعة</label>
-            <select id="stuLectureSelect" style="width:100%; margin-top:6px;"></select>
+            <select id="stuLectureSelect" style="width:100%; margin-top:6px;" onchange="refreshWindowUI()"></select>
           </div>
           <div>
             <label class="muted">رمز التحضير (4 أرقام)</label>
@@ -333,12 +333,12 @@
         </div>
 
         <div style="margin-top:14px;">
-          <button id="submitAttendanceBtn" type="button" class="btn-primary" style="width:100%;">تأكيد تسجيل الحضور</button>
+          <button id="submitAttendanceBtn" type="button" class="btn-primary" style="width:100%;" onclick="submitStudentAttendance()">تأكيد تسجيل الحضور</button>
         </div>
         <div id="studentFeedback" class="alert hidden"></div>
       </div>
 
-      <div id="feedbackTab" class="card no-print hidden">
+      <div id="feedbackTab" class="card no-print hidden" style="display:none;">
         <h3 style="margin-top:0;">الشكاوى والاقتراحات — توجيه مباشر إلى واتساب</h3>
         <p class="muted">أرسل شكواك أو اقتراحك أو ملاحظتك حول الحضور والرموز والمحاضرات ليتم توجيهها مباشرة إلى واتساب المندوب على الرقم <strong>+967781325909</strong>.</p>
 
@@ -372,8 +372,8 @@
         </div>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-          <button id="btnSendFeedbackWa" type="button" class="btn-primary">إرسال مباشرة إلى واتساب (+967781325909)</button>
-          <button id="btnCopyFeedbackText" type="button" class="btn-secondary">نسخ نص الرسالة</button>
+          <button id="btnSendFeedbackWa" type="button" class="btn-primary" onclick="sendFeedbackToWhatsApp()">إرسال مباشرة إلى واتساب (+967781325909)</button>
+          <button id="btnCopyFeedbackText" type="button" class="btn-secondary" onclick="copyFeedbackText()">نسخ نص الرسالة</button>
         </div>
         <div id="fbStatusMsg" class="alert hidden"></div>
 
@@ -382,7 +382,7 @@
             <strong>رقم التواصل المباشر:</strong> <span style="color:var(--accent-2);">+967781325909</span>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button id="btnCopyPhoneTab" type="button" class="btn-secondary">نسخ الرقم</button>
+            <button id="btnCopyPhoneTab" type="button" class="btn-secondary" onclick="copyPhoneNumber()">نسخ الرقم</button>
             <a href="https://wa.me/967781325909" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
               <button type="button" class="btn-success">فتح واتساب مباشرة</button>
             </a>
@@ -392,25 +392,25 @@
         <div id="fbHistoryBox" style="margin-top:16px;"></div>
       </div>
 
-      <div id="repTab" class="card no-print hidden">
+      <div id="repTab" class="card no-print hidden" style="display:none;">
         <div id="repAuthBox">
           <h3 style="margin-top:0;">دخول المندوب (محمي بكلمة مرور)</h3>
           <p class="muted">أدخل كلمة المرور للوصول إلى الرمز الرباعي الخاص بالمحاضرة، حالة المحاضرة الآن، قائمة الطلاب وأرقام القيد، والتسجيل الاستثنائي المؤكد.</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
             <input id="repPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
-            <button id="btnUnlockRep" type="button" class="btn-primary">دخول المندوب</button>
+            <button id="btnUnlockRep" type="button" class="btn-primary" onclick="unlockRepPanel()">دخول المندوب</button>
           </div>
           <div id="repAuthMsg" class="alert hidden"></div>
         </div>
 
-        <div id="repPanel" class="hidden">
+        <div id="repPanel" class="hidden" style="display:none;">
           <div class="topbar">
             <h3 style="margin:0;">لوحة المندوب — حالة المحاضرة الآن</h3>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button id="btnCopyLectureSummary" type="button" class="btn-secondary">نسخ ملخص المحاضرة</button>
-              <button id="btnChangePass" type="button" class="btn-secondary">تغيير كلمة المرور</button>
-              <button id="btnExportJson" type="button" class="btn-secondary">نسخ احتياطي JSON</button>
-              <button id="btnLockRep" type="button" class="btn-secondary">قفل</button>
+              <button id="btnCopyLectureSummary" type="button" class="btn-secondary" onclick="copyLectureSummary()">نسخ ملخص المحاضرة</button>
+              <button id="btnChangePass" type="button" class="btn-secondary" onclick="changeSystemPassword()">تغيير كلمة المرور</button>
+              <button id="btnExportJson" type="button" class="btn-secondary" onclick="exportBackupJSON()">نسخ احتياطي JSON</button>
+              <button id="btnLockRep" type="button" class="btn-secondary" onclick="lockRepPanel()">قفل</button>
             </div>
           </div>
 
@@ -436,11 +436,11 @@
           <div class="grid-2" style="margin-top:14px;">
             <div>
               <label class="muted">تخصيص ترويسة التقارير</label>
-              <input id="reportHeaderInput" type="text" style="width:100%; margin-top:6px;" />
+              <input id="reportHeaderInput" type="text" style="width:100%; margin-top:6px;" onchange="saveReportHeader()" />
             </div>
             <div>
               <label class="muted">الأسبوع النشط لدورة الرموز المحفوظة</label>
-              <select id="weekSelector" style="width:100%; margin-top:6px;">
+              <select id="weekSelector" style="width:100%; margin-top:6px;" onchange="changeWeekIndex()">
                 <option value="0">الأسبوع 1 (W1)</option>
                 <option value="1">الأسبوع 2 (W2)</option>
                 <option value="2">الأسبوع 3 (W3)</option>
@@ -457,39 +457,39 @@
               <input id="excReason" type="text" placeholder="سبب الحالة الاستثنائية (مثال: عطل جهاز/انقطاع شبكة)" />
             </div>
             <div style="margin-top:10px;">
-              <button id="btnStartExc" type="button" class="btn-warn">إضافة حالة استثنائية (يتطلب تأكيداً مزدوجاً)</button>
+              <button id="btnStartExc" type="button" class="btn-warn" onclick="startExceptionalEntry()">إضافة حالة استثنائية (يتطلب تأكيداً مزدوجاً)</button>
             </div>
             <div id="excConfirmBox" class="alert hidden"></div>
           </div>
 
           <div style="margin-top:14px;">
-            <button id="btnToggleRoster" type="button" class="btn-secondary">عرض / إخفاء قائمة الطلاب وأرقام القيد (للمندوب فقط)</button>
-            <div id="repRosterBox" class="hidden" style="margin-top:10px; overflow-x:auto;"></div>
+            <button id="btnToggleRoster" type="button" class="btn-secondary" onclick="toggleRosterVisibility()">عرض / إخفاء قائمة الطلاب وأرقام القيد (للمندوب فقط)</button>
+            <div id="repRosterBox" class="hidden" style="display:none; margin-top:10px; overflow-x:auto;"></div>
           </div>
         </div>
       </div>
 
-      <div id="logsTab" class="card hidden">
+      <div id="logsTab" class="card hidden" style="display:none;">
         <div id="logsAuthBox" class="no-print">
           <h3 style="margin-top:0;">قسم السجل (كشوفات الدكتور والمقرر)</h3>
           <p class="muted">أدخل كلمة المرور لعرض الكشوفات المستقلة لكل دكتور ومقرر، وكشف الفروقات الزمنية للأوفلاين، وتنبيهات التحضير المشبوه/المكرر.</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
             <input id="logsPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
-            <button id="btnUnlockLogs" type="button" class="btn-primary">فتح السجل</button>
+            <button id="btnUnlockLogs" type="button" class="btn-primary" onclick="unlockLogsPanel()">فتح السجل</button>
           </div>
           <div id="logsAuthMsg" class="alert hidden"></div>
         </div>
 
-        <div id="logsPanel" class="hidden">
+        <div id="logsPanel" class="hidden" style="display:none;">
           <div class="topbar">
             <div>
               <h3 id="activeReportHeader" style="margin:0;">كشوفات الحضور والغياب حسب الدكتور والمقرر</h3>
               <div class="muted" style="font-size:0.84rem;">يشمل الفارق الزمني الدقيق بين (وقت التسجيل) و(وقت فتح الإنترنت) لطلاب الأوفلاين.</div>
             </div>
             <div class="no-print" style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button id="btnExportCsv" type="button" class="btn-secondary">تصدير Excel/CSV</button>
-              <button id="btnPrintLogs" type="button" class="btn-secondary">طباعة الكشوفات</button>
-              <button id="btnLockLogs" type="button" class="btn-secondary">قفل السجل</button>
+              <button id="btnExportCsv" type="button" class="btn-secondary" onclick="protectedExportCSV()">تصدير Excel/CSV</button>
+              <button id="btnPrintLogs" type="button" class="btn-secondary" onclick="protectedPrint()">طباعة الكشوفات</button>
+              <button id="btnLockLogs" type="button" class="btn-secondary" onclick="lockLogsPanel()">قفل السجل</button>
             </div>
           </div>
 
@@ -699,6 +699,17 @@
     let logsUnlocked = false;
     let pendingExceptionDraft = null;
 
+    function setElementVisible(el, visible, displayType = 'block') {
+      if (!el) return;
+      if (visible) {
+        el.classList.remove('hidden');
+        el.style.display = displayType;
+      } else {
+        el.classList.add('hidden');
+        el.style.display = 'none';
+      }
+    }
+
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('hajjah_smart_attendance_v4');
@@ -766,28 +777,20 @@
           <button id="btnQuickResume" type="button" class="btn-secondary">دخول سريع للقسم السابق</button>
         </div>
       `;
-      box.classList.remove('hidden');
+      setElementVisible(box, true, 'block');
       const resumeBtn = document.getElementById('btnQuickResume');
       if (resumeBtn) {
-        resumeBtn.addEventListener('click', () => {
+        resumeBtn.onclick = () => {
           currentEntryMode = state.lastMode || 'online';
           if (navigator.onLine) markPendingOfflineOpenedNow();
           selectDepartment(state.lastDept || 'ai');
-        });
+        };
       }
     }
 
     function enterWithMode(mode) {
       const msgEl = document.getElementById('gateMsg');
-      if (msgEl) msgEl.classList.add('hidden');
-
-      if (mode === 'online' && navigator.onLine === false) {
-        if (msgEl) {
-          msgEl.textContent = 'لا يوجد اتصال بالإنترنت حالياً. فعّل الإنترنت ثم أعد المحاولة، أو اختر «دخول بدون إنترنت».';
-          msgEl.classList.remove('hidden');
-        }
-        return;
-      }
+      setElementVisible(msgEl, false);
 
       currentEntryMode = mode;
       state.lastMode = mode;
@@ -797,23 +800,21 @@
         markPendingOfflineOpenedNow();
       }
 
-      const gateScreen = document.getElementById('gateScreen');
-      const deptScreen = document.getElementById('deptScreen');
+      setElementVisible(document.getElementById('gateScreen'), false);
+      setElementVisible(document.getElementById('deptScreen'), true, 'block');
       const modeLabel = document.getElementById('currentModeLabel');
-      if (gateScreen) gateScreen.classList.add('hidden');
-      if (deptScreen) deptScreen.classList.remove('hidden');
       if (modeLabel) {
         modeLabel.textContent =
           mode === 'online' ? 'دخول باستخدام الإنترنت' : 'دخول بدون إنترنت (أوفلاين)';
       }
+      window.scrollTo(0, 0);
     }
 
     function backToGate() {
-      const deptScreen = document.getElementById('deptScreen');
-      const gateScreen = document.getElementById('gateScreen');
-      if (deptScreen) deptScreen.classList.add('hidden');
-      if (gateScreen) gateScreen.classList.remove('hidden');
+      setElementVisible(document.getElementById('deptScreen'), false);
+      setElementVisible(document.getElementById('gateScreen'), true, 'block');
       renderQuickResumeBox();
+      window.scrollTo(0, 0);
     }
 
     function selectDepartment(deptKey) {
@@ -830,10 +831,8 @@
       const deptTitle = document.getElementById('deptTitle');
       if (deptTitle) deptTitle.textContent = dept.name;
 
-      const deptScreen = document.getElementById('deptScreen');
-      const deptWorkspace = document.getElementById('deptWorkspace');
-      if (deptScreen) deptScreen.classList.add('hidden');
-      if (deptWorkspace) deptWorkspace.classList.remove('hidden');
+      setElementVisible(document.getElementById('deptScreen'), false);
+      setElementVisible(document.getElementById('deptWorkspace'), true, 'block');
 
       populateLectureSelects();
       syncTopBadges();
@@ -844,13 +843,13 @@
       switchTab('student');
       refreshWindowUI();
       updateStudentTracker();
+      window.scrollTo(0, 0);
     }
 
     function backToDeptScreen() {
-      const deptWorkspace = document.getElementById('deptWorkspace');
-      const deptScreen = document.getElementById('deptScreen');
-      if (deptWorkspace) deptWorkspace.classList.add('hidden');
-      if (deptScreen) deptScreen.classList.remove('hidden');
+      setElementVisible(document.getElementById('deptWorkspace'), false);
+      setElementVisible(document.getElementById('deptScreen'), true, 'block');
+      window.scrollTo(0, 0);
     }
 
     function syncTopBadges() {
@@ -944,7 +943,7 @@
       const now = new Date();
       const active = dept.lectures.find(l => getLectureWindowStatus(l, now).isLectureRunning);
       const fb = document.getElementById('studentFeedback');
-      if (fb) fb.classList.remove('hidden');
+      setElementVisible(fb, true, 'block');
       if (active) {
         const sel = document.getElementById('stuLectureSelect');
         if (sel) sel.value = active.id;
@@ -961,7 +960,7 @@
       if (!stuIdInp || !trackerEl) return;
       const stuId = stuIdInp.value.trim();
       if (!stuId) {
-        trackerEl.classList.add('hidden');
+        setElementVisible(trackerEl, false);
         return;
       }
 
@@ -982,7 +981,7 @@
         <div><strong>متابعة الطالب:</strong> ${matched ? matched.name : 'رقم قيد غير مطابق للقسم'} (${stuId})</div>
         <div class="muted" style="margin-top:4px;">عدد التسجيلات المرصودة: <strong>${stuRecords.length}</strong> من أصل ${totalLectures} محاضرات مجدولة (${pct}%) — ${warningText}</div>
       `;
-      trackerEl.classList.remove('hidden');
+      setElementVisible(trackerEl, true, 'block');
     }
 
     function refreshWindowUI() {
@@ -1069,7 +1068,7 @@
       const code = document.getElementById('stuCodeInput').value.trim();
       const lecId = document.getElementById('stuLectureSelect').value;
       const fb = document.getElementById('studentFeedback');
-      fb.classList.remove('hidden');
+      setElementVisible(fb, true, 'block');
 
       const dept = DEPARTMENTS[currentDeptKey];
       const lec = dept.lectures.find(l => l.id === lecId);
@@ -1182,7 +1181,7 @@
     function sendFeedbackToWhatsApp() {
       const built = buildFeedbackMessage();
       const statusEl = document.getElementById('fbStatusMsg');
-      statusEl.classList.remove('hidden');
+      setElementVisible(statusEl, true, 'block');
 
       if (!built.msg) {
         statusEl.textContent = 'يرجى كتابة نص الشكوى أو الاقتراح قبل التوجيه إلى واتساب.';
@@ -1210,7 +1209,7 @@
     function copyFeedbackText() {
       const built = buildFeedbackMessage();
       const statusEl = document.getElementById('fbStatusMsg');
-      statusEl.classList.remove('hidden');
+      setElementVisible(statusEl, true, 'block');
       if (!built.msg) {
         statusEl.textContent = 'اكتب نص الرسالة أولاً ليتم نسخه.';
         return;
@@ -1337,7 +1336,7 @@
       ['student', 'feedback', 'rep', 'logs'].forEach(t => {
         const tabEl = document.getElementById(`${t}Tab`);
         const btnEl = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`);
-        if (tabEl) tabEl.classList.toggle('hidden', t !== tab);
+        setElementVisible(tabEl, t === tab, 'block');
         if (btnEl) btnEl.classList.toggle('active', t === tab);
       });
     }
@@ -1347,13 +1346,13 @@
       const msg = document.getElementById('repAuthMsg');
       if (!verifyPassword(pass)) {
         msg.textContent = 'كلمة المرور غير صحيحة.';
-        msg.classList.remove('hidden');
+        setElementVisible(msg, true, 'block');
         return;
       }
-      msg.classList.add('hidden');
+      setElementVisible(msg, false);
       repUnlocked = true;
-      document.getElementById('repAuthBox').classList.add('hidden');
-      document.getElementById('repPanel').classList.remove('hidden');
+      setElementVisible(document.getElementById('repAuthBox'), false);
+      setElementVisible(document.getElementById('repPanel'), true, 'block');
       document.getElementById('reportHeaderInput').value = state.headers[currentDeptKey] || DEPARTMENTS[currentDeptKey].defaultHeader;
       document.getElementById('weekSelector').value = String(state.weekIndex);
       renderRepStats();
@@ -1364,16 +1363,12 @@
     function lockRepPanel() {
       repUnlocked = false;
       pendingExceptionDraft = null;
-      const excConfirmBox = document.getElementById('excConfirmBox');
+      setElementVisible(document.getElementById('excConfirmBox'), false);
       const repPassInput = document.getElementById('repPassInput');
-      const repPanel = document.getElementById('repPanel');
-      const repAuthBox = document.getElementById('repAuthBox');
-      const repRosterBox = document.getElementById('repRosterBox');
-      if (excConfirmBox) excConfirmBox.classList.add('hidden');
       if (repPassInput) repPassInput.value = '';
-      if (repPanel) repPanel.classList.add('hidden');
-      if (repAuthBox) repAuthBox.classList.remove('hidden');
-      if (repRosterBox) repRosterBox.classList.add('hidden');
+      setElementVisible(document.getElementById('repPanel'), false);
+      setElementVisible(document.getElementById('repAuthBox'), true, 'block');
+      setElementVisible(document.getElementById('repRosterBox'), false);
     }
 
     function renderRepStats() {
@@ -1396,7 +1391,7 @@
       const stuId = document.getElementById('excStudentId').value.trim();
       const reason = document.getElementById('excReason').value.trim();
       const confirmBox = document.getElementById('excConfirmBox');
-      confirmBox.classList.remove('hidden');
+      setElementVisible(confirmBox, true, 'block');
 
       if (!stuId || !reason) {
         confirmBox.textContent = 'يرجى إدخال رقم القيد وسبب الحالة الاستثنائية أولاً.';
@@ -1418,17 +1413,15 @@
       confirmBox.innerHTML = `
         <div><strong>تأكيد مزدوج مطلوب:</strong> هل تؤكد اعتماد تسجيل استثنائي للطالب <strong>${pendingExceptionDraft.student_name}</strong> (${stuId}) في مقرر <strong>${lec.course}</strong> بسبب: «${reason}»؟</div>
         <div style="margin-top:8px; display:flex; gap:8px;">
-          <button id="btnConfirmExcFinal" type="button" class="btn-primary">تأكيد نهائي (الخطوة 2/2)</button>
-          <button id="btnCancelExc" type="button" class="btn-secondary">إلغاء</button>
+          <button id="btnConfirmExcFinal" type="button" class="btn-primary" onclick="confirmExceptionalEntry()">تأكيد نهائي (الخطوة 2/2)</button>
+          <button id="btnCancelExc" type="button" class="btn-secondary" onclick="cancelExceptionalEntry()">إلغاء</button>
         </div>
       `;
-      document.getElementById('btnConfirmExcFinal').addEventListener('click', confirmExceptionalEntry);
-      document.getElementById('btnCancelExc').addEventListener('click', cancelExceptionalEntry);
     }
 
     function cancelExceptionalEntry() {
       pendingExceptionDraft = null;
-      document.getElementById('excConfirmBox').classList.add('hidden');
+      setElementVisible(document.getElementById('excConfirmBox'), false);
     }
 
     function confirmExceptionalEntry() {
@@ -1487,7 +1480,9 @@
 
     function toggleRosterVisibility() {
       if (!repUnlocked) return;
-      document.getElementById('repRosterBox').classList.toggle('hidden');
+      const box = document.getElementById('repRosterBox');
+      const isHidden = box.classList.contains('hidden');
+      setElementVisible(box, isHidden, 'block');
     }
 
     function renderRosterTable() {
@@ -1528,13 +1523,13 @@
       const msg = document.getElementById('logsAuthMsg');
       if (!verifyPassword(pass)) {
         msg.textContent = 'كلمة المرور غير صحيحة.';
-        msg.classList.remove('hidden');
+        setElementVisible(msg, true, 'block');
         return;
       }
-      msg.classList.add('hidden');
+      setElementVisible(msg, false);
       logsUnlocked = true;
-      document.getElementById('logsAuthBox').classList.add('hidden');
-      document.getElementById('logsPanel').classList.remove('hidden');
+      setElementVisible(document.getElementById('logsAuthBox'), false);
+      setElementVisible(document.getElementById('logsPanel'), true, 'block');
       document.getElementById('activeReportHeader').textContent =
         state.headers[currentDeptKey] || DEPARTMENTS[currentDeptKey].defaultHeader;
       renderSuspiciousAlerts();
@@ -1544,11 +1539,9 @@
     function lockLogsPanel() {
       logsUnlocked = false;
       const logsPassInput = document.getElementById('logsPassInput');
-      const logsPanel = document.getElementById('logsPanel');
-      const logsAuthBox = document.getElementById('logsAuthBox');
       if (logsPassInput) logsPassInput.value = '';
-      if (logsPanel) logsPanel.classList.add('hidden');
-      if (logsAuthBox) logsAuthBox.classList.remove('hidden');
+      setElementVisible(document.getElementById('logsPanel'), false);
+      setElementVisible(document.getElementById('logsAuthBox'), true, 'block');
     }
 
     function renderSuspiciousAlerts() {
@@ -1678,68 +1671,7 @@
       window.print();
     }
 
-    let appInitialized = false;
-    function initAppEvents() {
-      if (appInitialized) return;
-      appInitialized = true;
-
-      renderQuickResumeBox();
-
-      const bindClick = (id, fn) => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('click', fn);
-      };
-
-      bindClick('btnOnline', () => enterWithMode('online'));
-      bindClick('btnOffline', () => enterWithMode('offline'));
-      bindClick('btnCopyPhoneGate', copyPhoneNumber);
-      bindClick('btnCopyPhoneTab', copyPhoneNumber);
-      bindClick('btnBackGate', backToGate);
-      bindClick('btnDeptAi', () => selectDepartment('ai'));
-      bindClick('btnDeptCyber', () => selectDepartment('cyber'));
-      bindClick('btnDeptCs', () => selectDepartment('cs'));
-      bindClick('btnSyncNow', syncOfflineRecordsNow);
-      bindClick('btnBackDept', backToDeptScreen);
-
-      bindClick('tabStudentBtn', () => switchTab('student'));
-      bindClick('tabFeedbackBtn', () => switchTab('feedback'));
-      bindClick('tabRepBtn', () => switchTab('rep'));
-      bindClick('tabLogsBtn', () => switchTab('logs'));
-
-      bindClick('btnSelectActiveLecture', selectActiveLectureNow);
-      const lecSel = document.getElementById('stuLectureSelect');
-      if (lecSel) lecSel.addEventListener('change', refreshWindowUI);
-      const stuIdInp = document.getElementById('stuIdInput');
-      if (stuIdInp) stuIdInp.addEventListener('input', updateStudentTracker);
-      bindClick('submitAttendanceBtn', submitStudentAttendance);
-
-      bindClick('btnSendFeedbackWa', sendFeedbackToWhatsApp);
-      bindClick('btnCopyFeedbackText', copyFeedbackText);
-
-      bindClick('btnUnlockRep', unlockRepPanel);
-      bindClick('btnCopyLectureSummary', copyLectureSummary);
-      bindClick('btnChangePass', changeSystemPassword);
-      bindClick('btnExportJson', exportBackupJSON);
-      bindClick('btnLockRep', lockRepPanel);
-      const hdrInp = document.getElementById('reportHeaderInput');
-      if (hdrInp) hdrInp.addEventListener('change', saveReportHeader);
-      const wkSel = document.getElementById('weekSelector');
-      if (wkSel) wkSel.addEventListener('change', changeWeekIndex);
-      bindClick('btnStartExc', startExceptionalEntry);
-      bindClick('btnToggleRoster', toggleRosterVisibility);
-
-      bindClick('btnUnlockLogs', unlockLogsPanel);
-      bindClick('btnExportCsv', protectedExportCSV);
-      bindClick('btnPrintLogs', protectedPrint);
-      bindClick('btnLockLogs', lockLogsPanel);
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initAppEvents);
-    } else {
-      initAppEvents();
-    }
-
+    renderQuickResumeBox();
     setInterval(refreshWindowUI, 1000);
   </script>
 </body>
