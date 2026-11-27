@@ -216,7 +216,7 @@
     <section id="gateScreen" class="card">
       <div class="badge">جامعة حجة • كلية الهندسة وتكنولوجيا المعلومات • إعداد يوسف وليد المروني</div>
       <h1 class="hero-title" style="margin-top:10px;">المنصة الذكية لتحضير وغياب الطلاب</h1>
-      <p class="muted">بوابة دخول مباشرة للانتقال إلى الأقسام الهندسية، مع دعم العمل المزدوج (أونلاين وأوفلاين)، وحساب الفارق الزمني بين وقت التسجيل ووقت فتح الإنترنت تلقائياً.</p>
+      <p class="muted">يعمل التطبيق والمنصة دون إلزام بالإنترنت؛ اختر <strong>«دخول بدون إنترنت»</strong> للعمل المحلي المباشر أو <strong>«دخول باستخدام الإنترنت»</strong> حسب الخيار المناسب لك.</p>
 
       <div id="quickResumeBox" class="alert hidden"></div>
 
@@ -244,7 +244,7 @@
       <div class="topbar">
         <div>
           <h2 class="hero-title" style="font-size:1.25rem;">اختر القسم الأكاديمي</h2>
-          <div class="muted">الوضع المحدد: <strong id="currentModeLabel"></strong></div>
+          <div class="muted">الوضع المحدد: <strong id="currentModeLabel"></strong> — <span id="modeHelperDesc"></span></div>
         </div>
         <button id="btnBackGate" type="button" class="btn-secondary" onclick="backToGate()">تغيير وضع الدخول</button>
       </div>
@@ -277,7 +277,8 @@
             </div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button id="btnSyncNow" type="button" class="btn-secondary" onclick="syncOfflineRecordsNow()">مزامنة الأوفلاين الآن</button>
+            <button id="btnSwitchModeQuick" type="button" class="btn-secondary" onclick="toggleEntryModeQuick()">تبديل الوضع (أونلاين / أوفلاين)</button>
+            <button id="btnSyncNow" type="button" class="btn-secondary" onclick="syncOfflineRecordsNow()">تسجيل وقت فتح الإنترنت</button>
             <button id="btnBackDept" type="button" class="btn-secondary" onclick="backToDeptScreen()">الأقسام</button>
           </div>
         </div>
@@ -691,10 +692,10 @@
       }
     };
 
-    const STORAGE_KEY = 'hajjah_smart_attendance_v5';
+    const STORAGE_KEY = 'hajjah_smart_attendance_v6';
     let state = loadState();
-    let currentEntryMode = 'online';
-    let currentDeptKey = 'ai';
+    let currentEntryMode = state.lastMode || 'offline';
+    let currentDeptKey = state.lastDept || 'ai';
     let repUnlocked = false;
     let logsUnlocked = false;
     let pendingExceptionDraft = null;
@@ -712,14 +713,14 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('hajjah_smart_attendance_v4');
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('hajjah_smart_attendance_v5') || localStorage.getItem('hajjah_smart_attendance_v4');
         if (raw) {
           const parsed = JSON.parse(raw);
           return {
             password: parsed.password || '2026',
             weekIndex: Number.isInteger(parsed.weekIndex) ? parsed.weekIndex : 0,
             lastDept: parsed.lastDept || 'ai',
-            lastMode: parsed.lastMode || 'online',
+            lastMode: parsed.lastMode || 'offline',
             headers: {
               ai: parsed.headers?.ai || DEPARTMENTS.ai.defaultHeader,
               cyber: parsed.headers?.cyber || DEPARTMENTS.cyber.defaultHeader,
@@ -735,7 +736,7 @@
         password: '2026',
         weekIndex: 0,
         lastDept: 'ai',
-        lastMode: 'online',
+        lastMode: 'offline',
         headers: {
           ai: DEPARTMENTS.ai.defaultHeader,
           cyber: DEPARTMENTS.cyber.defaultHeader,
@@ -766,6 +767,13 @@
         .toLowerCase();
     }
 
+    function getModeDescription(mode) {
+      if (mode === 'offline') {
+        return 'تسجيل محلي فوري بدون الحاجة للإنترنت، ويُحسب الفارق الزمني عند فتح الإنترنت';
+      }
+      return 'وضع الإنترنت مفعل دون إلزام؛ يعمل التسجيل محلياً ويُسجّل وقت فتح الإنترنت تلقائياً';
+    }
+
     function renderQuickResumeBox() {
       const box = document.getElementById('quickResumeBox');
       if (!box) return;
@@ -774,40 +782,58 @@
       box.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <div><strong>اختيارك السابق:</strong> ${lastDept.name} (${modeText})</div>
-          <button id="btnQuickResume" type="button" class="btn-secondary">دخول سريع للقسم السابق</button>
+          <button id="btnQuickResume" type="button" class="btn-secondary" onclick="quickResumeLast()">دخول سريع للقسم السابق</button>
         </div>
       `;
       setElementVisible(box, true, 'block');
-      const resumeBtn = document.getElementById('btnQuickResume');
-      if (resumeBtn) {
-        resumeBtn.onclick = () => {
-          currentEntryMode = state.lastMode || 'online';
-          if (navigator.onLine) markPendingOfflineOpenedNow();
-          selectDepartment(state.lastDept || 'ai');
-        };
+    }
+
+    function quickResumeLast() {
+      currentEntryMode = state.lastMode || 'offline';
+      if (currentEntryMode === 'online' && navigator.onLine) {
+        markPendingOfflineOpenedNow();
       }
+      selectDepartment(state.lastDept || 'ai');
     }
 
     function enterWithMode(mode) {
       const msgEl = document.getElementById('gateMsg');
       setElementVisible(msgEl, false);
 
-      currentEntryMode = mode;
-      state.lastMode = mode;
+      currentEntryMode = mode === 'online' ? 'online' : 'offline';
+      state.lastMode = currentEntryMode;
       saveState();
 
-      if (navigator.onLine) {
+      if (currentEntryMode === 'online' && navigator.onLine) {
         markPendingOfflineOpenedNow();
       }
 
       setElementVisible(document.getElementById('gateScreen'), false);
       setElementVisible(document.getElementById('deptScreen'), true, 'block');
       const modeLabel = document.getElementById('currentModeLabel');
+      const modeDesc = document.getElementById('modeHelperDesc');
       if (modeLabel) {
         modeLabel.textContent =
-          mode === 'online' ? 'دخول باستخدام الإنترنت' : 'دخول بدون إنترنت (أوفلاين)';
+          currentEntryMode === 'online' ? 'دخول باستخدام الإنترنت' : 'دخول بدون إنترنت';
+      }
+      if (modeDesc) {
+        modeDesc.textContent = getModeDescription(currentEntryMode);
       }
       window.scrollTo(0, 0);
+    }
+
+    function toggleEntryModeQuick() {
+      const nextMode = currentEntryMode === 'offline' ? 'online' : 'offline';
+      currentEntryMode = nextMode;
+      state.lastMode = nextMode;
+      saveState();
+      if (nextMode === 'online' && navigator.onLine) {
+        markPendingOfflineOpenedNow();
+      }
+      syncTopBadges();
+      renderDeptQuickSummary();
+      if (repUnlocked) renderRepStats();
+      if (logsUnlocked) renderDoctorCourseSheets();
     }
 
     function backToGate() {
@@ -849,6 +875,15 @@
     function backToDeptScreen() {
       setElementVisible(document.getElementById('deptWorkspace'), false);
       setElementVisible(document.getElementById('deptScreen'), true, 'block');
+      const modeLabel = document.getElementById('currentModeLabel');
+      const modeDesc = document.getElementById('modeHelperDesc');
+      if (modeLabel) {
+        modeLabel.textContent =
+          currentEntryMode === 'online' ? 'دخول باستخدام الإنترنت' : 'دخول بدون إنترنت';
+      }
+      if (modeDesc) {
+        modeDesc.textContent = getModeDescription(currentEntryMode);
+      }
       window.scrollTo(0, 0);
     }
 
@@ -856,8 +891,8 @@
       const modeBadge = document.getElementById('deptModeBadge');
       const netStatus = document.getElementById('deptNetStatus');
       const weekBadge = document.getElementById('deptWeekBadge');
-      if (modeBadge) modeBadge.textContent = currentEntryMode === 'online' ? 'الوضع: أونلاين' : 'الوضع: أوفلاين';
-      if (netStatus) netStatus.textContent = navigator.onLine ? 'الشبكة: متصلة' : 'الشبكة: غير متصلة';
+      if (modeBadge) modeBadge.textContent = currentEntryMode === 'online' ? 'الوضع: باستخدام الإنترنت' : 'الوضع: بدون إنترنت';
+      if (netStatus) netStatus.textContent = navigator.onLine ? 'الشبكة: متصلة' : 'الشبكة: غير متصلة (متاح العمل)';
       if (weekBadge) weekBadge.textContent = `دورة الرموز: الأسبوع ${Number(state.weekIndex) + 1}`;
     }
 
@@ -875,7 +910,7 @@
         <div class="stat-box"><div class="muted">طلاب القسم</div><div class="stat-val">${dept.students.length}</div></div>
         <div class="stat-box"><div class="muted">إجمالي التسجيلات</div><div class="stat-val">${deptRecs.length}</div></div>
         <div class="stat-box"><div class="muted">طلاب حضروا مرة+</div><div class="stat-val">${uniqueStudents}</div></div>
-        <div class="stat-box"><div class="muted">بانتظار المزامنة</div><div class="stat-val">${pendingOffline}</div></div>
+        <div class="stat-box"><div class="muted">بانتظار فتح الإنترنت</div><div class="stat-val">${pendingOffline}</div></div>
         <div class="stat-box"><div class="muted">مؤشر النشاط</div><div class="stat-val">${avgRate}%</div></div>
       `;
     }
@@ -1120,9 +1155,10 @@
         logSuspiciousAlert('تسجيل متقارب وسريع', `رصد ${recentSameLecture.length + 1} عمليات تسجيل خلال أقل من 25 ثانية في مقرر (${lec.course}).`, stuId, lec.id);
       }
 
-      const isOfflineRecord = currentEntryMode === 'offline' || !navigator.onLine;
+      const isOfflineMode = currentEntryMode === 'offline';
+      const hasNetworkNow = Boolean(navigator.onLine);
       const recordedAtIso = now.toISOString();
-      const onlineOpenedAtIso = (!isOfflineRecord && navigator.onLine) ? now.toISOString() : null;
+      const onlineOpenedAtIso = (!isOfflineMode && hasNetworkNow) ? now.toISOString() : null;
 
       state.records.push({
         id: 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
@@ -1133,7 +1169,7 @@
         week_index: state.weekIndex + 1,
         code_used: code,
         within_10min: true,
-        entry_mode: isOfflineRecord ? 'offline' : 'online',
+        entry_mode: isOfflineMode ? 'offline' : 'online',
         recorded_at: recordedAtIso,
         online_opened_at: onlineOpenedAtIso,
         synced: Boolean(onlineOpenedAtIso),
@@ -1144,9 +1180,13 @@
       });
       saveState();
 
-      fb.textContent = isOfflineRecord
-        ? 'تم تسجيل حضورك محلياً (بدون إنترنت) مع حفظ وقت التسجيل؛ وسيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني عند عودة الشبكة.'
-        : 'تم تسجيل حضورك بنجاح وحفظ السجل.';
+      if (isOfflineMode) {
+        fb.textContent = 'تم تسجيل حضورك محلياً (بدون إنترنت) وحفظ وقت التسجيل بدقة؛ وعند فتح الإنترنت سيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني تلقائياً.';
+      } else if (!hasNetworkNow) {
+        fb.textContent = 'تم تسجيل حضورك محلياً دون توقف رغم عدم توفر الإنترنت؛ وسيُضاف وقت فتح الإنترنت ويُحسب الفارق الزمني عند عودة الاتصال.';
+      } else {
+        fb.textContent = 'تم تسجيل حضورك وحفظ السجل بنجاح مع توثيق وقت التسجيل ووقت فتح الإنترنت.';
+      }
 
       document.getElementById('stuCodeInput').value = '';
       renderDeptQuickSummary();
@@ -1202,7 +1242,7 @@
       renderFeedbackHistory();
 
       const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(built.formatted)}`;
-      statusEl.innerHTML = `تم تجهيز الرسالة وتوجيهك إلى واتساب (${WHATSAPP_DISPLAY}). إذا لم يفتح تلقائياً اضغط <a href="${waUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-2); font-weight:700;">هنا لفتح واتساب</a>.`;
+      statusEl.innerHTML = `تم حفظ الرسالة محلياً وتجهيز التوجيه إلى واتساب (${WHATSAPP_DISPLAY}). إذا لم يفتح تلقائياً اضغط <a href="${waUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-2); font-weight:700;">هنا لفتح واتساب</a>.`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     }
 
@@ -1280,7 +1320,7 @@
     }
 
     function markPendingOfflineOpenedNow() {
-      if (!navigator.onLine) return;
+      if (!navigator.onLine) return false;
       const openedIso = new Date().toISOString();
       let changed = false;
       state.records.forEach(r => {
@@ -1291,20 +1331,23 @@
         }
       });
       if (changed) saveState();
+      return changed;
     }
 
     function syncOfflineRecordsNow() {
       if (!navigator.onLine) {
-        alert('الشبكة غير متصلة حالياً. سيتم تسجيل وقت فتح الإنترنت فور توفر الاتصال.');
+        alert('لا يوجد اتصال إنترنت نشط الآن؛ السجلات محفوظة محلياً وعند فتح الإنترنت سيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني تلقائياً.');
         return;
       }
-      markPendingOfflineOpenedNow();
+      const updated = markPendingOfflineOpenedNow();
       syncTopBadges();
       renderDeptQuickSummary();
       updateStudentTracker();
       if (repUnlocked) renderRepStats();
       if (logsUnlocked) renderDoctorCourseSheets();
-      alert('تم تسجيل وقت فتح الإنترنت وتحديث الفروقات الزمنية لسجلات الأوفلاين بنجاح.');
+      alert(updated
+        ? 'تم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني لجميع التسجيلات المؤجلة بنجاح.'
+        : 'جميع التسجيلات مسجّل لها وقت فتح الإنترنت بالفعل.');
     }
 
     window.addEventListener('online', () => {
@@ -1437,10 +1480,10 @@
         week_index: state.weekIndex + 1,
         code_used: 'EXC-' + d.lecture.codes[state.weekIndex % d.lecture.codes.length],
         within_10min: true,
-        entry_mode: navigator.onLine ? 'online' : 'offline',
+        entry_mode: currentEntryMode === 'offline' ? 'offline' : 'online',
         recorded_at: now.toISOString(),
-        online_opened_at: navigator.onLine ? now.toISOString() : null,
-        synced: navigator.onLine,
+        online_opened_at: (currentEntryMode === 'online' && navigator.onLine) ? now.toISOString() : null,
+        synced: Boolean(currentEntryMode === 'online' && navigator.onLine),
         exceptional: true,
         exceptional_reason: d.reason,
         student_name: d.student_name,
@@ -1599,7 +1642,7 @@
                   <td>W${it.week_index} (${it.code_used})</td>
                   <td>${modeLabel}</td>
                   <td>${new Date(it.recorded_at).toLocaleTimeString('ar-YE')}</td>
-                  <td>${it.online_opened_at ? new Date(it.online_opened_at).toLocaleTimeString('ar-YE') : 'بانتظار النت'}</td>
+                  <td>${it.online_opened_at ? new Date(it.online_opened_at).toLocaleTimeString('ar-YE') : 'بانتظار فتح الإنترنت'}</td>
                   <td class="${diffInfo.badgeClass}">${diffInfo.diffText}</td>
                 </tr>
               `;
