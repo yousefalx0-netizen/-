@@ -1753,4 +1753,261 @@
         course_name: d.lecture.course,
         doctor_name: d.lecture.doctor,
         week_index: state.weekIndex + 1,
-        code_used: 'EXC-' + d.lecture.
+        code_used: 'EXC-' + d.lecture.codes[state.weekIndex % d.lecture.codes.length],
+        within_10min: true,
+        entry_mode: currentEntryMode === 'offline' ? 'offline' : 'online',
+        recorded_at: now.toISOString(),
+        online_opened_at: hasNet ? now.toISOString() : null,
+        synced: hasNet,
+        cloud_synced: false,
+        exceptional: true,
+        exceptional_reason: d.reason,
+        student_name: d.student_name,
+        student_id: d.student_id
+      };
+      state.records.push(excRec);
+      saveState();
+      pendingExceptionDraft = null;
+      document.getElementById('excStudentId').value = '';
+      document.getElementById('excReason').value = '';
+      document.getElementById('excConfirmBox').innerHTML = 'تم اعتماد الحالة الاستثنائية وإضافتها إلى السجل.';
+      syncTopBadges();
+      renderDeptQuickSummary();
+      updateStudentTracker();
+      renderRepStats();
+      if (logsUnlocked) renderDoctorCourseSheets();
+
+      if (hasNet) {
+        await pushSingleRecordToCloud(excRec);
+        syncTopBadges();
+        renderDeptQuickSummary();
+        renderRepStats();
+        if (logsUnlocked) renderDoctorCourseSheets();
+      }
+    }
+
+    function changeSystemPassword() {
+      const nextPass = prompt('أدخل كلمة المرور الجديدة للمندوب والسجل والتصدير والطباعة:');
+      if (nextPass && nextPass.trim().length >= 2) {
+        state.password = nextPass.trim();
+        saveState();
+        alert('تم تحديث كلمة المرور بنجاح.');
+      }
+    }
+
+    function saveReportHeader() {
+      state.headers[currentDeptKey] = document.getElementById('reportHeaderInput').value;
+      saveState();
+    }
+
+    function changeWeekIndex() {
+      state.weekIndex = Number(document.getElementById('weekSelector').value) || 0;
+      saveState();
+      syncTopBadges();
+      refreshWindowUI();
+    }
+
+    function toggleRosterVisibility() {
+      if (!repUnlocked) return;
+      const box = document.getElementById('repRosterBox');
+      const isHidden = box.classList.contains('hidden');
+      setElementVisible(box, isHidden, 'block');
+    }
+
+    function renderRosterTable() {
+      const dept = DEPARTMENTS[currentDeptKey];
+      const rows = dept.students.map((s, idx) =>
+        `<tr><td>${idx + 1}</td><td>${s.name}</td><td>${s.id}</td></tr>`
+      ).join('');
+      document.getElementById('repRosterBox').innerHTML = `
+        <table>
+          <thead><tr><th>م</th><th>اسم الطالب</th><th>رقم القيد</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function exportBackupJSON() {
+      if (!repUnlocked) return;
+      const payload = {
+        department: currentDeptKey,
+        contact: WHATSAPP_DISPLAY,
+        header: state.headers[currentDeptKey],
+        announcement: state.announcements[currentDeptKey],
+        exported_at: new Date().toISOString(),
+        records: state.records.filter(r => r.department === currentDeptKey),
+        alerts: state.alerts.filter(a => a.department === currentDeptKey),
+        feedbacks: state.feedbacks.filter(f => f.department === currentDeptKey)
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `attendance_backup_${currentDeptKey}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function unlockLogsPanel() {
+      const pass = document.getElementById('logsPassInput').value;
+      const msg = document.getElementById('logsAuthMsg');
+      if (!verifyPassword(pass)) {
+        msg.textContent = 'كلمة المرور غير صحيحة.';
+        setElementVisible(msg, true, 'block');
+        return;
+      }
+      setElementVisible(msg, false);
+      logsUnlocked = true;
+      setElementVisible(document.getElementById('logsAuthBox'), false);
+      setElementVisible(document.getElementById('logsPanel'), true, 'block');
+      document.getElementById('activeReportHeader').textContent =
+        state.headers[currentDeptKey] || DEPARTMENTS[currentDeptKey].defaultHeader;
+      renderSuspiciousAlerts();
+      renderDoctorCourseSheets();
+    }
+
+    function lockLogsPanel() {
+      logsUnlocked = false;
+      const logsPassInput = document.getElementById('logsPassInput');
+      if (logsPassInput) logsPassInput.value = '';
+      setElementVisible(document.getElementById('logsPanel'), false);
+      setElementVisible(document.getElementById('logsAuthBox'), true, 'block');
+    }
+
+    function renderSuspiciousAlerts() {
+      const deptAlerts = state.alerts.filter(a => a.department === currentDeptKey);
+      const sec = document.getElementById('suspiciousAlertsSection');
+      if (!deptAlerts.length) {
+        sec.innerHTML = '';
+        return;
+      }
+      const itemsHtml = deptAlerts.slice().reverse().map(a =>
+        `<li><strong>[${a.type}]</strong> ${a.detail} <span class="muted">(${new Date(a.at).toLocaleString('ar-YE')})</span></li>`
+      ).join('');
+      sec.innerHTML = `
+        <div class="suspicious-box">
+          <h4 style="margin:0 0 6px; color:#fca5a5;">تنبيهات التحضير المشبوه / المكرر / غير المطابق (${deptAlerts.length})</h4>
+          <ul style="margin:6px 0 0; padding-right:18px; line-height:1.7;">${itemsHtml}</ul>
+        </div>
+      `;
+    }
+
+    function renderDoctorCourseSheets() {
+      const dept = DEPARTMENTS[currentDeptKey];
+      const container = document.getElementById('doctorCourseSheets');
+      const deptRecords = state.records.filter(r => r.department === currentDeptKey);
+
+      const groups = {};
+      dept.lectures.forEach(lec => {
+        const key = `${lec.doctor} || ${lec.course}`;
+        if (!groups[key]) groups[key] = { doctor: lec.doctor, course: lec.course, items: [] };
+      });
+
+      deptRecords.forEach(rec => {
+        const key = `${rec.doctor_name} || ${rec.course_name}`;
+        if (!groups[key]) groups[key] = { doctor: rec.doctor_name, course: rec.course_name, items: [] };
+        groups[key].items.push(rec);
+      });
+
+      container.innerHTML = Object.values(groups).map(g => {
+        const presentCount = g.items.length;
+        const absentCount = Math.max(0, dept.students.length - presentCount);
+        const rate = dept.students.length ? Math.round((presentCount / dept.students.length) * 100) : 0;
+
+        const rowsHtml = g.items.length
+          ? g.items.map((it, i) => {
+              const diffInfo = computeTimeDiffInfo(it);
+              const modeLabel = it.exceptional
+                ? `<span class="tag-warn">استثنائي: ${it.exceptional_reason}</span>`
+                : (it.entry_mode === 'offline' ? '<span class="tag-warn">بدون إنترنت</span>' : '<span class="tag-ok">بالإنترنت</span>');
+              const cloudLabel = it.cloud_synced
+                ? '<span class="tag-ok">مرفوع للسحابة</span>'
+                : '<span class="tag-warn">محلي / بانتظار الرفع</span>';
+
+              return `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${it.student_name}</td>
+                  <td>${it.student_id}</td>
+                  <td>W${it.week_index} (${it.code_used})</td>
+                  <td>${modeLabel}</td>
+                  <td>${new Date(it.recorded_at).toLocaleTimeString('ar-YE')}</td>
+                  <td>${it.online_opened_at ? new Date(it.online_opened_at).toLocaleTimeString('ar-YE') : 'بانتظار فتح الإنترنت'}</td>
+                  <td class="${diffInfo.badgeClass}">${diffInfo.diffText}</td>
+                  <td>${cloudLabel}</td>
+                </tr>
+              `;
+            }).join('')
+          : `<tr><td colspan="9" class="muted" style="text-align:center;">لا توجد سجلات حضور مسجلة لهذا الكشف حتى الآن.</td></tr>`;
+
+        return `
+          <div class="record-card">
+            <div class="topbar">
+              <div>
+                <strong>المقرر: ${g.course}</strong>
+                <div class="muted">الدكتور / الأستاذ: ${g.doctor}</div>
+              </div>
+              <div class="muted">
+                حاضرون: <strong>${presentCount}</strong> | غائبون تقديرياً: <strong>${absentCount}</strong> | النسبة: <strong>${rate}%</strong>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>رقم القيد</th>
+                    <th>الأسبوع / الرمز</th>
+                    <th>الوضع</th>
+                    <th>وقت التسجيل</th>
+                    <th>وقت فتح الإنترنت</th>
+                    <th>الفارق الزمني</th>
+                    <th>السحابة</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function protectedExportCSV() {
+      const p = prompt('أدخل كلمة المرور لتأكيد تصدير Excel/CSV:');
+      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
+      const rows = state.records.filter(r => r.department === currentDeptKey);
+      const header = [
+        'department,course_name,doctor_name,week_index,code_used,within_10min,entry_mode,recorded_at,online_opened_at,time_diff_seconds,cloud_synced,exceptional,student_name,student_id'
+      ];
+      const body = rows.map(r => {
+        const diffSec = r.online_opened_at
+          ? Math.max(0, Math.round((new Date(r.online_opened_at).getTime() - new Date(r.recorded_at).getTime()) / 1000))
+          : '';
+        return [
+          r.department, r.course_name, r.doctor_name, r.week_index, r.code_used,
+          r.within_10min, r.entry_mode, r.recorded_at, r.online_opened_at || '',
+          diffSec, r.cloud_synced ? 'true' : 'false', r.exceptional ? 'true' : 'false', r.student_name, r.student_id
+        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+      });
+      const blob = new Blob(['\ufeff' + header.concat(body).join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `attendance_${currentDeptKey}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function protectedPrint() {
+      const p = prompt('أدخل كلمة المرور لتأكيد الطباعة:');
+      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
+      window.print();
+    }
+
+    renderQuickResumeBox();
+    setInterval(refreshWindowUI, 1000);
+  </script>
+</body>
+</html>
