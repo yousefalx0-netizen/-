@@ -146,6 +146,7 @@
     .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #090612; border: none; }
     .btn-secondary { background: var(--bg-elevated); border: 1px solid var(--border); }
     .btn-warn { background: rgba(245, 158, 11, 0.16); border: 1px solid var(--warn); color: #fde68a; }
+    .btn-danger { background: rgba(239, 68, 68, 0.16); border: 1px solid var(--danger); color: #fca5a5; }
     .btn-success { background: rgba(34, 197, 94, 0.18); border: 1px solid var(--success); color: #bbf7d0; }
     .btn-dept { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; font-size: 1.05rem; text-align: right; }
 
@@ -172,11 +173,18 @@
     .timer-num.closed { color: var(--danger); }
 
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 10px; margin: 12px 0; }
     .stat-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
     .stat-val { font-size: 1.25rem; font-weight: 800; color: var(--accent-2); }
 
     .record-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+    .announcement-banner {
+      border: 1px solid var(--accent-2);
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.14), rgba(168, 85, 247, 0.12));
+      border-radius: 16px;
+      padding: 15px 16px;
+      margin-bottom: 16px;
+    }
     .suspicious-box { border: 1px solid rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.08); border-radius: 14px; padding: 14px; margin-top: 14px; }
 
     .contact-bar {
@@ -206,7 +214,7 @@
     @media print {
       .no-print { display: none !important; }
       body { background: #fff !important; color: #000 !important; }
-      .card, .record-card { background: #fff !important; color: #000 !important; border: 1px solid #ccc !important; box-shadow: none !important; }
+      .card, .record-card, .announcement-banner { background: #fff !important; color: #000 !important; border: 1px solid #ccc !important; box-shadow: none !important; }
     }
   </style>
 </head>
@@ -216,7 +224,7 @@
     <section id="gateScreen" class="card">
       <div class="badge">جامعة حجة • كلية الهندسة وتكنولوجيا المعلومات • إعداد يوسف وليد المروني</div>
       <h1 class="hero-title" style="margin-top:10px;">المنصة الذكية لتحضير وغياب الطلاب</h1>
-      <p class="muted">يعمل التطبيق والمنصة دون إلزام بالإنترنت؛ اختر <strong>«دخول بدون إنترنت»</strong> للعمل المحلي المباشر أو <strong>«دخول باستخدام الإنترنت»</strong> حسب الخيار المناسب لك.</p>
+      <p class="muted">يعمل التطبيق والمنصة دون إلزام بالإنترنت؛ اختر <strong>«دخول بدون إنترنت»</strong> للعمل المحلي المباشر أو <strong>«دخول باستخدام الإنترنت»</strong> للمزامنة السحابية وجلب التنبيهات العاجلة عند توفر الاتصال.</p>
 
       <div id="quickResumeBox" class="alert hidden"></div>
 
@@ -266,6 +274,8 @@
     </section>
 
     <section id="deptWorkspace" class="hidden" style="display:none;">
+      <div id="announcementBanner" class="announcement-banner hidden" style="display:none;"></div>
+
       <div class="card no-print">
         <div class="topbar">
           <div>
@@ -273,12 +283,13 @@
             <div>
               <span id="deptModeBadge" class="badge"></span>
               <span id="deptNetStatus" class="badge"></span>
+              <span id="deptCloudStatus" class="badge"></span>
               <span id="deptWeekBadge" class="badge"></span>
             </div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button id="btnSwitchModeQuick" type="button" class="btn-secondary" onclick="toggleEntryModeQuick()">تبديل الوضع (أونلاين / أوفلاين)</button>
-            <button id="btnSyncNow" type="button" class="btn-secondary" onclick="syncOfflineRecordsNow()">تسجيل وقت فتح الإنترنت</button>
+            <button id="btnSyncNow" type="button" class="btn-secondary" onclick="syncAllNow(true)">مزامنة الآن</button>
             <button id="btnBackDept" type="button" class="btn-secondary" onclick="backToDeptScreen()">الأقسام</button>
           </div>
         </div>
@@ -396,7 +407,7 @@
       <div id="repTab" class="card no-print hidden" style="display:none;">
         <div id="repAuthBox">
           <h3 style="margin-top:0;">دخول المندوب (محمي بكلمة مرور)</h3>
-          <p class="muted">أدخل كلمة المرور للوصول إلى الرمز الرباعي الخاص بالمحاضرة، حالة المحاضرة الآن، قائمة الطلاب وأرقام القيد، والتسجيل الاستثنائي المؤكد.</p>
+          <p class="muted">أدخل كلمة المرور للوصول إلى الرمز الرباعي الخاص بالمحاضرة، نشر التنبيهات العاجلة للقسم، قائمة الطلاب وأرقام القيد، والتسجيل الاستثنائي المؤكد.</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
             <input id="repPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
             <button id="btnUnlockRep" type="button" class="btn-primary" onclick="unlockRepPanel()">دخول المندوب</button>
@@ -406,7 +417,7 @@
 
         <div id="repPanel" class="hidden" style="display:none;">
           <div class="topbar">
-            <h3 style="margin:0;">لوحة المندوب — حالة المحاضرة الآن</h3>
+            <h3 style="margin:0;">لوحة المندوب — حالة المحاضرة والإعلانات</h3>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button id="btnCopyLectureSummary" type="button" class="btn-secondary" onclick="copyLectureSummary()">نسخ ملخص المحاضرة</button>
               <button id="btnChangePass" type="button" class="btn-secondary" onclick="changeSystemPassword()">تغيير كلمة المرور</button>
@@ -433,6 +444,31 @@
           </div>
 
           <div id="repStatsGrid" class="stats-grid"></div>
+
+          <div class="record-card" style="margin-top:14px;">
+            <h4 style="margin:0 0 8px;">لوحة نشر الإعلانات والتنبيهات العاجلة للقسم (محلي + سحابي)</h4>
+            <p class="muted" style="margin:0 0 10px;">يُحفظ التنبيه محلياً ليظهر لطلاب القسم حتى بدون إنترنت، ويُزامَن مع Firebase Realtime Database عند وجود اتصال.</p>
+            <div class="grid-2">
+              <div>
+                <label class="muted">نوع التنبيه</label>
+                <select id="annTypeSelect" style="width:100%; margin-top:6px;">
+                  <option value="تغيير قاعة">تغيير قاعة</option>
+                  <option value="موعد اختبار">موعد اختبار</option>
+                  <option value="تنبيه رمز تحضير">تنبيه رمز تحضير</option>
+                  <option value="تنويه عاجل">تنويه عاجل</option>
+                </select>
+              </div>
+              <div>
+                <label class="muted">نص التنبيه العاجل</label>
+                <input id="annMessageInput" type="text" placeholder="مثال: تم نقل محاضرة اليوم إلى قاعة القدس" style="width:100%; margin-top:6px;" />
+              </div>
+            </div>
+            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="btnPublishAnn" type="button" class="btn-primary" onclick="publishAnnouncement()">نشر التنبيه للقسم</button>
+              <button id="btnClearAnn" type="button" class="btn-danger" onclick="clearAnnouncement()">إخفاء / حذف التنبيه الحالي</button>
+            </div>
+            <div id="annStatusMsg" class="alert hidden"></div>
+          </div>
 
           <div class="grid-2" style="margin-top:14px;">
             <div>
@@ -473,7 +509,7 @@
       <div id="logsTab" class="card hidden" style="display:none;">
         <div id="logsAuthBox" class="no-print">
           <h3 style="margin-top:0;">قسم السجل (كشوفات الدكتور والمقرر)</h3>
-          <p class="muted">أدخل كلمة المرور لعرض الكشوفات المستقلة لكل دكتور ومقرر، وكشف الفروقات الزمنية للأوفلاين، وتنبيهات التحضير المشبوه/المكرر.</p>
+          <p class="muted">أدخل كلمة المرور لعرض الكشوفات المستقلة لكل دكتور ومقرر، وكشف الفروقات الزمنية للأوفلاين، وحالة المزامنة السحابية، وتنبيهات التحضير المشبوه/المكرر.</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
             <input id="logsPassInput" type="password" placeholder="كلمة المرور (الافتراضية: 2026)" />
             <button id="btnUnlockLogs" type="button" class="btn-primary" onclick="unlockLogsPanel()">فتح السجل</button>
@@ -485,7 +521,7 @@
           <div class="topbar">
             <div>
               <h3 id="activeReportHeader" style="margin:0;">كشوفات الحضور والغياب حسب الدكتور والمقرر</h3>
-              <div class="muted" style="font-size:0.84rem;">يشمل الفارق الزمني الدقيق بين (وقت التسجيل) و(وقت فتح الإنترنت) لطلاب الأوفلاين.</div>
+              <div class="muted" style="font-size:0.84rem;">يشمل الفارق الزمني الدقيق بين (وقت التسجيل) و(وقت فتح الإنترنت) لطلاب الأوفلاين وحالة المزامنة السحابية.</div>
             </div>
             <div class="no-print" style="display:flex; gap:8px; flex-wrap:wrap;">
               <button id="btnExportCsv" type="button" class="btn-secondary" onclick="protectedExportCSV()">تصدير Excel/CSV</button>
@@ -501,9 +537,12 @@
     </section>
 
   </div>
+
   <script>
     const WHATSAPP_NUMBER = '967781325909';
     const WHATSAPP_DISPLAY = '+967781325909';
+    const FIREBASE_DB_URL = 'https://hajjah-attendance-default-rtdb.firebaseio.com';
+    const CLOUD_TIMEOUT_MS = 3500;
 
     const DEPARTMENTS = {
       ai: {
@@ -692,13 +731,14 @@
       }
     };
 
-    const STORAGE_KEY = 'hajjah_smart_attendance_v6';
+    const STORAGE_KEY = 'hajjah_smart_attendance_v7';
     let state = loadState();
     let currentEntryMode = state.lastMode || 'offline';
     let currentDeptKey = state.lastDept || 'ai';
     let repUnlocked = false;
     let logsUnlocked = false;
     let pendingExceptionDraft = null;
+    let isSyncingCloud = false;
 
     function setElementVisible(el, visible, displayType = 'block') {
       if (!el) return;
@@ -713,7 +753,11 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('hajjah_smart_attendance_v5') || localStorage.getItem('hajjah_smart_attendance_v4');
+        const raw =
+          localStorage.getItem(STORAGE_KEY) ||
+          localStorage.getItem('hajjah_smart_attendance_v6') ||
+          localStorage.getItem('hajjah_smart_attendance_v5') ||
+          localStorage.getItem('hajjah_smart_attendance_v4');
         if (raw) {
           const parsed = JSON.parse(raw);
           return {
@@ -726,7 +770,15 @@
               cyber: parsed.headers?.cyber || DEPARTMENTS.cyber.defaultHeader,
               cs: parsed.headers?.cs || DEPARTMENTS.cs.defaultHeader
             },
-            records: Array.isArray(parsed.records) ? parsed.records : [],
+            announcements: {
+              ai: parsed.announcements?.ai || null,
+              cyber: parsed.announcements?.cyber || null,
+              cs: parsed.announcements?.cs || null
+            },
+            records: Array.isArray(parsed.records) ? parsed.records.map(r => ({
+              ...r,
+              cloud_synced: Boolean(r.cloud_synced)
+            })) : [],
             alerts: Array.isArray(parsed.alerts) ? parsed.alerts : [],
             feedbacks: Array.isArray(parsed.feedbacks) ? parsed.feedbacks : []
           };
@@ -742,6 +794,7 @@
           cyber: DEPARTMENTS.cyber.defaultHeader,
           cs: DEPARTMENTS.cs.defaultHeader
         },
+        announcements: { ai: null, cyber: null, cs: null },
         records: [],
         alerts: [],
         feedbacks: []
@@ -769,9 +822,136 @@
 
     function getModeDescription(mode) {
       if (mode === 'offline') {
-        return 'تسجيل محلي فوري بدون الحاجة للإنترنت، ويُحسب الفارق الزمني عند فتح الإنترنت';
+        return 'تسجيل محلي فوري بدون الحاجة للإنترنت، ويُحسب الفارق الزمني والمزامنة عند توفر الإنترنت';
       }
-      return 'وضع الإنترنت مفعل دون إلزام؛ يعمل التسجيل محلياً ويُسجّل وقت فتح الإنترنت تلقائياً';
+      return 'وضع الإنترنت مفعل دون إلزام؛ يعمل التسجيل محلياً ويُزامَن مع السحابة تلقائياً عند توفر الاتصال';
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = CLOUD_TIMEOUT_MS) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        return res;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function canAttemptCloud() {
+      return Boolean(FIREBASE_DB_URL) && Boolean(navigator.onLine);
+    }
+
+    async function pushSingleRecordToCloud(rec) {
+      if (!canAttemptCloud() || !rec) return false;
+      try {
+        const url = `${FIREBASE_DB_URL}/attendance/${rec.department}/${encodeURIComponent(rec.id)}.json`;
+        const payload = {
+          id: rec.id,
+          department: rec.department,
+          lecture_id: rec.lecture_id,
+          course_name: rec.course_name,
+          doctor_name: rec.doctor_name,
+          week_index: rec.week_index,
+          code_used: rec.code_used,
+          within_10min: rec.within_10min,
+          entry_mode: rec.entry_mode,
+          recorded_at: rec.recorded_at,
+          online_opened_at: rec.online_opened_at,
+          exceptional: Boolean(rec.exceptional),
+          exceptional_reason: rec.exceptional_reason || '',
+          student_name: rec.student_name,
+          student_id: rec.student_id,
+          synced_at: new Date().toISOString()
+        };
+        const res = await fetchWithTimeout(url, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) return false;
+        rec.cloud_synced = true;
+        saveState();
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function pushPendingRecordsToCloud(deptFilter = null) {
+      if (!canAttemptCloud() || isSyncingCloud) return 0;
+      isSyncingCloud = true;
+      let pushedCount = 0;
+      try {
+        const pending = state.records.filter(r => !r.cloud_synced && (!deptFilter || r.department === deptFilter));
+        for (const rec of pending) {
+          const ok = await pushSingleRecordToCloud(rec);
+          if (ok) pushedCount += 1;
+        }
+      } finally {
+        isSyncingCloud = false;
+      }
+      return pushedCount;
+    }
+
+    async function syncAnnouncementWithCloud(deptKey, annObj) {
+      if (!canAttemptCloud()) return false;
+      try {
+        const url = `${FIREBASE_DB_URL}/announcements/${deptKey}.json`;
+        const res = await fetchWithTimeout(url, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(annObj || null)
+        });
+        return res.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function fetchAnnouncementFromCloud(deptKey) {
+      if (!canAttemptCloud()) return null;
+      try {
+        const url = `${FIREBASE_DB_URL}/announcements/${deptKey}.json`;
+        const res = await fetchWithTimeout(url, { method: 'GET' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data && typeof data === 'object' && data.message) {
+          state.announcements[deptKey] = data;
+          saveState();
+          return data;
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function syncAllNow(showFeedbackAlert = false) {
+      const hasNet = Boolean(navigator.onLine);
+      const openedChanged = hasNet ? markPendingOfflineOpenedNow() : false;
+      let pushed = 0;
+      let annFetched = null;
+
+      if (hasNet) {
+        pushed = await pushPendingRecordsToCloud(currentDeptKey);
+        annFetched = await fetchAnnouncementFromCloud(currentDeptKey);
+      }
+
+      renderAnnouncementBanner();
+      syncTopBadges();
+      renderDeptQuickSummary();
+      updateStudentTracker();
+      if (repUnlocked) renderRepStats();
+      if (logsUnlocked) renderDoctorCourseSheets();
+
+      if (showFeedbackAlert) {
+        if (!hasNet) {
+          alert('لا يوجد اتصال إنترنت نشط حالياً؛ البيانات محفوظة محلياً وستُزامَن تلقائياً عند توفر الإنترنت.');
+        } else {
+          alert(`اكتملت المزامنة: تم رفع ${pushed} سجل/سجلات جديدة${openedChanged ? ' وتحديث أوقات فتح الإنترنت' : ''}${annFetched ? ' وجلب أحدث تنبيه للقسم' : ''}.`);
+        }
+      }
     }
 
     function renderQuickResumeBox() {
@@ -790,7 +970,7 @@
 
     function quickResumeLast() {
       currentEntryMode = state.lastMode || 'offline';
-      if (currentEntryMode === 'online' && navigator.onLine) {
+      if (navigator.onLine) {
         markPendingOfflineOpenedNow();
       }
       selectDepartment(state.lastDept || 'ai');
@@ -804,7 +984,7 @@
       state.lastMode = currentEntryMode;
       saveState();
 
-      if (currentEntryMode === 'online' && navigator.onLine) {
+      if (navigator.onLine) {
         markPendingOfflineOpenedNow();
       }
 
@@ -827,8 +1007,14 @@
       currentEntryMode = nextMode;
       state.lastMode = nextMode;
       saveState();
-      if (nextMode === 'online' && navigator.onLine) {
+      if (navigator.onLine) {
         markPendingOfflineOpenedNow();
+        pushPendingRecordsToCloud(currentDeptKey).then(() => {
+          syncTopBadges();
+          renderDeptQuickSummary();
+          if (repUnlocked) renderRepStats();
+          if (logsUnlocked) renderDoctorCourseSheets();
+        });
       }
       syncTopBadges();
       renderDeptQuickSummary();
@@ -861,6 +1047,7 @@
       setElementVisible(document.getElementById('deptWorkspace'), true, 'block');
 
       populateLectureSelects();
+      renderAnnouncementBanner();
       syncTopBadges();
       renderDeptQuickSummary();
       renderFeedbackHistory();
@@ -870,6 +1057,14 @@
       refreshWindowUI();
       updateStudentTracker();
       window.scrollTo(0, 0);
+
+      if (navigator.onLine) {
+        fetchAnnouncementFromCloud(deptKey).then(() => renderAnnouncementBanner());
+        pushPendingRecordsToCloud(deptKey).then(() => {
+          syncTopBadges();
+          renderDeptQuickSummary();
+        });
+      }
     }
 
     function backToDeptScreen() {
@@ -887,12 +1082,95 @@
       window.scrollTo(0, 0);
     }
 
+    function renderAnnouncementBanner() {
+      const banner = document.getElementById('announcementBanner');
+      if (!banner) return;
+      const ann = state.announcements[currentDeptKey];
+      if (!ann || !ann.message) {
+        setElementVisible(banner, false);
+        return;
+      }
+      const dept = DEPARTMENTS[currentDeptKey];
+      const timeStr = ann.updated_at ? new Date(ann.updated_at).toLocaleString('ar-YE') : '';
+      banner.innerHTML = `
+        <div class="topbar" style="margin-bottom:4px;">
+          <div>
+            <span class="badge" style="background:rgba(234,179,8,0.2); color:var(--accent-2);">تنبيه عاجل • ${ann.type || 'تنويه'}</span>
+            <span class="muted" style="font-size:0.82rem; margin-right:6px;">${dept.name}</span>
+          </div>
+          <div class="muted" style="font-size:0.8rem;">${timeStr}</div>
+        </div>
+        <div style="font-size:1rem; font-weight:700; line-height:1.6;">${ann.message}</div>
+      `;
+      setElementVisible(banner, true, 'block');
+    }
+
+    async function publishAnnouncement() {
+      if (!repUnlocked) return;
+      const type = document.getElementById('annTypeSelect').value;
+      const msg = document.getElementById('annMessageInput').value.trim();
+      const statusEl = document.getElementById('annStatusMsg');
+      setElementVisible(statusEl, true, 'block');
+
+      if (!msg) {
+        statusEl.textContent = 'يرجى كتابة نص التنبيه العاجل قبل نشره.';
+        return;
+      }
+
+      const annObj = {
+        department: currentDeptKey,
+        type,
+        message: msg,
+        updated_at: new Date().toISOString()
+      };
+
+      state.announcements[currentDeptKey] = annObj;
+      saveState();
+      renderAnnouncementBanner();
+
+      if (navigator.onLine) {
+        const synced = await syncAnnouncementWithCloud(currentDeptKey, annObj);
+        statusEl.textContent = synced
+          ? 'تم نشر التنبيه محلياً ومزامنته مع قاعدة البيانات السحابية بنجاح.'
+          : 'تم نشر التنبيه محلياً وسيُزامَن مع السحابة عند توفر اتصال مستقر.';
+      } else {
+        statusEl.textContent = 'تم حفظ التنبيه محلياً وسيظهر لطلاب هذا الجهاز حتى بدون إنترنت.';
+      }
+      document.getElementById('annMessageInput').value = '';
+    }
+
+    async function clearAnnouncement() {
+      if (!repUnlocked) return;
+      const statusEl = document.getElementById('annStatusMsg');
+      setElementVisible(statusEl, true, 'block');
+
+      state.announcements[currentDeptKey] = null;
+      saveState();
+      renderAnnouncementBanner();
+
+      if (navigator.onLine) {
+        await syncAnnouncementWithCloud(currentDeptKey, null);
+        statusEl.textContent = 'تم إخفاء التنبيه محلياً وحذفه من القاعدة السحابية.';
+      } else {
+        statusEl.textContent = 'تم إخفاء التنبيه من التخزين المحلي.';
+      }
+    }
+
     function syncTopBadges() {
       const modeBadge = document.getElementById('deptModeBadge');
       const netStatus = document.getElementById('deptNetStatus');
+      const cloudStatus = document.getElementById('deptCloudStatus');
       const weekBadge = document.getElementById('deptWeekBadge');
+
+      const pendingCloudCount = state.records.filter(r => r.department === currentDeptKey && !r.cloud_synced).length;
+
       if (modeBadge) modeBadge.textContent = currentEntryMode === 'online' ? 'الوضع: باستخدام الإنترنت' : 'الوضع: بدون إنترنت';
       if (netStatus) netStatus.textContent = navigator.onLine ? 'الشبكة: متصلة' : 'الشبكة: غير متصلة (متاح العمل)';
+      if (cloudStatus) {
+        cloudStatus.textContent = pendingCloudCount > 0
+          ? `السحابة: ${pendingCloudCount} بانتظار الرفع`
+          : 'السحابة: متزامن';
+      }
       if (weekBadge) weekBadge.textContent = `دورة الرموز: الأسبوع ${Number(state.weekIndex) + 1}`;
     }
 
@@ -903,6 +1181,7 @@
       const deptRecs = state.records.filter(r => r.department === currentDeptKey);
       const uniqueStudents = new Set(deptRecs.map(r => r.student_id)).size;
       const pendingOffline = deptRecs.filter(r => !r.online_opened_at).length;
+      const pendingCloud = deptRecs.filter(r => !r.cloud_synced).length;
       const totalLectures = dept.lectures.length || 1;
       const avgRate = Math.min(100, Math.round((deptRecs.length / (dept.students.length * totalLectures)) * 100));
 
@@ -911,6 +1190,7 @@
         <div class="stat-box"><div class="muted">إجمالي التسجيلات</div><div class="stat-val">${deptRecs.length}</div></div>
         <div class="stat-box"><div class="muted">طلاب حضروا مرة+</div><div class="stat-val">${uniqueStudents}</div></div>
         <div class="stat-box"><div class="muted">بانتظار فتح الإنترنت</div><div class="stat-val">${pendingOffline}</div></div>
+        <div class="stat-box"><div class="muted">بانتظار السحابة</div><div class="stat-val">${pendingCloud}</div></div>
         <div class="stat-box"><div class="muted">مؤشر النشاط</div><div class="stat-val">${avgRate}%</div></div>
       `;
     }
@@ -1097,7 +1377,7 @@
       saveState();
     }
 
-    function submitStudentAttendance() {
+    async function submitStudentAttendance() {
       const name = document.getElementById('stuNameInput').value.trim();
       const stuId = document.getElementById('stuIdInput').value.trim();
       const code = document.getElementById('stuCodeInput').value.trim();
@@ -1158,9 +1438,9 @@
       const isOfflineMode = currentEntryMode === 'offline';
       const hasNetworkNow = Boolean(navigator.onLine);
       const recordedAtIso = now.toISOString();
-      const onlineOpenedAtIso = (!isOfflineMode && hasNetworkNow) ? now.toISOString() : null;
+      const onlineOpenedAtIso = hasNetworkNow ? now.toISOString() : null;
 
-      state.records.push({
+      const newRecord = {
         id: 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         department: currentDeptKey,
         lecture_id: lec.id,
@@ -1173,26 +1453,38 @@
         recorded_at: recordedAtIso,
         online_opened_at: onlineOpenedAtIso,
         synced: Boolean(onlineOpenedAtIso),
+        cloud_synced: false,
         exceptional: false,
         exceptional_reason: '',
         student_name: name,
         student_id: stuId
-      });
+      };
+
+      state.records.push(newRecord);
       saveState();
 
-      if (isOfflineMode) {
-        fb.textContent = 'تم تسجيل حضورك محلياً (بدون إنترنت) وحفظ وقت التسجيل بدقة؛ وعند فتح الإنترنت سيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني تلقائياً.';
-      } else if (!hasNetworkNow) {
-        fb.textContent = 'تم تسجيل حضورك محلياً دون توقف رغم عدم توفر الإنترنت؛ وسيُضاف وقت فتح الإنترنت ويُحسب الفارق الزمني عند عودة الاتصال.';
-      } else {
-        fb.textContent = 'تم تسجيل حضورك وحفظ السجل بنجاح مع توثيق وقت التسجيل ووقت فتح الإنترنت.';
-      }
-
       document.getElementById('stuCodeInput').value = '';
+      syncTopBadges();
       renderDeptQuickSummary();
       updateStudentTracker();
       if (repUnlocked) renderRepStats();
       if (logsUnlocked) renderDoctorCourseSheets();
+
+      let uploadedNow = false;
+      if (hasNetworkNow) {
+        uploadedNow = await pushSingleRecordToCloud(newRecord);
+        syncTopBadges();
+        renderDeptQuickSummary();
+        if (logsUnlocked) renderDoctorCourseSheets();
+      }
+
+      if (!hasNetworkNow) {
+        fb.textContent = 'تم تسجيل حضورك محلياً دون توقف رغم عدم توفر الإنترنت؛ وسيُضاف وقت فتح الإنترنت ويُرفع إلى السحابة تلقائياً عند عودة الاتصال.';
+      } else if (uploadedNow) {
+        fb.textContent = 'تم تسجيل حضورك وحفظه محلياً ومزامنته مع قاعدة البيانات السحابية بنجاح.';
+      } else {
+        fb.textContent = 'تم تسجيل حضورك وحفظه محلياً؛ وسيتم إكمال المزامنة السحابية تلقائياً عند استقرار الاتصال.';
+      }
     }
 
     function buildFeedbackMessage() {
@@ -1334,29 +1626,8 @@
       return changed;
     }
 
-    function syncOfflineRecordsNow() {
-      if (!navigator.onLine) {
-        alert('لا يوجد اتصال إنترنت نشط الآن؛ السجلات محفوظة محلياً وعند فتح الإنترنت سيتم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني تلقائياً.');
-        return;
-      }
-      const updated = markPendingOfflineOpenedNow();
-      syncTopBadges();
-      renderDeptQuickSummary();
-      updateStudentTracker();
-      if (repUnlocked) renderRepStats();
-      if (logsUnlocked) renderDoctorCourseSheets();
-      alert(updated
-        ? 'تم تسجيل وقت فتح الإنترنت وحساب الفارق الزمني لجميع التسجيلات المؤجلة بنجاح.'
-        : 'جميع التسجيلات مسجّل لها وقت فتح الإنترنت بالفعل.');
-    }
-
     window.addEventListener('online', () => {
-      markPendingOfflineOpenedNow();
-      syncTopBadges();
-      renderDeptQuickSummary();
-      updateStudentTracker();
-      if (repUnlocked) renderRepStats();
-      if (logsUnlocked) renderDoctorCourseSheets();
+      syncAllNow(false);
     });
 
     function computeTimeDiffInfo(rec) {
@@ -1407,6 +1678,7 @@
       repUnlocked = false;
       pendingExceptionDraft = null;
       setElementVisible(document.getElementById('excConfirmBox'), false);
+      setElementVisible(document.getElementById('annStatusMsg'), false);
       const repPassInput = document.getElementById('repPassInput');
       if (repPassInput) repPassInput.value = '';
       setElementVisible(document.getElementById('repPanel'), false);
@@ -1419,12 +1691,14 @@
       const deptRecs = state.records.filter(r => r.department === currentDeptKey);
       const offlineCount = deptRecs.filter(r => r.entry_mode === 'offline').length;
       const pendingSync = deptRecs.filter(r => !r.online_opened_at).length;
+      const pendingCloud = deptRecs.filter(r => !r.cloud_synced).length;
       const alertCount = state.alerts.filter(a => a.department === currentDeptKey).length;
 
       document.getElementById('repStatsGrid').innerHTML = `
         <div class="stat-box"><div class="muted">إجمالي طلاب القسم</div><div class="stat-val">${dept.students.length}</div></div>
         <div class="stat-box"><div class="muted">إجمالي سجلات الحضور</div><div class="stat-val">${deptRecs.length}</div></div>
         <div class="stat-box"><div class="muted">تسجيل أوفلاين</div><div class="stat-val">${offlineCount} (${pendingSync} بانتظار النت)</div></div>
+        <div class="stat-box"><div class="muted">بانتظار السحابة</div><div class="stat-val">${pendingCloud}</div></div>
         <div class="stat-box"><div class="muted">تنبيهات الفحص</div><div class="stat-val">${alertCount}</div></div>
       `;
     }
@@ -1467,255 +1741,16 @@
       setElementVisible(document.getElementById('excConfirmBox'), false);
     }
 
-    function confirmExceptionalEntry() {
+    async function confirmExceptionalEntry() {
       if (!repUnlocked || !pendingExceptionDraft) return;
       const now = new Date();
+      const hasNet = Boolean(navigator.onLine);
       const d = pendingExceptionDraft;
-      state.records.push({
+      const excRec = {
         id: 'exc_' + Date.now(),
         department: currentDeptKey,
         lecture_id: d.lecture.id,
         course_name: d.lecture.course,
         doctor_name: d.lecture.doctor,
         week_index: state.weekIndex + 1,
-        code_used: 'EXC-' + d.lecture.codes[state.weekIndex % d.lecture.codes.length],
-        within_10min: true,
-        entry_mode: currentEntryMode === 'offline' ? 'offline' : 'online',
-        recorded_at: now.toISOString(),
-        online_opened_at: (currentEntryMode === 'online' && navigator.onLine) ? now.toISOString() : null,
-        synced: Boolean(currentEntryMode === 'online' && navigator.onLine),
-        exceptional: true,
-        exceptional_reason: d.reason,
-        student_name: d.student_name,
-        student_id: d.student_id
-      });
-      saveState();
-      pendingExceptionDraft = null;
-      document.getElementById('excStudentId').value = '';
-      document.getElementById('excReason').value = '';
-      document.getElementById('excConfirmBox').innerHTML = 'تم اعتماد الحالة الاستثنائية وإضافتها إلى السجل.';
-      renderDeptQuickSummary();
-      updateStudentTracker();
-      renderRepStats();
-      if (logsUnlocked) renderDoctorCourseSheets();
-    }
-
-    function changeSystemPassword() {
-      const nextPass = prompt('أدخل كلمة المرور الجديدة للمندوب والسجل والتصدير والطباعة:');
-      if (nextPass && nextPass.trim().length >= 2) {
-        state.password = nextPass.trim();
-        saveState();
-        alert('تم تحديث كلمة المرور بنجاح.');
-      }
-    }
-
-    function saveReportHeader() {
-      state.headers[currentDeptKey] = document.getElementById('reportHeaderInput').value;
-      saveState();
-    }
-
-    function changeWeekIndex() {
-      state.weekIndex = Number(document.getElementById('weekSelector').value) || 0;
-      saveState();
-      syncTopBadges();
-      refreshWindowUI();
-    }
-
-    function toggleRosterVisibility() {
-      if (!repUnlocked) return;
-      const box = document.getElementById('repRosterBox');
-      const isHidden = box.classList.contains('hidden');
-      setElementVisible(box, isHidden, 'block');
-    }
-
-    function renderRosterTable() {
-      const dept = DEPARTMENTS[currentDeptKey];
-      const rows = dept.students.map((s, idx) =>
-        `<tr><td>${idx + 1}</td><td>${s.name}</td><td>${s.id}</td></tr>`
-      ).join('');
-      document.getElementById('repRosterBox').innerHTML = `
-        <table>
-          <thead><tr><th>م</th><th>اسم الطالب</th><th>رقم القيد</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `;
-    }
-
-    function exportBackupJSON() {
-      if (!repUnlocked) return;
-      const payload = {
-        department: currentDeptKey,
-        contact: WHATSAPP_DISPLAY,
-        header: state.headers[currentDeptKey],
-        exported_at: new Date().toISOString(),
-        records: state.records.filter(r => r.department === currentDeptKey),
-        alerts: state.alerts.filter(a => a.department === currentDeptKey),
-        feedbacks: state.feedbacks.filter(f => f.department === currentDeptKey)
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `attendance_backup_${currentDeptKey}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function unlockLogsPanel() {
-      const pass = document.getElementById('logsPassInput').value;
-      const msg = document.getElementById('logsAuthMsg');
-      if (!verifyPassword(pass)) {
-        msg.textContent = 'كلمة المرور غير صحيحة.';
-        setElementVisible(msg, true, 'block');
-        return;
-      }
-      setElementVisible(msg, false);
-      logsUnlocked = true;
-      setElementVisible(document.getElementById('logsAuthBox'), false);
-      setElementVisible(document.getElementById('logsPanel'), true, 'block');
-      document.getElementById('activeReportHeader').textContent =
-        state.headers[currentDeptKey] || DEPARTMENTS[currentDeptKey].defaultHeader;
-      renderSuspiciousAlerts();
-      renderDoctorCourseSheets();
-    }
-
-    function lockLogsPanel() {
-      logsUnlocked = false;
-      const logsPassInput = document.getElementById('logsPassInput');
-      if (logsPassInput) logsPassInput.value = '';
-      setElementVisible(document.getElementById('logsPanel'), false);
-      setElementVisible(document.getElementById('logsAuthBox'), true, 'block');
-    }
-
-    function renderSuspiciousAlerts() {
-      const deptAlerts = state.alerts.filter(a => a.department === currentDeptKey);
-      const sec = document.getElementById('suspiciousAlertsSection');
-      if (!deptAlerts.length) {
-        sec.innerHTML = '';
-        return;
-      }
-      const itemsHtml = deptAlerts.slice().reverse().map(a =>
-        `<li><strong>[${a.type}]</strong> ${a.detail} <span class="muted">(${new Date(a.at).toLocaleString('ar-YE')})</span></li>`
-      ).join('');
-      sec.innerHTML = `
-        <div class="suspicious-box">
-          <h4 style="margin:0 0 6px; color:#fca5a5;">تنبيهات التحضير المشبوه / المكرر / غير المطابق (${deptAlerts.length})</h4>
-          <ul style="margin:6px 0 0; padding-right:18px; line-height:1.7;">${itemsHtml}</ul>
-        </div>
-      `;
-    }
-
-    function renderDoctorCourseSheets() {
-      const dept = DEPARTMENTS[currentDeptKey];
-      const container = document.getElementById('doctorCourseSheets');
-      const deptRecords = state.records.filter(r => r.department === currentDeptKey);
-
-      const groups = {};
-      dept.lectures.forEach(lec => {
-        const key = `${lec.doctor} || ${lec.course}`;
-        if (!groups[key]) groups[key] = { doctor: lec.doctor, course: lec.course, items: [] };
-      });
-
-      deptRecords.forEach(rec => {
-        const key = `${rec.doctor_name} || ${rec.course_name}`;
-        if (!groups[key]) groups[key] = { doctor: rec.doctor_name, course: rec.course_name, items: [] };
-        groups[key].items.push(rec);
-      });
-
-      container.innerHTML = Object.values(groups).map(g => {
-        const presentCount = g.items.length;
-        const absentCount = Math.max(0, dept.students.length - presentCount);
-        const rate = dept.students.length ? Math.round((presentCount / dept.students.length) * 100) : 0;
-
-        const rowsHtml = g.items.length
-          ? g.items.map((it, i) => {
-              const diffInfo = computeTimeDiffInfo(it);
-              const modeLabel = it.exceptional
-                ? `<span class="tag-warn">استثنائي: ${it.exceptional_reason}</span>`
-                : (it.entry_mode === 'offline' ? '<span class="tag-warn">بدون إنترنت</span>' : '<span class="tag-ok">بالإنترنت</span>');
-
-              return `
-                <tr>
-                  <td>${i + 1}</td>
-                  <td>${it.student_name}</td>
-                  <td>${it.student_id}</td>
-                  <td>W${it.week_index} (${it.code_used})</td>
-                  <td>${modeLabel}</td>
-                  <td>${new Date(it.recorded_at).toLocaleTimeString('ar-YE')}</td>
-                  <td>${it.online_opened_at ? new Date(it.online_opened_at).toLocaleTimeString('ar-YE') : 'بانتظار فتح الإنترنت'}</td>
-                  <td class="${diffInfo.badgeClass}">${diffInfo.diffText}</td>
-                </tr>
-              `;
-            }).join('')
-          : `<tr><td colspan="8" class="muted" style="text-align:center;">لا توجد سجلات حضور مسجلة لهذا الكشف حتى الآن.</td></tr>`;
-
-        return `
-          <div class="record-card">
-            <div class="topbar">
-              <div>
-                <strong>المقرر: ${g.course}</strong>
-                <div class="muted">الدكتور / الأستاذ: ${g.doctor}</div>
-              </div>
-              <div class="muted">
-                حاضرون: <strong>${presentCount}</strong> | غائبون تقديرياً: <strong>${absentCount}</strong> | النسبة: <strong>${rate}%</strong>
-              </div>
-            </div>
-            <div style="overflow-x:auto;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>الاسم</th>
-                    <th>رقم القيد</th>
-                    <th>الأسبوع / الرمز</th>
-                    <th>الوضع</th>
-                    <th>وقت التسجيل</th>
-                    <th>وقت فتح الإنترنت</th>
-                    <th>الفارق الزمني</th>
-                  </tr>
-                </thead>
-                <tbody>${rowsHtml}</tbody>
-              </table>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function protectedExportCSV() {
-      const p = prompt('أدخل كلمة المرور لتأكيد تصدير Excel/CSV:');
-      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
-      const rows = state.records.filter(r => r.department === currentDeptKey);
-      const header = [
-        'department,course_name,doctor_name,week_index,code_used,within_10min,entry_mode,recorded_at,online_opened_at,time_diff_seconds,exceptional,student_name,student_id'
-      ];
-      const body = rows.map(r => {
-        const diffSec = r.online_opened_at
-          ? Math.max(0, Math.round((new Date(r.online_opened_at).getTime() - new Date(r.recorded_at).getTime()) / 1000))
-          : '';
-        return [
-          r.department, r.course_name, r.doctor_name, r.week_index, r.code_used,
-          r.within_10min, r.entry_mode, r.recorded_at, r.online_opened_at || '',
-          diffSec, r.exceptional ? 'true' : 'false', r.student_name, r.student_id
-        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
-      });
-      const blob = new Blob(['\ufeff' + header.concat(body).join('\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `attendance_${currentDeptKey}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function protectedPrint() {
-      const p = prompt('أدخل كلمة المرور لتأكيد الطباعة:');
-      if (!verifyPassword(p)) return alert('كلمة المرور غير صحيحة.');
-      window.print();
-    }
-
-    renderQuickResumeBox();
-    setInterval(refreshWindowUI, 1000);
-  </script>
-</body>
-</html>
+        code_used: 'EXC-' + d.lecture.
